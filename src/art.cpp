@@ -28,7 +28,17 @@ std::string TerminalVisualizer::drawPlanet(const Planet& planet) const
   lines[2] += temp_stream.str();
   lines[3] += "Class: " + info->planet_class.getName();
   lines[4] += "Description: " + info->planet_class.getDescription();
-
+  lines[5] += "Population: " + std::to_string(planet.getPops().size());
+  std::vector<Population> pops = planet.getPops();
+  sort(pops.begin(), pops.end(), [](const Population &x, const Population &y){ return (x.getReproductionProgress() > y.getReproductionProgress());});
+  for (int i = 6; i < std::min(lines.size(), pops.size() + 6); ++i) {
+    std::ostringstream rp_stream;
+    rp_stream << "Species: " << pops[i - 6].getSpecies().getName();
+    rp_stream << std::fixed;
+    rp_stream << std::setprecision(4);
+    rp_stream << " Progress: " << pops[i - 6].getReproductionProgress();
+    lines[i] += rp_stream.str();
+  }
 
   return joinLines(lines, "\n");
 }

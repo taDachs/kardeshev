@@ -1,0 +1,6 @@
+old
+.clangd/
+.cache/
+planet_images/
+build/
+compile_commands.json

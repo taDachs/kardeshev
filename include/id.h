@@ -16,6 +16,7 @@ public:
   GameObject();
   std::string getIdAsString() const;
   bool operator==(GameObject& other) { return (other.m_id == this->m_id); }
+  virtual void update() {};
 };
 
 class GameClass
@@ -28,7 +29,7 @@ public:
     : m_key(std::move(key))
   {
   }
-  bool operator==(GameClass& other) { return (other.m_key == this->m_key); }
+  bool operator==(const GameClass& other) { return (other.m_key == this->m_key); }
   std::string getKey() const { return m_key; }
 };
 } // namespace kardeshev

@@ -143,15 +143,20 @@ class Planet : public GameObject
 {
 private:
   std::vector<Population> m_pops;
-  std::vector<Building> m_buildings;
+  std::vector<std::shared_ptr<Building>> m_buildings;
   std::shared_ptr<PlanetInfo> m_info;
+  ResourceList m_stockpile;
 
 public:
   Planet(std::shared_ptr<PlanetInfo> info)
     : m_info(std::move(info)){};
   std::vector<Population> getPops() const { return m_pops; };
-  std::vector<Building> getBuildings() const { return m_buildings; };
+  void addPop(const Population& pop) { m_pops.push_back(pop); }
+  std::vector<std::shared_ptr<Building>> getBuildings() const { return m_buildings; };
   std::shared_ptr<PlanetInfo> getInfo() const { return m_info; }
+  ResourceList getStockpile() const { return m_stockpile; }
+  void update() override;
+  void addBuilding(const std::shared_ptr<Building>& building) { m_buildings.push_back(building); }
 };
 
 } // namespace kardeshev

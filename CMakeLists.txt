@@ -18,6 +18,8 @@ add_library(kardeshev_lib
   src/stars.cpp
   src/solar_system_generation.cpp
   src/solar_systems.cpp
+  src/population.cpp
+  src/buildings.cpp
   )
 
 add_executable(kardeshev src/main.cpp)
