@@ -1,4 +1,5 @@
 #include "util.h"
+#include <cmath>
 
 std::vector<std::string> splitString(std::string s, const std::string& delimiter)
 {
@@ -63,4 +64,14 @@ std::string encodeBase32(long i)
   } while (u > 0);
 
   return b32;
+}
+
+glm::vec2 polarToCart(const double radius, const double angle) {
+  return {radius * cos(angle), radius * sin(angle)};
+
+}
+
+glm::vec2 polarToCart(const double radius, const int angle) {
+  double radians = angle * (360.0 / (2 * M_PI));
+  return polarToCart(radius, radians);
 }
