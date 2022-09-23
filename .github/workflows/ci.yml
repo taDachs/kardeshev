@@ -17,7 +17,7 @@ jobs:
     - name: install deps
       run: |
           sudo apt update
-          sudo apt install cmake libsdl2-dev libsdl2-ttf-dev libboost-dev
+          sudo apt install cmake libsdl2-dev libsdl2-ttf-dev libboost-dev libglm-dev
     - name: cmake setup
       run: |
           mkdir build;
