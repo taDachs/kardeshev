@@ -15,11 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install deps
-      run: sudo apt update;
-           sudo apt install cmake libsdl2-dev libsdl2-ttf-dev
+      run: |
+          sudo apt update
+          sudo apt install cmake libsdl2-dev libsdl2-ttf-dev libboost-dev
     - name: cmake setup
-      run: mkdir build;
-           cd build;
-           cmake ..
+      run: |
+          mkdir build;
+          cd build;
+          cmake ..
     - name: make
       run: make
