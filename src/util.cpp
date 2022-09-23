@@ -72,6 +72,6 @@ glm::vec2 polarToCart(const double radius, const double angle) {
 }
 
 glm::vec2 polarToCart(const double radius, const int angle) {
-  double radians = angle * (360.0 / (2 * M_PI));
+  double radians = static_cast<double>(angle) * ((2 * M_PI) / 360.0);
   return polarToCart(radius, radians);
 }

@@ -1,12 +1,14 @@
 #ifndef PLANETS_H
 #define PLANETS_H
 
+#include "duration.h"
 #include "id.h"
 #include "population.h"
 #include <buildings.h>
 #include <memory>
 #include <utility>
 #include <vector>
+#include "util.h"
 
 namespace kardeshev {
 
@@ -137,6 +139,15 @@ struct PlanetInfo
   double temperature;
   std::vector<ResourceDeposit> resources;
   std::string getNameOrId() const;
+  Duration m_orbit_duration;
+
+  int getCurrentAngle(const Duration& time) const {
+    // this is okay because the orbit duraiton shouldn't be that large
+    auto day_of_year = static_cast<double>(time.getTicks() % m_orbit_duration.getTicks());
+    auto orbit_duration = static_cast<double>(m_orbit_duration.getTicks());
+
+    return static_cast<int>((day_of_year / orbit_duration) * 360.0);
+  }
 };
 
 class Planet : public GameObject

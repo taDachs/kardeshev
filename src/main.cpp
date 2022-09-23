@@ -84,6 +84,7 @@ int main_old()
 
 int main()
 {
+  auto game = std::make_shared<kardeshev::Game>();
   std::cout << "Setting up generators" << std::endl;
   auto pg = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
   auto sg = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
@@ -92,19 +93,23 @@ int main()
   std::cout << "Generating solar system" << std::endl;
   std::shared_ptr<kardeshev::SolarSystem> ss = ssg.generateSolarSystem();
 
-  std::cout << "Creating render" << std::endl;
-  auto render = std::make_shared<kardeshev::Render>();
   std::cout << "Creating system artist" << std::endl;
-  auto system_artist = std::make_shared<kardeshev::SystemView>();
-  system_artist->setSystem(ss);
-  render->setArtist(system_artist);
+  auto system_artist = std::make_shared<kardeshev::SystemView>(game);
+  auto system_info_artist = std::make_shared<kardeshev::SystemInfoViewArtist>(game);
 
-  std::cout << "init render" << std::endl;
-  render->init();
-  std::cout << "displaying" << std::endl;
-  render->display();
+  std::cout << "Creating window" << std::endl;
+  auto main_window = std::make_shared<kardeshev::GameWindow>();
+  main_window->setGame(game);
+  main_window->init();
+
+  system_artist->setSystem(ss);
+  system_info_artist->setSystem(ss);
+  main_window->getMainViewRender()->setArtist(system_artist);
+  main_window->getSidebarRender()->setArtist(system_info_artist);
+  main_window->display();
+
   std::cout << "killing" << std::endl;
-  render->kill();
+  main_window->kill();
 
   return 0;
 }

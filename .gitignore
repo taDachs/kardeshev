@@ -4,3 +4,5 @@ old
 planet_images/
 build/
 compile_commands.json
+core.kardeshev.*
+tags

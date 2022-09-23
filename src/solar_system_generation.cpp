@@ -15,6 +15,7 @@ std::shared_ptr<SolarSystem> NaiveSolarSystemGenerator::generateSolarSystem() co
   }
 
   auto solar_system = std::make_shared<SolarSystem>(info, star, planets);
+  info->solar_system = solar_system;
   return solar_system;
 
 }
