@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: setup
+      run: |
+          sudo apt update
+          sudo apt install cmake libsdl2-dev libsdl2-ttf-dev libboost-dev libglm-dev
+          mkdir build
+    - name: cmake
+      run: cmake ..
+      working-directory: build
+    - name: make
+      run: make
+      working-directory: build
