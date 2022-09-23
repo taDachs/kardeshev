@@ -1,4 +1,5 @@
 # kardeshev
+[![CI](https://github.com/taDachs/kardeshev/actions/workflows/ci.yml/badge.svg)](https://github.com/taDachs/kardeshev/actions/workflows/ci.yml)
 
 ## What is this supposed to be?
 Kardshev is supposed to be a minimal 4X game set in space.
@@ -21,3 +22,11 @@ Everything.
 - find a way to make it look like a computer monitor from an old scifi movie (picture the computer screens of the Nostromo in Alien) without touching opengl if possible
 - client-server architecture
     - my frontend is going to be terrible and I want to be able to exchange it later
+    
+# build
+```sh
+mkdir build
+cd build
+cmake ..
+make
+```
