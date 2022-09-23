@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install deps
-      run: apt install cmake libsdl2-dev libsdl2-ttf-dev
+      run: sudo apt install cmake libsdl2-dev libsdl2-ttf-dev
     - name: cmake setup
       run: mkdir build
            cmake . -B build
