@@ -58,7 +58,7 @@ void GameWindow::init()
                               SDL_WINDOWPOS_UNDEFINED,
                               m_window_width,
                               m_window_height,
-                              SDL_WINDOW_SHOWN);
+                              SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
   if (m_window == nullptr)
   {
@@ -75,27 +75,33 @@ void GameWindow::init()
     throw SDLException();
   }
 
-  SDL_Rect sidebar_viewport;
-  sidebar_viewport.x = 0;
-  sidebar_viewport.y = 0;
-  sidebar_viewport.w = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  sidebar_viewport.h = m_window_height;
-  m_sidebar_render   = std::make_shared<Render>(m_renderer, sidebar_viewport);
+  m_sidebar_viewport = std::make_shared<SDL_Rect>();
+  m_sidebar_render   = std::make_shared<Render>(m_renderer, m_sidebar_viewport);
 
-  SDL_Rect mainview_viewport;
-  mainview_viewport.x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  mainview_viewport.y = 0;
-  mainview_viewport.w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  mainview_viewport.h = m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
-  m_main_view_render  = std::make_shared<Render>(m_renderer, mainview_viewport);
+  m_main_view_viewport = std::make_shared<SDL_Rect>();
+  m_main_view_render  = std::make_shared<Render>(m_renderer, m_main_view_viewport);
 
-  SDL_Rect bottombar_viewport;
-  bottombar_viewport.x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  bottombar_viewport.y =
+  m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
+  m_bottom_bar_render  = std::make_shared<Render>(m_renderer, m_bottom_bar_viewport);
+  setViewports();
+}
+
+void GameWindow::setViewports() {
+  m_sidebar_viewport->x = 0;
+  m_sidebar_viewport->y = 0;
+  m_sidebar_viewport->w = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_sidebar_viewport->h = m_window_height;
+
+  m_main_view_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_main_view_viewport->y = 0;
+  m_main_view_viewport->w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_main_view_viewport->h = m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+
+  m_bottom_bar_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_bottom_bar_viewport->y =
     m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
-  bottombar_viewport.w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  bottombar_viewport.h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
-  m_bottom_bar_render  = std::make_shared<Render>(m_renderer, bottombar_viewport);
+  m_bottom_bar_viewport->w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_bottom_bar_viewport->h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
 }
 
 
@@ -161,7 +167,7 @@ void Render::drawCircle(const int32_t centre_x,
 
 void Render::display()
 {
-  SDL_RenderSetViewport(m_renderer, &m_viewport);
+  SDL_RenderSetViewport(m_renderer, m_viewport.get());
   if (m_artist == nullptr)
   {
     std::cout << "No artist set" << std::endl;
@@ -175,7 +181,7 @@ bool Render::handleEvent(SDL_Event* e)
   int x;
   int y;
   SDL_GetMouseState(&x, &y);
-  if (!isInRect(x, y, m_viewport))
+  if (!isInRect(x, y, *m_viewport))
   {
     return false;
   }
@@ -196,6 +202,16 @@ void GameWindow::display()
       }
       else
       {
+        if (e.type == SDL_WINDOWEVENT) {
+          if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+              std::cout << "MESSAGE:Resizing window..." << std::endl;
+              /* resizeWindow(e.window.data1, e.window.data2); */
+              m_window_width = e.window.data1;
+              m_window_height = e.window.data2;
+              setViewports();
+          }
+          break;
+        }
         if (m_sidebar_render->handleEvent(&e))
         {
           break;

@@ -153,13 +153,13 @@ class Render
 private:
   bool m_active;
   SDL_Renderer* m_renderer = nullptr;
-  SDL_Rect m_viewport;
   std::shared_ptr<Artist> m_artist;
+  std::shared_ptr<SDL_Rect> m_viewport;
 
 public:
-  Render(SDL_Renderer* renderer, const SDL_Rect& viewport)
+  Render(SDL_Renderer* renderer, std::shared_ptr<SDL_Rect>  viewport)
     : m_renderer(renderer)
-    , m_viewport(viewport)
+    , m_viewport(std::move(viewport))
   {
   }
   void drawCircle(const int centre_x,
@@ -184,10 +184,10 @@ public:
   void display();
   void setArtist(std::shared_ptr<Artist> artist) { m_artist = std::move(artist); }
   bool handleEvent(SDL_Event* e);
-  int getWidth() const { return m_viewport.w; }
-  int getHeight() const { return m_viewport.h; }
-  int getOriginX() const { return m_viewport.x; }
-  int getOriginY() const { return m_viewport.y; }
+  int getWidth() const { return m_viewport->w; }
+  int getHeight() const { return m_viewport->h; }
+  int getOriginX() const { return m_viewport->x; }
+  int getOriginY() const { return m_viewport->y; }
 };
 
 class SystemView : public Artist
@@ -297,8 +297,13 @@ private:
   std::shared_ptr<Render> m_main_view_render;
   std::shared_ptr<Render> m_bottom_bar_render;
 
+  std::shared_ptr<SDL_Rect> m_sidebar_viewport;
+  std::shared_ptr<SDL_Rect> m_main_view_viewport;
+  std::shared_ptr<SDL_Rect> m_bottom_bar_viewport;
+
   std::shared_ptr<SystemView> m_system_view_artist;
   std::shared_ptr<GalaxyViewArtist> m_galaxy_view_artist;
+  void setViewports();
 
 public:
   std::shared_ptr<Render> getSidebarRender() const { return m_sidebar_render; }
