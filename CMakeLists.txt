@@ -19,7 +19,6 @@ add_library(kardeshev_lib
   src/id.cpp
   src/util.cpp
   src/planet_generation.cpp
-  src/art.cpp
   src/star_generation.cpp
   src/stars.cpp
   src/solar_system_generation.cpp
