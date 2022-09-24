@@ -25,6 +25,9 @@ Everything.
     
 # build
 ```sh
+# on ubuntu
+sudo apt install cmake libsdl2-dev libsdl2-ttf-dev libboost-dev libglm-dev
+
 mkdir build
 cd build
 cmake ..
