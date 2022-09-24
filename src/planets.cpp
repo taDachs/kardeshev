@@ -35,6 +35,6 @@ void Planet::update() {
   }
   m_pops = alive_pops;
   for (const auto& supply : m_stockpile.getSupplies()) {
-    std::cout << supply.getType().getName() << " : " << supply.getAmount() << std::endl;
+    /* std::cout << supply.getType().getName() << " : " << supply.getAmount() << std::endl; */
   }
 }

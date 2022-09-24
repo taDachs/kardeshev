@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 #include "random.h"
+#include <cmath>
 #include <string>
 #include <vector>
 #include <random>
@@ -29,5 +30,21 @@ public:
     return u(rand);
   }
 };
+
+class NormalDistribution {
+private:
+
+public:
+  static double sample(const double mean, const double variance)  {
+    std::random_device rd;
+    pcg rand(rd);
+    std::uniform_int_distribution<> u(0, 1000);
+    double u1 = static_cast<double>(u(rand)) / 1000.0;
+    double u2 = static_cast<double>(u(rand)) / 1000.0;
+    double z1 = std::sqrt(-2 * std::log(u1)) * std::cos(2 * M_PI * u2);
+    return mean + z1 * variance;
+  }
+};
+
 
 #endif // !UTIL_H

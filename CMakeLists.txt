@@ -27,6 +27,7 @@ add_library(kardeshev_lib
   src/population.cpp
   src/buildings.cpp
   src/render.cpp
+  src/galaxy_generation.cpp
   )
 
 add_executable(kardeshev src/main.cpp)

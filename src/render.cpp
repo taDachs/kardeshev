@@ -210,6 +210,11 @@ void GameWindow::display()
         }
       }
     }
+    if (m_state->focused_system == nullptr) {
+      m_main_view_render->setArtist(m_galaxy_view_artist);
+    } else {
+      m_main_view_render->setArtist(m_system_view_artist);
+    }
     m_game->step(Duration(1));
     SDL_SetRenderDrawColor(m_renderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
     SDL_RenderClear(m_renderer);
@@ -217,7 +222,7 @@ void GameWindow::display()
     m_main_view_render->display();
     m_bottom_bar_render->display();
     SDL_RenderPresent(m_renderer);
-    SDL_Delay(10);
+    /* SDL_Delay(10); */
   }
 }
 
@@ -277,7 +282,11 @@ void Render::drawRect(
 
 void SystemView::draw(Render& renderer)
 {
-  std::vector<std::shared_ptr<Planet> > planets = m_system->getPlanets();
+  if (m_current_system != m_state->focused_system) {
+    m_current_system = m_state->focused_system;
+    resetSystem();
+  }
+  std::vector<std::shared_ptr<Planet> > planets = m_current_system->getPlanets();
   int orbit                                     = 75;
   int mid_x                                     = renderer.getWidth() / 2 + m_offset.x;
   int mid_y                                     = renderer.getHeight() / 2 + m_offset.y;
@@ -303,12 +312,8 @@ void SystemView::draw(Render& renderer)
         break;
       }
     }
-    /* renderer.drawCircle(mid_x + cors.x, mid_y + cors.y, size, WHITE); */
-    /* renderer.drawText(mid_x + cors.x, mid_y + cors.y, 20, p->getIdAsString().substr(0, 10),
-     * WHITE); */
-    /* size += 2; */
 
-    orbit *= 1.25;
+    orbit *= 1.5;
   }
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
@@ -322,6 +327,11 @@ bool SystemView::handleEvent(SDL_Event* e)
       return true;
     }
   }
+  if (e->type == SDL_MOUSEBUTTONUP && e->button.button == SDL_BUTTON_LEFT)
+  {
+    m_left_mouse_pressed = false;
+    return true;
+  }
   if (e->type == SDL_MOUSEWHEEL)
   {
     if (e->wheel.y > 0)
@@ -332,7 +342,7 @@ bool SystemView::handleEvent(SDL_Event* e)
     else if (e->wheel.y < 0)
     {
       m_zoom_level /= 1.1;
-      m_zoom_level = std::max(0.5, m_zoom_level);
+      m_zoom_level = std::max(0.3, m_zoom_level);
     }
     return true;
   }
@@ -360,11 +370,90 @@ bool SystemView::handleEvent(SDL_Event* e)
     m_mouse_pos_on_click.y = y;
     return true;
   }
+  return false;
+}
+
+
+void GalaxyViewArtist::draw(Render& renderer)
+{
+  std::vector<std::shared_ptr<SolarSystem> > systems = m_galaxy->getSystems();
+  int mid_x                                     = renderer.getWidth() / 2 + m_offset.x;
+  int mid_y                                     = renderer.getHeight() / 2 + m_offset.y;
+  for (const auto& s : systems)
+  {
+    // draws planet
+    glm::vec2 cors = s->getInfo()->pos;
+    for (auto& sip : m_systems)
+    {
+      if (*sip.getSystem() == *s)
+      {
+        sip.setX(mid_x + cors.x * m_zoom_level);
+        sip.setY(mid_y + cors.y * m_zoom_level);
+        sip.setTotalX(renderer.getOriginX() + mid_x + cors.x * m_zoom_level);
+        sip.setTotalY(renderer.getOriginY() + mid_y + cors.y * m_zoom_level);
+        sip.setZoomLevel(m_zoom_level);
+        sip.display(renderer);
+        break;
+      }
+    }
+
+  }
+  renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
+}
+
+bool GalaxyViewArtist::handleEvent(SDL_Event* e)
+{
+  for (auto& pui : m_systems)
+  {
+    if (pui.handleEvent(e))
+    {
+      return true;
+    }
+  }
+  if (e->type == SDL_MOUSEWHEEL)
+  {
+    if (e->wheel.y > 0)
+    {
+      m_zoom_level *= 1.1;
+      m_zoom_level = std::min(10.0, m_zoom_level);
+    }
+    else if (e->wheel.y < 0)
+    {
+      m_zoom_level /= 1.1;
+      m_zoom_level = std::max(1.0, m_zoom_level);
+    }
+    return true;
+  }
   if (e->type == SDL_MOUSEBUTTONUP && e->button.button == SDL_BUTTON_LEFT)
   {
     m_left_mouse_pressed = false;
     return true;
   }
+  if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_LEFT)
+  {
+    if (!m_left_mouse_pressed)
+    {
+      m_left_mouse_pressed = true;
+      int x;
+      int y;
+      SDL_GetMouseState(&x, &y);
+      m_mouse_pos_on_click.x = x;
+      m_mouse_pos_on_click.y = y;
+    }
+    return true;
+  }
+  if (e->type == SDL_MOUSEMOTION && m_left_mouse_pressed)
+  {
+    int x;
+    int y;
+    SDL_GetMouseState(&x, &y);
+    m_offset.x             += x - m_mouse_pos_on_click.x;
+    m_offset.y             += y - m_mouse_pos_on_click.y;
+    m_mouse_pos_on_click.x = x;
+    m_mouse_pos_on_click.y = y;
+    return true;
+  }
+
   return false;
 }
 
@@ -372,13 +461,21 @@ void SystemInfoViewArtist::draw(Render& renderer)
 {
   renderer.drawText(
     10, 20, 15, "Time: " + std::to_string(m_game->getTime().getTicks()), DYSTOPIC_YELLOW);
+
+  std::shared_ptr<SolarSystem> system = m_state->focused_system;
+
+  if (system == nullptr) {
+    renderer.drawText(
+      10, 40, 20, "NO SYSTEM SELECTED", DYSTOPIC_YELLOW);
+    return;
+  }
   renderer.drawText(10,
                     40,
                     15,
-                    "System Name: " + m_system->getInfo()->getNameOrId().substr(0, 10),
+                    "System Name: " + system->getInfo()->getNameOrId().substr(0, 10),
                     DYSTOPIC_YELLOW);
 
-  std::vector<std::shared_ptr<Planet> > planets = m_system->getPlanets();
+  std::vector<std::shared_ptr<Planet> > planets = system->getPlanets();
   renderer.drawText(
     10, 60, 15, "Number of Planets: " + std::to_string(planets.size()), DYSTOPIC_YELLOW);
   renderer.drawText(10, 80, 15, "Planets:", DYSTOPIC_YELLOW);
@@ -431,7 +528,7 @@ void PlanetUI::display(Render& renderer) const
     renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, GREEN);
     renderer.drawText(m_x, m_y, 20, m_planet->getIdAsString().substr(0, 10), WHITE);
   }
-  else if (this->m_planet.get() == m_state->focused_planet.get())
+  else if (m_planet == m_state->focused_planet)
   {
     renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, DYSTOPIC_YELLOW);
   }
@@ -440,6 +537,48 @@ void PlanetUI::display(Render& renderer) const
     renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, WHITE);
   }
 }
+
+bool SystemUI::handleEvent(SDL_Event* e)
+{
+  int x;
+  int y;
+  SDL_GetMouseState(&x, &y);
+  int dx = m_total_x - x;
+  int dy = m_total_y - y;
+  int d  = dx * dx + dy * dy;
+  int r  = 1 * m_zoom_level;
+  if (e->type == SDL_MOUSEMOTION)
+  {
+    // Get mouse position
+    m_selected = d <= r * r;
+    // should not be counted as handled
+    return false;
+  }
+  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  {
+    if (d <= r * r)
+    {
+      m_state->focused_system = m_system;
+      return true;
+    }
+  }
+  return false;
+}
+
+void SystemUI::display(Render& renderer) const
+{
+  if (m_selected)
+  {
+    renderer.drawCircle(m_x, m_y, 1 * m_zoom_level, GREEN);
+    renderer.drawText(m_x, m_y - 40, 20, m_system->getIdAsString().substr(0, 10), DYSTOPIC_YELLOW);
+    renderer.drawText(m_x, m_y - 20, 20, "Num Planets: " + std::to_string(m_system->getPlanets().size()), DYSTOPIC_YELLOW);
+  }
+  else
+  {
+    renderer.drawCircle(m_x, m_y, 1 * m_zoom_level, WHITE);
+  }
+}
+
 
 void PlanetInfoViewArtist::draw(Render& renderer)
 {
@@ -485,5 +624,10 @@ void PlanetInfoViewArtist::draw(Render& renderer)
 
 bool PlanetInfoViewArtist::handleEvent(SDL_Event* e)
 {
+  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  {
+    m_state->focused_system = nullptr;
+    return true;
+  }
   return false;
 }

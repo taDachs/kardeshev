@@ -3,6 +3,7 @@
 #include "id.h"
 #include "planets.h"
 #include "stars.h"
+#include <glm/fwd.hpp>
 
 namespace kardeshev {
 class SolarSystem;
@@ -10,6 +11,7 @@ struct SolarSystemInfo
 {
   std::string name;
   std::shared_ptr<SolarSystem> solar_system;
+  glm::vec2 pos = {0, 0};
   std::string getNameOrId() const;
 };
 
