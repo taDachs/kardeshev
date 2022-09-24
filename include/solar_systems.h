@@ -30,6 +30,7 @@ public:
   std::vector<std::shared_ptr<Planet> > getPlanets() const { return m_planets; }
   std::shared_ptr<SolarSystemInfo> getInfo() const { return m_info; }
   std::shared_ptr<Star> getStar() const { return m_star; }
+  void update() override;
 };
 } // namespace kardeshev
 #endif //! SOLAR_SYSTEM_H

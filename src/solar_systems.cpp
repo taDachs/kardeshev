@@ -8,3 +8,9 @@ std::string SolarSystemInfo::getNameOrId() const {
   }
   return name;
 }
+
+void SolarSystem::update() {
+  for (auto& p : m_planets) {
+    p->update();
+  }
+}

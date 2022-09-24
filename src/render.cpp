@@ -1,13 +1,41 @@
 #include "render.h"
+#include "SDL_events.h"
 #include "SDL_render.h"
 #include "SDL_ttf.h"
 #include "planets.h"
 #include "util.h"
+#include <algorithm>
 #include <exception>
 #include <glm/glm.hpp>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
 using namespace kardeshev;
+
+TTF_Font* Fonts::sans_large = nullptr;
+TTF_Font* Fonts::sans_medium = nullptr;
+TTF_Font* Fonts::sans_small = nullptr;
+
+void Fonts::loadFonts() {
+  Fonts::sans_large = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 52);
+  Fonts::sans_medium = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 26);
+  Fonts::sans_small = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 12);
+}
+
+
+bool kardeshev::isInRect(int x, int y, SDL_Rect rect)
+{
+  if (x < rect.x || x > rect.x + rect.w)
+  {
+    return false;
+  }
+  if (y < rect.y || y > rect.y + rect.h)
+  {
+    return false;
+  }
+  return true;
+}
 
 void GameWindow::init()
 {
@@ -16,6 +44,8 @@ void GameWindow::init()
     std::cout << "TTF init failed" << std::endl;
     throw SDLException();
   }
+
+  Fonts::loadFonts();
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
@@ -61,7 +91,8 @@ void GameWindow::init()
 
   SDL_Rect bottombar_viewport;
   bottombar_viewport.x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  bottombar_viewport.y = m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+  bottombar_viewport.y =
+    m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
   bottombar_viewport.w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   bottombar_viewport.h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
   m_bottom_bar_render  = std::make_shared<Render>(m_renderer, bottombar_viewport);
@@ -139,9 +170,16 @@ void Render::display()
   m_artist->draw(*this);
 }
 
-void Render::handleEvent(SDL_Event* e)
+bool Render::handleEvent(SDL_Event* e)
 {
-  m_artist->handleEvent(e);
+  int x;
+  int y;
+  SDL_GetMouseState(&x, &y);
+  if (!isInRect(x, y, m_viewport))
+  {
+    return false;
+  }
+  return m_artist->handleEvent(e);
 }
 
 void GameWindow::display()
@@ -158,8 +196,18 @@ void GameWindow::display()
       }
       else
       {
-        m_sidebar_render->handleEvent(&e);
-        m_main_view_render->handleEvent(&e);
+        if (m_sidebar_render->handleEvent(&e))
+        {
+          break;
+        }
+        if (m_main_view_render->handleEvent(&e))
+        {
+          break;
+        }
+        if (m_bottom_bar_render->handleEvent(&e))
+        {
+          break;
+        }
       }
     }
     m_game->step(Duration(1));
@@ -167,6 +215,7 @@ void GameWindow::display()
     SDL_RenderClear(m_renderer);
     m_sidebar_render->display();
     m_main_view_render->display();
+    m_bottom_bar_render->display();
     SDL_RenderPresent(m_renderer);
     SDL_Delay(10);
   }
@@ -176,7 +225,7 @@ void Render::drawText(
   const int x, const int y, const int h, const std::string& text, const Color& color)
 {
   SDL_Surface* surface_message =
-    TTF_RenderText_Blended(m_sans, text.c_str(), {color.r, color.g, color.b});
+    TTF_RenderText_Blended(Fonts::sans_medium, text.c_str(), {color.r, color.g, color.b});
   SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surface_message);
   SDL_Rect message_rect; // create a rect
   message_rect.x = x;
@@ -187,6 +236,21 @@ void Render::drawText(
   SDL_FreeSurface(surface_message);
 
   SDL_DestroyTexture(message);
+}
+void Render::drawWrappedText(
+    const int x, const int y, const int w, const int h, const std::string& text, const Color& color) {
+  SDL_Surface* surface_message =
+    TTF_RenderText_Blended_Wrapped(Fonts::sans_small, text.c_str(), {color.r, color.g, color.b}, w);
+
+  SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surface_message);
+  SDL_Rect message_rect; // create a rect
+  message_rect.x = x;
+  message_rect.y = y;
+  message_rect.w = w;
+  message_rect.h = h;
+  SDL_RenderCopy(m_renderer, message, nullptr, &message_rect);
+  SDL_FreeSurface(surface_message);
+
 }
 
 void Render::drawRect(
@@ -215,18 +279,17 @@ void SystemView::draw(Render& renderer)
 {
   std::vector<std::shared_ptr<Planet> > planets = m_system->getPlanets();
   int orbit                                     = 75;
-  /* int size                                      = 5; */
-  int mid_x = renderer.getWidth() / 2;
-  int mid_y = renderer.getHeight() / 2;
+  int mid_x                                     = renderer.getWidth() / 2 + m_offset.x;
+  int mid_y                                     = renderer.getHeight() / 2 + m_offset.y;
   // draw sun
-  renderer.drawCircle(mid_x, mid_y, 20, RED);
+  renderer.drawCircle(mid_x, mid_y, 20 * m_zoom_level, RED);
   for (const auto& p : planets)
   {
     // draw orbit rings
-    renderer.drawCircle(mid_x, mid_y, orbit, GRAY);
+    renderer.drawCircle(mid_x, mid_y, orbit * m_zoom_level, GRAY);
     // draws planet
-    glm::vec2 cors =
-      polarToCart(static_cast<double>(orbit), p->getInfo()->getCurrentAngle(m_game->getTime()));
+    glm::vec2 cors = polarToCart(static_cast<double>(orbit * m_zoom_level),
+                                 p->getInfo()->getCurrentAngle(m_game->getTime()));
     for (auto& uip : m_planets)
     {
       if (*uip.getPlanet() == *p)
@@ -235,6 +298,7 @@ void SystemView::draw(Render& renderer)
         uip.setY(mid_y + cors.y);
         uip.setTotalX(renderer.getOriginX() + mid_x + cors.x);
         uip.setTotalY(renderer.getOriginY() + mid_y + cors.y);
+        uip.setZoomLevel(m_zoom_level);
         uip.display(renderer);
         break;
       }
@@ -249,21 +313,74 @@ void SystemView::draw(Render& renderer)
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
 
-void SystemView::handleEvent(SDL_Event* e)
+bool SystemView::handleEvent(SDL_Event* e)
 {
   for (auto& pui : m_planets)
   {
-    pui.handleEvent(e);
+    if (pui.handleEvent(e))
+    {
+      return true;
+    }
   }
+  if (e->type == SDL_MOUSEWHEEL)
+  {
+    if (e->wheel.y > 0)
+    {
+      m_zoom_level *= 1.1;
+      m_zoom_level = std::min(5.0, m_zoom_level);
+    }
+    else if (e->wheel.y < 0)
+    {
+      m_zoom_level /= 1.1;
+      m_zoom_level = std::max(0.5, m_zoom_level);
+    }
+    return true;
+  }
+  if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_LEFT)
+  {
+    if (!m_left_mouse_pressed)
+    {
+      m_left_mouse_pressed = true;
+      int x;
+      int y;
+      SDL_GetMouseState(&x, &y);
+      m_mouse_pos_on_click.x = x;
+      m_mouse_pos_on_click.y = y;
+    }
+    return true;
+  }
+  if (e->type == SDL_MOUSEMOTION && m_left_mouse_pressed)
+  {
+    int x;
+    int y;
+    SDL_GetMouseState(&x, &y);
+    m_offset.x             += x - m_mouse_pos_on_click.x;
+    m_offset.y             += y - m_mouse_pos_on_click.y;
+    m_mouse_pos_on_click.x = x;
+    m_mouse_pos_on_click.y = y;
+    return true;
+  }
+  if (e->type == SDL_MOUSEBUTTONUP && e->button.button == SDL_BUTTON_LEFT)
+  {
+    m_left_mouse_pressed = false;
+    return true;
+  }
+  return false;
 }
 
 void SystemInfoViewArtist::draw(Render& renderer)
 {
-  renderer.drawText(10, 20, 15, "Time: " + std::to_string(m_game->getTime().getTicks()), DYSTOPIC_YELLOW);
-  renderer.drawText(10, 40, 15, "System Name: " + m_system->getInfo()->getNameOrId().substr(0, 10), DYSTOPIC_YELLOW);
+  renderer.drawText(
+    10, 20, 15, "Time: " + std::to_string(m_game->getTime().getTicks()), DYSTOPIC_YELLOW);
+  renderer.drawText(10,
+                    40,
+                    15,
+                    "System Name: " + m_system->getInfo()->getNameOrId().substr(0, 10),
+                    DYSTOPIC_YELLOW);
 
   std::vector<std::shared_ptr<Planet> > planets = m_system->getPlanets();
-  renderer.drawText(10, 60, 15, "Number of Planets: " + std::to_string(planets.size()), DYSTOPIC_YELLOW);
+  renderer.drawText(
+    10, 60, 15, "Number of Planets: " + std::to_string(planets.size()), DYSTOPIC_YELLOW);
   renderer.drawText(10, 80, 15, "Planets:", DYSTOPIC_YELLOW);
 
   int y = 100;
@@ -275,29 +392,98 @@ void SystemInfoViewArtist::draw(Render& renderer)
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
 
-void SystemInfoViewArtist::handleEvent(SDL_Event* e) {}
-
-void PlanetUI::handleEvent(SDL_Event* e)
+bool SystemInfoViewArtist::handleEvent(SDL_Event* e)
 {
-  if (e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  return false;
+}
+
+bool PlanetUI::handleEvent(SDL_Event* e)
+{
+  int x;
+  int y;
+  SDL_GetMouseState(&x, &y);
+  int dx = m_total_x - x;
+  int dy = m_total_y - y;
+  int d  = dx * dx + dy * dy;
+  int r  = 10 * m_zoom_level;
+  if (e->type == SDL_MOUSEMOTION)
   {
     // Get mouse position
-    int x;
-    int y;
-    SDL_GetMouseState(&x, &y);
-    int dx = m_total_x - x;
-    int dy = m_total_y - y;
-    int d = dx * dx + dy * dy;
-    m_selected = d <= 10 * 10;
+    m_selected = d <= r * r;
+    // should not be counted as handled
+    return false;
   }
+  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  {
+    if (d <= r * r)
+    {
+      m_state->focused_planet = m_planet;
+      return true;
+    }
+  }
+  return false;
 }
 
 void PlanetUI::display(Render& renderer) const
 {
-  if (m_selected) {
-    renderer.drawCircle(m_x, m_y, 10, GREEN);
+  if (m_selected)
+  {
+    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, GREEN);
     renderer.drawText(m_x, m_y, 20, m_planet->getIdAsString().substr(0, 10), WHITE);
-  } else {
-    renderer.drawCircle(m_x, m_y, 10, WHITE);
   }
+  else if (this->m_planet.get() == m_state->focused_planet.get())
+  {
+    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, DYSTOPIC_YELLOW);
+  }
+  else
+  {
+    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, WHITE);
+  }
+}
+
+void PlanetInfoViewArtist::draw(Render& renderer)
+{
+  if (m_state->focused_planet == nullptr)
+  {
+    renderer.drawText(10, 20, 40, "No planet selected", DYSTOPIC_YELLOW);
+    return;
+  }
+  renderer.drawText(10,
+                    20,
+                    15,
+                    "Planet Name: " +
+                      m_state->focused_planet->getInfo()->getNameOrId().substr(0, 10),
+                    DYSTOPIC_YELLOW);
+  renderer.drawText(10,
+                    40,
+                    15,
+                    "Planet Class: " + m_state->focused_planet->getInfo()->planet_class.getName(),
+                    DYSTOPIC_YELLOW);
+  std::vector<Population> pops = m_state->focused_planet->getPops();
+  renderer.drawText(10, 60, 15, "Population Size: " + std::to_string(pops.size()), DYSTOPIC_YELLOW);
+  sort(pops.begin(), pops.end(), [](const Population& x, const Population& y) {
+    return (x.getReproductionProgress() > y.getReproductionProgress());
+  });
+  for (int i = 0; i < std::min(static_cast<int>(pops.size()), 6); ++i)
+  {
+    std::ostringstream rp_stream;
+    rp_stream << "Species: " << pops[i].getSpecies().getName();
+    rp_stream << std::fixed;
+    rp_stream << std::setprecision(4);
+    rp_stream << " Progress: " << pops[i].getReproductionProgress();
+    renderer.drawText(10, 80 + i * 10, 12, rp_stream.str(), DYSTOPIC_YELLOW);
+  }
+  renderer.drawWrappedText(renderer.getWidth() * 0.5,
+                    30,
+                    renderer.getWidth() * 0.4,
+                    100,
+                    m_state->focused_planet->getInfo()->planet_class.getDescription(),
+                    DYSTOPIC_YELLOW);
+
+  renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
+}
+
+bool PlanetInfoViewArtist::handleEvent(SDL_Event* e)
+{
+  return false;
 }

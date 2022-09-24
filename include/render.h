@@ -5,12 +5,27 @@
 #include "solar_systems.h"
 #include <SDL.h>
 #include <exception>
+#include <glm/glm.hpp>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace kardeshev {
+
+// it's either this or implementing a UI framework
+struct UIState {
+  std::shared_ptr<Planet> focused_planet = nullptr;
+};
+
+bool isInRect(int x, int y, SDL_Rect rect);
+
+struct Fonts {
+  static TTF_Font* sans_small;
+  static TTF_Font* sans_medium;
+  static TTF_Font* sans_large;
+  static void loadFonts();
+};
 
 struct Color
 {
@@ -47,8 +62,12 @@ class Render;
 
 class UIElement
 {
+protected:
+  std::shared_ptr<UIState> m_state = nullptr;
 public:
-  virtual void handleEvent(SDL_Event* e) = 0;
+  UIElement(std::shared_ptr<UIState> state): m_state(std::move(state)) {}
+
+  virtual bool handleEvent(SDL_Event* e) = 0;
   virtual void display(Render& renderer) const           = 0;
 };
 
@@ -61,26 +80,33 @@ private:
   int m_total_x;
   int m_total_y;
   bool m_selected = false;
+  double m_zoom_level = 1;
+
+
 
 public:
-  PlanetUI(std::shared_ptr<Planet> planet)
-    : m_planet(std::move(planet))
+  PlanetUI(std::shared_ptr<UIState> state, std::shared_ptr<Planet> planet)
+    : UIElement(std::move(state)), m_planet(std::move(planet))
   {
   }
   std::shared_ptr<Planet> getPlanet() const { return m_planet; }
-  void handleEvent(SDL_Event* e) override;
+  bool handleEvent(SDL_Event* e) override;
   void display(Render& renderer) const override;
   void setX(int x) { m_x = x; }
   void setY(int y) { m_y = y; }
   void setTotalX(int x) { m_total_x = x; }
   void setTotalY(int y) { m_total_y = y; }
+  void setZoomLevel(double zoom_level) { m_zoom_level = zoom_level; }
 };
 
 class Artist
 {
+protected:
+  std::shared_ptr<UIState> m_state = nullptr;
 public:
+  Artist(std::shared_ptr<UIState> state): m_state(std::move(state)) {};
   virtual void draw(Render& renderer) = 0;
-  virtual void handleEvent(SDL_Event* e) = 0;
+  virtual bool handleEvent(SDL_Event* e) = 0;
 };
 
 class Render
@@ -90,8 +116,6 @@ private:
   SDL_Renderer* m_renderer = nullptr;
   SDL_Rect m_viewport;
   std::shared_ptr<Artist> m_artist;
-  TTF_Font* m_sans =
-    TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 52);
 
 public:
   Render(SDL_Renderer* renderer, const SDL_Rect& viewport)
@@ -106,6 +130,8 @@ public:
                   const bool filled  = false);
   void drawText(
     const int x, const int y, const int h, const std::string& text, const Color& color = WHITE);
+  void drawWrappedText(
+    const int x, const int y, const int w, const int h, const std::string& text, const Color& color = WHITE);
   void drawRect(const int x,
                 const int y,
                 const int w,
@@ -114,7 +140,7 @@ public:
                 const Color& color = WHITE);
   void display();
   void setArtist(std::shared_ptr<Artist> artist) { m_artist = std::move(artist); }
-  void handleEvent(SDL_Event* e);
+  bool handleEvent(SDL_Event* e);
   int getWidth() const { return m_viewport.w; }
   int getHeight() const { return m_viewport.h; }
   int getOriginX() const { return m_viewport.x; }
@@ -127,10 +153,14 @@ private:
   std::shared_ptr<SolarSystem> m_system;
   std::shared_ptr<Game> m_game;
   std::vector<PlanetUI> m_planets;
+  double m_zoom_level = 1;
+  glm::vec2 m_offset = {0, 0};
+  glm::vec2 m_mouse_pos_on_click = {0, 0};
+  bool m_left_mouse_pressed = false;
 
 public:
-  SystemView(std::shared_ptr<Game> game)
-    : m_game(std::move(game))
+  SystemView(std::shared_ptr<UIState> state, std::shared_ptr<Game> game)
+    : Artist(std::move(state)), m_game(std::move(game))
   {
   }
   void draw(Render& renderer) override;
@@ -138,27 +168,40 @@ public:
     m_system = std::move(system);
     m_planets.clear();
     for (auto& p : m_system->getPlanets()) {
-      m_planets.emplace_back(p);
+      m_planets.emplace_back(m_state, p);
     }
   };
-  void handleEvent(SDL_Event* e) override;
+  bool handleEvent(SDL_Event* e) override;
 };
 
 class SystemInfoViewArtist : public Artist
 {
 private:
-  std::shared_ptr<Render> m_render;
   std::shared_ptr<SolarSystem> m_system;
   std::shared_ptr<Game> m_game;
 
 public:
-  SystemInfoViewArtist(std::shared_ptr<Game> game)
-    : m_game(std::move(game))
+  SystemInfoViewArtist(std::shared_ptr<UIState> state, std::shared_ptr<Game> game)
+    : Artist(std::move(state)), m_game(std::move(game))
   {
   }
   void draw(Render& renderer) override;
   void setSystem(std::shared_ptr<SolarSystem> system) { m_system = std::move(system); };
-  void handleEvent(SDL_Event* e) override;
+  bool handleEvent(SDL_Event* e) override;
+};
+
+class PlanetInfoViewArtist : public Artist
+{
+private:
+  std::shared_ptr<Game> m_game;
+
+public:
+  PlanetInfoViewArtist(std::shared_ptr<UIState> state, std::shared_ptr<Game> game)
+    : Artist(std::move(state)), m_game(std::move(game))
+  {
+  }
+  void draw(Render& renderer) override;
+  bool handleEvent(SDL_Event* e) override;
 };
 
 class GameWindow

@@ -1,4 +1,4 @@
-#include "art.h"
+/* #include "art.h" */
 #include "ascii_planets.h"
 #include "buildings.h"
 #include "planet_generation.h"
@@ -26,62 +26,51 @@ const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
                                             kardeshev::TERRESTIAL};
 const std::vector<kardeshev::StarClass> STARS{kardeshev::O, kardeshev::B, kardeshev::G};
 
-
-int main_old()
-{
-  auto pg = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
-  auto sg = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
-  kardeshev::NaiveSolarSystemGenerator ssg(pg, sg, 3, 10);
-
-  std::map<std::string, std::string> visualizer;
-  visualizer[kardeshev::DESERT.getKey()]     = kardeshev::ASCII_MARS;
-  visualizer[kardeshev::GAS_DWARF.getKey()]  = kardeshev::ASCII_VENUS;
-  visualizer[kardeshev::GAS_GIANT.getKey()]  = kardeshev::ASCII_JUPITER;
-  visualizer[kardeshev::HYCEAN.getKey()]     = kardeshev::ASCII_EARTH;
-  visualizer[kardeshev::ICE_GIANT.getKey()]  = kardeshev::ASCII_PLUTO;
-  visualizer[kardeshev::ICE.getKey()]        = kardeshev::ASCII_PLUTO;
-  visualizer[kardeshev::IRON.getKey()]       = kardeshev::ASCII_MERKUR;
-  visualizer[kardeshev::LAVA.getKey()]       = kardeshev::ASCII_VENUS;
-  visualizer[kardeshev::OCEAN.getKey()]      = kardeshev::ASCII_EARTH;
-  visualizer[kardeshev::PROTO.getKey()]      = kardeshev::ASCII_VENUS;
-  visualizer[kardeshev::TERRESTIAL.getKey()] = kardeshev::ASCII_MERKUR;
-  visualizer[kardeshev::O.getKey()]          = kardeshev::ASCII_O_STAR;
-  visualizer[kardeshev::B.getKey()]          = kardeshev::ASCII_B_STAR;
-  visualizer[kardeshev::G.getKey()]          = kardeshev::ASCII_SUN;
-
-  kardeshev::ResourceType potatoes("potato_resource", "Potatoes");
-  kardeshev::Need food_req(potatoes, 1);
-  std::shared_ptr<kardeshev::Building> potato_farm = std::make_shared<kardeshev::Farm>(potatoes);
-  kardeshev::Species humans("human_species", "Humans", 1.4, {food_req});
-  kardeshev::Population pop(humans, {});
-
-  kardeshev::TerminalVisualizer tv(visualizer);
-
-
-  /* std::shared_ptr<kardeshev::SolarSystem> ss = ssg.generateSolarSystem(); */
-  std::shared_ptr<kardeshev::Planet> planet = pg->generatePlanet();
-  planet->addBuilding(potato_farm);
-  planet->addPop(pop);
-  while (true)
-  {
-    std::cout << tv.drawPlanet(*planet) << std::endl;
-    /* std::cout << "Next action: q(uit), s(tep)"; */
-    sleep(1);
-    planet->update();
-    /* std::string next; */
-    /* std::cin >> next; */
-    /* if (next == "s" || next.empty()) { */
-    /*   planet->update(); */
-    /* } else if (next == "q") { */
-    /*   break; */
-    /* } else { */
-    /*   std::cout << "Invalid input" << std::endl; */
-    /* } */
-  }
-
-  return 0;
-}
-
+/**/
+/* int main_old() */
+/* { */
+/*   auto pg = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS); */
+/*   auto sg = std::make_shared<kardeshev::NaiveStarGenerator>(STARS); */
+/*   kardeshev::NaiveSolarSystemGenerator ssg(pg, sg, 3, 10); */
+/**/
+/*   std::map<std::string, std::string> visualizer; */
+/*   visualizer[kardeshev::DESERT.getKey()]     = kardeshev::ASCII_MARS; */
+/*   visualizer[kardeshev::GAS_DWARF.getKey()]  = kardeshev::ASCII_VENUS; */
+/*   visualizer[kardeshev::GAS_GIANT.getKey()]  = kardeshev::ASCII_JUPITER; */
+/*   visualizer[kardeshev::HYCEAN.getKey()]     = kardeshev::ASCII_EARTH; */
+/*   visualizer[kardeshev::ICE_GIANT.getKey()]  = kardeshev::ASCII_PLUTO; */
+/*   visualizer[kardeshev::ICE.getKey()]        = kardeshev::ASCII_PLUTO; */
+/*   visualizer[kardeshev::IRON.getKey()]       = kardeshev::ASCII_MERKUR; */
+/*   visualizer[kardeshev::LAVA.getKey()]       = kardeshev::ASCII_VENUS; */
+/*   visualizer[kardeshev::OCEAN.getKey()]      = kardeshev::ASCII_EARTH; */
+/*   visualizer[kardeshev::PROTO.getKey()]      = kardeshev::ASCII_VENUS; */
+/*   visualizer[kardeshev::TERRESTIAL.getKey()] = kardeshev::ASCII_MERKUR; */
+/*   visualizer[kardeshev::O.getKey()]          = kardeshev::ASCII_O_STAR; */
+/*   visualizer[kardeshev::B.getKey()]          = kardeshev::ASCII_B_STAR; */
+/*   visualizer[kardeshev::G.getKey()]          = kardeshev::ASCII_SUN; */
+/**/
+/*   kardeshev::ResourceType potatoes("potato_resource", "Potatoes"); */
+/*   kardeshev::Need food_req(potatoes, 1); */
+/*   std::shared_ptr<kardeshev::Building> potato_farm = std::make_shared<kardeshev::Farm>(potatoes); */
+/*   kardeshev::Species humans("human_species", "Humans", 1.4, {food_req}); */
+/*   kardeshev::Population pop(humans, {}); */
+/**/
+/*   kardeshev::TerminalVisualizer tv(visualizer); */
+/**/
+/**/
+/*   std::shared_ptr<kardeshev::Planet> planet = pg->generatePlanet(); */
+/*   planet->addBuilding(potato_farm); */
+/*   planet->addPop(pop); */
+/*   while (true) */
+/*   { */
+/*     std::cout << tv.drawPlanet(*planet) << std::endl; */
+/*     sleep(1); */
+/*     planet->update(); */
+/*   } */
+/**/
+/*   return 0; */
+/* } */
+/**/
 int main()
 {
   auto game = std::make_shared<kardeshev::Game>();
@@ -92,10 +81,21 @@ int main()
 
   std::cout << "Generating solar system" << std::endl;
   std::shared_ptr<kardeshev::SolarSystem> ss = ssg.generateSolarSystem();
+  game->addSystem(ss);
+
+  kardeshev::ResourceType potatoes("potato_resource", "Potatoes");
+  kardeshev::Need food_req(potatoes, 1);
+  std::shared_ptr<kardeshev::Building> potato_farm = std::make_shared<kardeshev::Farm>(potatoes);
+  kardeshev::Species humans("human_species", "Humans", 1.01, {food_req});
+  kardeshev::Population pop(humans, {});
+  ss->getPlanets()[0]->addPop(pop);
+  ss->getPlanets()[0]->addBuilding(potato_farm);
 
   std::cout << "Creating system artist" << std::endl;
-  auto system_artist = std::make_shared<kardeshev::SystemView>(game);
-  auto system_info_artist = std::make_shared<kardeshev::SystemInfoViewArtist>(game);
+  auto ui_state = std::make_shared<kardeshev::UIState>();
+  auto system_artist = std::make_shared<kardeshev::SystemView>(ui_state, game);
+  auto system_info_artist = std::make_shared<kardeshev::SystemInfoViewArtist>(ui_state, game);
+  auto planet_info_artist = std::make_shared<kardeshev::PlanetInfoViewArtist>(ui_state, game);
 
   std::cout << "Creating window" << std::endl;
   auto main_window = std::make_shared<kardeshev::GameWindow>();
@@ -106,6 +106,7 @@ int main()
   system_info_artist->setSystem(ss);
   main_window->getMainViewRender()->setArtist(system_artist);
   main_window->getSidebarRender()->setArtist(system_info_artist);
+  main_window->getBottomBarRender()->setArtist(planet_info_artist);
   main_window->display();
 
   std::cout << "killing" << std::endl;
