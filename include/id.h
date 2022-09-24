@@ -16,7 +16,7 @@ public:
   GameObject();
   std::string getIdAsString() const;
   bool operator==(GameObject& other) { return (other.m_id == this->m_id); }
-  virtual void update() {};
+  virtual void update(){};
 };
 
 class GameClass

@@ -43,7 +43,7 @@ private:
   Species m_species;
   double m_reproduction_progress = 1;
   bool m_can_reproduce           = false;
-  bool m_dead                = false;
+  bool m_dead                    = false;
   bool m_basic_needs_satisfied   = false;
 
 public:

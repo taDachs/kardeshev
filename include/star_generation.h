@@ -22,6 +22,6 @@ public:
   std::shared_ptr<Star> generateStar() const override;
 };
 
-}
+} // namespace kardeshev
 
 #endif //! STAR_GENERATION_H

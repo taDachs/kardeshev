@@ -23,7 +23,9 @@ private:
   std::shared_ptr<SolarSystemInfo> m_info;
 
 public:
-  SolarSystem(std::shared_ptr<SolarSystemInfo> info, std::shared_ptr<Star> star, std::vector<std::shared_ptr<Planet> > planets)
+  SolarSystem(std::shared_ptr<SolarSystemInfo> info,
+              std::shared_ptr<Star> star,
+              std::vector<std::shared_ptr<Planet> > planets)
     : m_info(std::move(info))
     , m_star(std::move(star))
     , m_planets(std::move(planets))

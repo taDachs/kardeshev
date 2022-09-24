@@ -66,12 +66,13 @@ std::string encodeBase32(long i)
   return b32;
 }
 
-glm::vec2 polarToCart(const double radius, const double angle) {
+glm::vec2 polarToCart(const double radius, const double angle)
+{
   return {radius * cos(angle), radius * sin(angle)};
-
 }
 
-glm::vec2 polarToCart(const double radius, const int angle) {
+glm::vec2 polarToCart(const double radius, const int angle)
+{
   double radians = static_cast<double>(angle) * ((2 * M_PI) / 360.0);
   return polarToCart(radius, radians);
 }

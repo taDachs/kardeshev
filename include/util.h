@@ -4,9 +4,9 @@
 #include "glm/glm.hpp"
 #include "random.h"
 #include <cmath>
+#include <random>
 #include <string>
 #include <vector>
-#include <random>
 
 std::vector<std::string> splitString(std::string s, const std::string& delimiter);
 std::string joinLines(const std::vector<std::string>& lines,
@@ -19,11 +19,12 @@ std::string encodeBase32(long i);
 glm::vec2 polarToCart(const double radius, const double angle);
 glm::vec2 polarToCart(const double radius, const int angle);
 
-class RandomDistribution {
+class RandomDistribution
+{
 private:
-
 public:
-  static int sample(const int min, const int max)  {
+  static int sample(const int min, const int max)
+  {
     std::random_device rd;
     pcg rand(rd);
     std::uniform_int_distribution<> u(min, max - 1);
@@ -31,11 +32,12 @@ public:
   }
 };
 
-class NormalDistribution {
+class NormalDistribution
+{
 private:
-
 public:
-  static double sample(const double mean, const double variance)  {
+  static double sample(const double mean, const double variance)
+  {
     std::random_device rd;
     pcg rand(rd);
     std::uniform_int_distribution<> u(0, 1000);

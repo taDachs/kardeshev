@@ -44,11 +44,14 @@ struct StarInfo
   std::string getNameOrId() const;
 };
 
-class Star : public GameObject {
+class Star : public GameObject
+{
 private:
   std::shared_ptr<StarInfo> m_info;
+
 public:
-  Star(std::shared_ptr<StarInfo> info): m_info(std::move(info)) {};
+  Star(std::shared_ptr<StarInfo> info)
+    : m_info(std::move(info)){};
   std::shared_ptr<StarInfo> getInfo() const { return m_info; }
 };
 

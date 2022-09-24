@@ -4,11 +4,11 @@
 #include "duration.h"
 #include "id.h"
 #include "population.h"
+#include "util.h"
 #include <buildings.h>
 #include <memory>
 #include <utility>
 #include <vector>
-#include "util.h"
 
 namespace kardeshev {
 
@@ -141,9 +141,10 @@ struct PlanetInfo
   std::string getNameOrId() const;
   Duration m_orbit_duration;
 
-  int getCurrentAngle(const Duration& time) const {
+  int getCurrentAngle(const Duration& time) const
+  {
     // this is okay because the orbit duraiton shouldn't be that large
-    auto day_of_year = static_cast<double>(time.getTicks() % m_orbit_duration.getTicks());
+    auto day_of_year    = static_cast<double>(time.getTicks() % m_orbit_duration.getTicks());
     auto orbit_duration = static_cast<double>(m_orbit_duration.getTicks());
 
     return static_cast<int>((day_of_year / orbit_duration) * 360.0);
@@ -154,7 +155,7 @@ class Planet : public GameObject
 {
 private:
   std::vector<Population> m_pops;
-  std::vector<std::shared_ptr<Building>> m_buildings;
+  std::vector<std::shared_ptr<Building> > m_buildings;
   std::shared_ptr<PlanetInfo> m_info;
   ResourceList m_stockpile;
 
@@ -163,7 +164,7 @@ public:
     : m_info(std::move(info)){};
   std::vector<Population> getPops() const { return m_pops; };
   void addPop(const Population& pop) { m_pops.push_back(pop); }
-  std::vector<std::shared_ptr<Building>> getBuildings() const { return m_buildings; };
+  std::vector<std::shared_ptr<Building> > getBuildings() const { return m_buildings; };
   std::shared_ptr<PlanetInfo> getInfo() const { return m_info; }
   ResourceList getStockpile() const { return m_stockpile; }
   void update() override;

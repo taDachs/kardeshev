@@ -22,8 +22,8 @@ private:
 
 public:
   NaiveGalaxyGenerator(std::shared_ptr<SolarSystemGenerator> system_generator,
-                            int min_systems,
-                            int max_systems)
+                       int min_systems,
+                       int max_systems)
     : m_system_generator(system_generator)
     , m_min_systems(min_systems)
     , m_max_systems(max_systems)
@@ -31,6 +31,6 @@ public:
   }
   std::shared_ptr<Galaxy> generateGalaxy() const override;
 };
-}
+} // namespace kardeshev
 
 #endif // !GALAXY_GENERATION_H

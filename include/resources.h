@@ -17,7 +17,10 @@ private:
   std::vector<Requirement> m_components;
 
 public:
-  ResourceType() : GameClass("none") {}
+  ResourceType()
+    : GameClass("none")
+  {
+  }
   /**
    * @brief Constructor for ResourceType
    *
@@ -103,7 +106,6 @@ public:
 };
 
 
-
 class ResourceList
 {
 private:
@@ -114,7 +116,7 @@ private:
 public:
   void addSupply(const ResourceSupply& supply)
   {
-    std::string key = supply.getType().getKey();
+    std::string key        = supply.getType().getKey();
     m_type_helper_map[key] = supply.getType();
     if (!m_map.count(key))
     {
@@ -134,25 +136,29 @@ public:
     }
     return {type, m_map[key]};
   }
-  std::vector<ResourceSupply> getSupplies() {
+  std::vector<ResourceSupply> getSupplies()
+  {
     std::vector<ResourceSupply> out;
-    for (const auto& supply : m_map) {
+    for (const auto& supply : m_map)
+    {
       out.emplace_back(m_type_helper_map[supply.first], supply.second);
     }
     return out;
   }
-  Need provideNeed(const Need& need) {
+  Need provideNeed(const Need& need)
+  {
     std::string key = need.getType().getKey();
     if (!m_map.count(key))
     {
       return need;
     }
-    if (m_map[key] >= need.getAmount()) {
+    if (m_map[key] >= need.getAmount())
+    {
       m_map[key] -= need.getAmount();
       return {need.getType(), 0};
     }
     size_t amount_left = need.getAmount() - m_map[key];
-    m_map[key] = 0;
+    m_map[key]         = 0;
     return {need.getType(), amount_left};
   }
 };

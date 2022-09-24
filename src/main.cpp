@@ -5,6 +5,7 @@
 #include "planet_generation.h"
 #include "planets.h"
 #include "population.h"
+#include "render.h"
 #include "solar_system_generation.h"
 #include "solar_systems.h"
 #include "star_generation.h"
@@ -13,26 +14,25 @@
 #include <iostream>
 #include <map>
 #include <memory>
-#include "render.h"
 const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
-                                            kardeshev::GAS_DWARF,
-                                            kardeshev::GAS_GIANT,
-                                            kardeshev::HYCEAN,
-                                            kardeshev::ICE_GIANT,
-                                            kardeshev::ICE,
-                                            kardeshev::IRON,
-                                            kardeshev::LAVA,
-                                            kardeshev::OCEAN,
-                                            kardeshev::PROTO,
-                                            kardeshev::TERRESTIAL};
+                                                  kardeshev::GAS_DWARF,
+                                                  kardeshev::GAS_GIANT,
+                                                  kardeshev::HYCEAN,
+                                                  kardeshev::ICE_GIANT,
+                                                  kardeshev::ICE,
+                                                  kardeshev::IRON,
+                                                  kardeshev::LAVA,
+                                                  kardeshev::OCEAN,
+                                                  kardeshev::PROTO,
+                                                  kardeshev::TERRESTIAL};
 const std::vector<kardeshev::StarClass> STARS{kardeshev::O, kardeshev::B, kardeshev::G};
 
 int main()
 {
   auto game = std::make_shared<kardeshev::Game>();
   std::cout << "Setting up generators" << std::endl;
-  auto pg = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
-  auto sg = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
+  auto pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
+  auto sg  = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
   auto ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(pg, sg, 3, 10);
 
   auto gg = std::make_shared<kardeshev::NaiveGalaxyGenerator>(ssg, 500, 1000);
@@ -53,8 +53,8 @@ int main()
   std::cout << "Creating system artist" << std::endl;
   auto ui_state = std::make_shared<kardeshev::UIState>();
 
-  auto system_artist = std::make_shared<kardeshev::SystemView>(ui_state, game);
-  auto galaxy_artist = std::make_shared<kardeshev::GalaxyViewArtist>(ui_state, game);
+  auto system_artist      = std::make_shared<kardeshev::SystemView>(ui_state, game);
+  auto galaxy_artist      = std::make_shared<kardeshev::GalaxyViewArtist>(ui_state, game);
   auto system_info_artist = std::make_shared<kardeshev::SystemInfoViewArtist>(ui_state, game);
   auto planet_info_artist = std::make_shared<kardeshev::PlanetInfoViewArtist>(ui_state, game);
 

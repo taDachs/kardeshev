@@ -157,7 +157,7 @@ private:
   std::shared_ptr<SDL_Rect> m_viewport;
 
 public:
-  Render(SDL_Renderer* renderer, std::shared_ptr<SDL_Rect>  viewport)
+  Render(SDL_Renderer* renderer, std::shared_ptr<SDL_Rect> viewport)
     : m_renderer(renderer)
     , m_viewport(std::move(viewport))
   {
@@ -283,11 +283,11 @@ public:
 class GameWindow
 {
 private:
-  SDL_Window* m_window         = nullptr;
-  SDL_Renderer* m_renderer     = nullptr;
-  int m_window_width           = 1920;
-  int m_window_height          = 1080;
-  std::shared_ptr<Game> m_game = nullptr;
+  SDL_Window* m_window             = nullptr;
+  SDL_Renderer* m_renderer         = nullptr;
+  int m_window_width               = 1920;
+  int m_window_height              = 1080;
+  std::shared_ptr<Game> m_game     = nullptr;
   std::shared_ptr<UIState> m_state = nullptr;
 
   constexpr const static double SIDEBAR_WIDTH_PERCENT = 0.3;

@@ -13,14 +13,18 @@
 
 using namespace kardeshev;
 
-TTF_Font* Fonts::sans_large = nullptr;
+TTF_Font* Fonts::sans_large  = nullptr;
 TTF_Font* Fonts::sans_medium = nullptr;
-TTF_Font* Fonts::sans_small = nullptr;
+TTF_Font* Fonts::sans_small  = nullptr;
 
-void Fonts::loadFonts() {
-  Fonts::sans_large = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 52);
-  Fonts::sans_medium = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 26);
-  Fonts::sans_small = TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 12);
+void Fonts::loadFonts()
+{
+  Fonts::sans_large =
+    TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 52);
+  Fonts::sans_medium =
+    TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 26);
+  Fonts::sans_small =
+    TTF_OpenFont("/home/max/.local/share/fonts/Ubuntu Mono Nerd Font Complete Mono.ttf", 12);
 }
 
 
@@ -79,14 +83,15 @@ void GameWindow::init()
   m_sidebar_render   = std::make_shared<Render>(m_renderer, m_sidebar_viewport);
 
   m_main_view_viewport = std::make_shared<SDL_Rect>();
-  m_main_view_render  = std::make_shared<Render>(m_renderer, m_main_view_viewport);
+  m_main_view_render   = std::make_shared<Render>(m_renderer, m_main_view_viewport);
 
   m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
-  m_bottom_bar_render  = std::make_shared<Render>(m_renderer, m_bottom_bar_viewport);
+  m_bottom_bar_render   = std::make_shared<Render>(m_renderer, m_bottom_bar_viewport);
   setViewports();
 }
 
-void GameWindow::setViewports() {
+void GameWindow::setViewports()
+{
   m_sidebar_viewport->x = 0;
   m_sidebar_viewport->y = 0;
   m_sidebar_viewport->w = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
@@ -94,13 +99,16 @@ void GameWindow::setViewports() {
 
   m_main_view_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   m_main_view_viewport->y = 0;
-  m_main_view_viewport->w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  m_main_view_viewport->h = m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+  m_main_view_viewport->w =
+    m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_main_view_viewport->h =
+    m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
 
   m_bottom_bar_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   m_bottom_bar_viewport->y =
     m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
-  m_bottom_bar_viewport->w = m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_bottom_bar_viewport->w =
+    m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   m_bottom_bar_viewport->h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
 }
 
@@ -202,13 +210,14 @@ void GameWindow::display()
       }
       else
       {
-        if (e.type == SDL_WINDOWEVENT) {
-          if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-              std::cout << "MESSAGE:Resizing window..." << std::endl;
-              /* resizeWindow(e.window.data1, e.window.data2); */
-              m_window_width = e.window.data1;
-              m_window_height = e.window.data2;
-              setViewports();
+        if (e.type == SDL_WINDOWEVENT)
+        {
+          if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+          {
+            std::cout << "MESSAGE:Resizing window..." << std::endl;
+            m_window_width  = e.window.data1;
+            m_window_height = e.window.data2;
+            setViewports();
           }
           break;
         }
@@ -226,9 +235,12 @@ void GameWindow::display()
         }
       }
     }
-    if (m_state->focused_system == nullptr) {
+    if (m_state->focused_system == nullptr)
+    {
       m_main_view_render->setArtist(m_galaxy_view_artist);
-    } else {
+    }
+    else
+    {
       m_main_view_render->setArtist(m_system_view_artist);
     }
     m_game->step(Duration(1));
@@ -259,7 +271,8 @@ void Render::drawText(
   SDL_DestroyTexture(message);
 }
 void Render::drawWrappedText(
-    const int x, const int y, const int w, const int h, const std::string& text, const Color& color) {
+  const int x, const int y, const int w, const int h, const std::string& text, const Color& color)
+{
   SDL_Surface* surface_message =
     TTF_RenderText_Blended_Wrapped(Fonts::sans_small, text.c_str(), {color.r, color.g, color.b}, w);
 
@@ -271,7 +284,6 @@ void Render::drawWrappedText(
   message_rect.h = h;
   SDL_RenderCopy(m_renderer, message, nullptr, &message_rect);
   SDL_FreeSurface(surface_message);
-
 }
 
 void Render::drawRect(
@@ -298,7 +310,8 @@ void Render::drawRect(
 
 void SystemView::draw(Render& renderer)
 {
-  if (m_current_system != m_state->focused_system) {
+  if (m_current_system != m_state->focused_system)
+  {
     m_current_system = m_state->focused_system;
     resetSystem();
   }
@@ -380,8 +393,8 @@ bool SystemView::handleEvent(SDL_Event* e)
     int x;
     int y;
     SDL_GetMouseState(&x, &y);
-    m_offset.x             += x - m_mouse_pos_on_click.x;
-    m_offset.y             += y - m_mouse_pos_on_click.y;
+    m_offset.x += x - m_mouse_pos_on_click.x;
+    m_offset.y += y - m_mouse_pos_on_click.y;
     m_mouse_pos_on_click.x = x;
     m_mouse_pos_on_click.y = y;
     return true;
@@ -393,8 +406,8 @@ bool SystemView::handleEvent(SDL_Event* e)
 void GalaxyViewArtist::draw(Render& renderer)
 {
   std::vector<std::shared_ptr<SolarSystem> > systems = m_galaxy->getSystems();
-  int mid_x                                     = renderer.getWidth() / 2 + m_offset.x;
-  int mid_y                                     = renderer.getHeight() / 2 + m_offset.y;
+  int mid_x                                          = renderer.getWidth() / 2 + m_offset.x;
+  int mid_y                                          = renderer.getHeight() / 2 + m_offset.y;
   for (const auto& s : systems)
   {
     // draws planet
@@ -412,7 +425,6 @@ void GalaxyViewArtist::draw(Render& renderer)
         break;
       }
     }
-
   }
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
@@ -463,8 +475,8 @@ bool GalaxyViewArtist::handleEvent(SDL_Event* e)
     int x;
     int y;
     SDL_GetMouseState(&x, &y);
-    m_offset.x             += x - m_mouse_pos_on_click.x;
-    m_offset.y             += y - m_mouse_pos_on_click.y;
+    m_offset.x += x - m_mouse_pos_on_click.x;
+    m_offset.y += y - m_mouse_pos_on_click.y;
     m_mouse_pos_on_click.x = x;
     m_mouse_pos_on_click.y = y;
     return true;
@@ -480,16 +492,13 @@ void SystemInfoViewArtist::draw(Render& renderer)
 
   std::shared_ptr<SolarSystem> system = m_state->focused_system;
 
-  if (system == nullptr) {
-    renderer.drawText(
-      10, 40, 20, "NO SYSTEM SELECTED", DYSTOPIC_YELLOW);
+  if (system == nullptr)
+  {
+    renderer.drawText(10, 40, 20, "NO SYSTEM SELECTED", DYSTOPIC_YELLOW);
     return;
   }
-  renderer.drawText(10,
-                    40,
-                    15,
-                    "System Name: " + system->getInfo()->getNameOrId().substr(0, 10),
-                    DYSTOPIC_YELLOW);
+  renderer.drawText(
+    10, 40, 15, "System Name: " + system->getInfo()->getNameOrId().substr(0, 10), DYSTOPIC_YELLOW);
 
   std::vector<std::shared_ptr<Planet> > planets = system->getPlanets();
   renderer.drawText(
@@ -587,7 +596,11 @@ void SystemUI::display(Render& renderer) const
   {
     renderer.drawCircle(m_x, m_y, 1 * m_zoom_level, GREEN);
     renderer.drawText(m_x, m_y - 40, 20, m_system->getIdAsString().substr(0, 10), DYSTOPIC_YELLOW);
-    renderer.drawText(m_x, m_y - 20, 20, "Num Planets: " + std::to_string(m_system->getPlanets().size()), DYSTOPIC_YELLOW);
+    renderer.drawText(m_x,
+                      m_y - 20,
+                      20,
+                      "Num Planets: " + std::to_string(m_system->getPlanets().size()),
+                      DYSTOPIC_YELLOW);
   }
   else
   {
@@ -629,11 +642,11 @@ void PlanetInfoViewArtist::draw(Render& renderer)
     renderer.drawText(10, 80 + i * 10, 12, rp_stream.str(), DYSTOPIC_YELLOW);
   }
   renderer.drawWrappedText(renderer.getWidth() * 0.5,
-                    30,
-                    renderer.getWidth() * 0.4,
-                    100,
-                    m_state->focused_planet->getInfo()->planet_class.getDescription(),
-                    DYSTOPIC_YELLOW);
+                           30,
+                           renderer.getWidth() * 0.4,
+                           100,
+                           m_state->focused_planet->getInfo()->planet_class.getDescription(),
+                           DYSTOPIC_YELLOW);
 
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
