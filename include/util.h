@@ -26,7 +26,7 @@ public:
   static int sample(const int min, const int max)
   {
     std::random_device rd;
-    pcg rand(rd);
+    Pcg rand(rd);
     std::uniform_int_distribution<> u(min, max - 1);
     return u(rand);
   }
@@ -39,7 +39,7 @@ public:
   static double sample(const double mean, const double variance)
   {
     std::random_device rd;
-    pcg rand(rd);
+    Pcg rand(rd);
     std::uniform_int_distribution<> u(0, 1000);
     double u1 = static_cast<double>(u(rand)) / 1000.0;
     double u2 = static_cast<double>(u(rand)) / 1000.0;
