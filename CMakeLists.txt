@@ -27,6 +27,9 @@ add_library(kardeshev_lib
   src/buildings.cpp
   src/render.cpp
   src/galaxy_generation.cpp
+  src/artists.cpp
+  src/window.cpp
+  src/ui_elements.cpp
   )
 
 add_executable(kardeshev src/main.cpp)
