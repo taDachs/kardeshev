@@ -42,12 +42,6 @@ bool kardeshev::isInRect(int x, int y, SDL_Rect rect)
 }
 
 
-
-
-
-
-
-
 void Render::drawCircle(const int32_t centre_x,
                         const int32_t centre_y,
                         const int32_t radius,
@@ -125,7 +119,6 @@ bool Render::handleEvent(SDL_Event* e)
 }
 
 
-
 void Render::drawText(
   const int x, const int y, const int h, const std::string& text, const Color& color)
 {
@@ -179,4 +172,3 @@ void Render::drawRect(
   }
   SDL_SetRenderDrawColor(m_renderer, WHITE.r, WHITE.b, WHITE.g, WHITE.a);
 }
-

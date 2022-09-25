@@ -5,20 +5,20 @@
 
 #include <cstdint>
 #include <random>
-class splitmix
+class Splitmix
 {
 public:
   using result_type = uint32_t;
   static constexpr result_type(min)() { return 0; }
   static constexpr result_type(max)() { return UINT32_MAX; }
-  friend bool operator==(splitmix const&, splitmix const&);
-  friend bool operator!=(splitmix const&, splitmix const&);
+  friend bool operator==(Splitmix const&, Splitmix const&);
+  friend bool operator!=(Splitmix const&, Splitmix const&);
 
-  splitmix()
+  Splitmix()
     : m_seed(1)
   {
   }
-  explicit splitmix(std::random_device& rd) { seed(rd); }
+  explicit Splitmix(std::random_device& rd) { seed(rd); }
 
   void seed(std::random_device& rd) { m_seed = uint64_t(rd()) << 31 | uint64_t(rd()); }
 
@@ -33,64 +33,68 @@ public:
   void discard(unsigned long long n)
   {
     for (unsigned long long i = 0; i < n; ++i)
+    {
       operator()();
+    }
   }
 
 private:
   uint64_t m_seed;
 };
 
-class xorshift
+class Xorshift
 {
 public:
   using result_type = uint32_t;
   static constexpr result_type(min)() { return 0; }
   static constexpr result_type(max)() { return UINT32_MAX; }
-  friend bool operator==(xorshift const&, xorshift const&);
-  friend bool operator!=(xorshift const&, xorshift const&);
+  friend bool operator==(Xorshift const&, Xorshift const&);
+  friend bool operator!=(Xorshift const&, Xorshift const&);
 
-  xorshift()
-    : m_seed(0xc1f651c67c62c6e0ull)
+  Xorshift()
+    : m_seed(0xc1f651c67c62c6e0ULL)
   {
   }
-  explicit xorshift(std::random_device& rd) { seed(rd); }
+  explicit Xorshift(std::random_device& rd) { seed(rd); }
 
   void seed(std::random_device& rd) { m_seed = uint64_t(rd()) << 31 | uint64_t(rd()); }
 
   result_type operator()()
   {
-    uint64_t result = m_seed * 0xd989bcacc137dcd5ull;
+    uint64_t result = m_seed * 0xd989bcacc137dcd5ULL;
     m_seed ^= m_seed >> 11;
     m_seed ^= m_seed << 31;
     m_seed ^= m_seed >> 18;
-    return uint32_t(result >> 32ull);
+    return uint32_t(result >> 32ULL);
   }
 
   void discard(unsigned long long n)
   {
     for (unsigned long long i = 0; i < n; ++i)
+    {
       operator()();
+    }
   }
 
 private:
   uint64_t m_seed;
 };
 
-class pcg
+class Pcg
 {
 public:
   using result_type = uint32_t;
   static constexpr result_type(min)() { return 0; }
   static constexpr result_type(max)() { return UINT32_MAX; }
-  friend bool operator==(pcg const&, pcg const&);
-  friend bool operator!=(pcg const&, pcg const&);
+  friend bool operator==(Pcg const&, Pcg const&);
+  friend bool operator!=(Pcg const&, Pcg const&);
 
-  pcg()
+  Pcg()
     : m_state(0x853c49e6748fea9bULL)
     , m_inc(0xda3e39cb94b95bdbULL)
   {
   }
-  explicit pcg(std::random_device& rd) { seed(rd); }
+  explicit Pcg(std::random_device& rd) { seed(rd); }
 
   void seed(std::random_device& rd)
   {
@@ -106,17 +110,19 @@ public:
 
   result_type operator()()
   {
-    uint64_t oldstate   = m_state;
-    m_state             = oldstate * 6364136223846793005ULL + m_inc;
-    uint32_t xorshifted = uint32_t(((oldstate >> 18u) ^ oldstate) >> 27u);
-    int rot             = oldstate >> 59u;
+    uint64_t oldstate = m_state;
+    m_state           = oldstate * 6364136223846793005ULL + m_inc;
+    auto xorshifted   = uint32_t(((oldstate >> 18U) ^ oldstate) >> 27U);
+    int rot           = oldstate >> 59u;
     return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
   }
 
   void discard(unsigned long long n)
   {
     for (unsigned long long i = 0; i < n; ++i)
+    {
       operator()();
+    }
   }
 
 private:

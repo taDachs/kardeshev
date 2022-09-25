@@ -75,6 +75,6 @@ public:
 };
 
 
-}
+} // namespace kardeshev
 
 #endif // !UI_ELEMENTS_H

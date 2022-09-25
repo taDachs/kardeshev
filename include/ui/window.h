@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
-#include "ui/render.h"
 #include "lib/game.h"
+#include "ui/render.h"
 
 namespace kardeshev {
 class GameWindow
@@ -47,7 +47,7 @@ public:
   void kill();
   void display();
 };
-}
+} // namespace kardeshev
 
 
 #endif // !WINDOW_H

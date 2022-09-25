@@ -1,8 +1,8 @@
 #ifndef GALAXY_GENERATION_H
 #define GALAXY_GENERATION_H
 
-#include "lib/galaxy.h"
 #include "generation/solar_system_generation.h"
+#include "lib/galaxy.h"
 #include <memory>
 
 namespace kardeshev {

@@ -1,6 +1,6 @@
 #include "ui/artists.h"
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
 using namespace kardeshev;
 

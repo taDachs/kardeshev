@@ -96,7 +96,7 @@ public:
 };
 
 
-}
+} // namespace kardeshev
 
 
 #endif // !ARTIST_H

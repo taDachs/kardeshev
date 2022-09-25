@@ -1,10 +1,10 @@
 #ifndef PLANETS_H
 #define PLANETS_H
 
+#include "lib/buildings.h"
 #include "lib/duration.h"
 #include "lib/id.h"
 #include "lib/population.h"
-#include "lib/buildings.h"
 #include "util.h"
 #include <memory>
 #include <utility>
