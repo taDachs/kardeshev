@@ -1,5 +1,5 @@
-#include "planets.h"
-#include "population.h"
+#include "lib/planets.h"
+#include "lib/population.h"
 #include <iostream>
 using namespace kardeshev;
 

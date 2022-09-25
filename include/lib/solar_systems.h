@@ -1,8 +1,8 @@
 #ifndef SOLAR_SYSTEM_H
 #define SOLAR_SYSTEM_H
-#include "id.h"
-#include "planets.h"
-#include "stars.h"
+#include "lib/id.h"
+#include "lib/planets.h"
+#include "lib/stars.h"
 #include <glm/fwd.hpp>
 
 namespace kardeshev {

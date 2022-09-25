@@ -1,9 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "duration.h"
-#include "galaxy.h"
-#include "solar_systems.h"
+#include "lib/duration.h"
+#include "lib/galaxy.h"
+#include "lib/solar_systems.h"
 #include <memory.h>
 
 namespace kardeshev {

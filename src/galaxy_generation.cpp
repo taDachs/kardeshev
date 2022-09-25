@@ -1,6 +1,6 @@
-#include "galaxy_generation.h"
-#include "galaxy.h"
-#include "solar_systems.h"
+#include "generation/galaxy_generation.h"
+#include "lib/galaxy.h"
+#include "lib/solar_systems.h"
 #include "util.h"
 
 using namespace kardeshev;

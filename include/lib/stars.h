@@ -1,7 +1,7 @@
 #ifndef STARS_H
 #define STARS_H
 
-#include <id.h>
+#include "lib/id.h"
 #include <memory>
 #include <utility>
 namespace kardeshev {

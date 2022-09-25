@@ -1,4 +1,4 @@
-#include "stars.h"
+#include "lib/stars.h"
 using namespace kardeshev;
 
 std::string StarInfo::getNameOrId() const

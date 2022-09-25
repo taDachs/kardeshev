@@ -1,6 +1,6 @@
-#include "planet_generation.h"
-#include "duration.h"
-#include "planets.h"
+#include "generation/planet_generation.h"
+#include "lib/duration.h"
+#include "lib/planets.h"
 #include "util.h"
 
 using namespace kardeshev;

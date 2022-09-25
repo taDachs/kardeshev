@@ -1,7 +1,7 @@
 #ifndef STAR_GENERATION_H
 #define STAR_GENERATION_H
 
-#include "stars.h"
+#include "lib/stars.h"
 namespace kardeshev {
 class StarGenerator
 {

@@ -1,8 +1,8 @@
 #ifndef GALAXY_H
 #define GALAXY_H
 
-#include "id.h"
-#include "solar_systems.h"
+#include "lib/id.h"
+#include "lib/solar_systems.h"
 namespace kardeshev {
 
 class Galaxy : public GameObject

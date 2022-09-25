@@ -1,4 +1,4 @@
-#include "buildings.h"
+#include "lib/buildings.h"
 
 using namespace kardeshev;
 

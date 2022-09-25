@@ -1,8 +1,8 @@
 #ifndef BUILDINGS_H
 #define BUILDINGS_H
 
-#include "id.h"
-#include "resources.h"
+#include "lib/id.h"
+#include "lib/resources.h"
 
 namespace kardeshev {
 class Building : public GameObject

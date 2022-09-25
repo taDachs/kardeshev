@@ -1,15 +1,13 @@
-/* #include "art.h" */
-#include "ascii_planets.h"
-#include "buildings.h"
+#include "lib/buildings.h"
 #include "galaxy_generation.h"
 #include "planet_generation.h"
-#include "planets.h"
-#include "population.h"
-#include "render.h"
+#include "lib/planets.h"
+#include "lib/population.h"
+#include "ui/render.h"
 #include "solar_system_generation.h"
-#include "solar_systems.h"
+#include "lib/solar_systems.h"
 #include "star_generation.h"
-#include "stars.h"
+#include "lib/stars.h"
 #include <SDL.h>
 #include <iostream>
 #include <map>

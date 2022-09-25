@@ -1,4 +1,4 @@
-#include "solar_system_generation.h"
+#include "generation/solar_system_generation.h"
 #include "util.h"
 #include <iostream>
 

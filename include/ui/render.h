@@ -1,9 +1,9 @@
 #ifndef RENDER_H
 #define RENDER_H
 #include "SDL_ttf.h"
-#include "galaxy.h"
-#include "game.h"
-#include "solar_systems.h"
+#include "lib/galaxy.h"
+#include "lib/game.h"
+#include "lib/solar_systems.h"
 #include <SDL.h>
 #include <exception>
 #include <glm/glm.hpp>

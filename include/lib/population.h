@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "resources.h"
+#include "lib/resources.h"
 
 namespace kardeshev {
 

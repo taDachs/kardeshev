@@ -1,8 +1,8 @@
-#include "render.h"
+#include "ui/render.h"
 #include "SDL_events.h"
 #include "SDL_render.h"
 #include "SDL_ttf.h"
-#include "planets.h"
+#include "lib/planets.h"
 #include "util.h"
 #include <algorithm>
 #include <exception>

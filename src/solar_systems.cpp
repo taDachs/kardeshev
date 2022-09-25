@@ -1,4 +1,4 @@
-#include "solar_systems.h"
+#include "lib/solar_systems.h"
 
 using namespace kardeshev;
 

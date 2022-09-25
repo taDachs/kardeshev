@@ -1,4 +1,4 @@
-#include "star_generation.h"
+#include "generation/star_generation.h"
 #include "util.h"
 #include <iostream>
 

@@ -1,9 +1,9 @@
 #ifndef SOLAR_SYSTEM_GENERATION_H
 #define SOLAR_SYSTEM_GENERATION_H
 
-#include "planet_generation.h"
-#include "solar_systems.h"
-#include "star_generation.h"
+#include "generation/planet_generation.h"
+#include "lib/solar_systems.h"
+#include "generation/star_generation.h"
 #include <memory>
 namespace kardeshev {
 class SolarSystemGenerator
