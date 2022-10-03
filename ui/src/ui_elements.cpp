@@ -1,92 +1,109 @@
 #include "ui/ui_elements.h"
+#include "SDL_render.h"
+#include "ui/assets.h"
+#include "ui/render.h"
+#include "ui/window.h"
 
 using namespace kardeshev;
 
-bool PlanetUI::handleEvent(SDL_Event* e)
-{
-  int x;
-  int y;
-  SDL_GetMouseState(&x, &y);
-  int dx = m_total_x - x;
-  int dy = m_total_y - y;
-  int d  = dx * dx + dy * dy;
-  int r  = 10 * m_zoom_level;
-  if (e->type == SDL_MOUSEMOTION)
-  {
-    // Get mouse position
-    m_selected = d <= r * r;
-    // should not be counted as handled
-    return false;
-  }
-  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
-  {
-    if (d <= r * r)
-    {
-      m_state->focused_planet = m_planet;
-      return true;
-    }
-  }
-  return false;
-}
-
-void PlanetUI::display(Render& renderer) const
+SDL_Rect PlanetUI::draw()
 {
   if (m_selected)
   {
-    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, GREEN);
-    renderer.drawText(m_x, m_y, 20, m_planet->getIdAsString().substr(0, 10), WHITE);
+    SDL_Rect src = m_tex.getFrame(2);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
   }
-  else if (m_planet == m_state->focused_planet)
+  else if (m_planet == UI::state->focused_planet)
   {
-    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, DYSTOPIC_YELLOW);
+    SDL_Rect src = m_tex.getFrame(1);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
   }
   else
   {
-    renderer.drawCircle(m_x, m_y, 10 * m_zoom_level, WHITE);
+    SDL_Rect src = m_tex.getFrame(0);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
   }
+  return m_dst;
 }
 
-bool SystemUI::handleEvent(SDL_Event* e)
-{
-  int x;
-  int y;
-  SDL_GetMouseState(&x, &y);
-  int dx = m_total_x - x;
-  int dy = m_total_y - y;
-  int d  = dx * dx + dy * dy;
-  int r  = 1 * m_zoom_level;
-  if (e->type == SDL_MOUSEMOTION)
-  {
-    // Get mouse position
-    m_selected = d <= r * r;
-    // should not be counted as handled
-    return false;
-  }
-  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
-  {
-    if (d <= r * r)
-    {
-      m_state->focused_system = m_system;
-      return true;
-    }
-  }
-  return false;
-}
 
-void SystemUI::display(Render& renderer) const
+SDL_Rect SystemUI::draw()
 {
   if (m_selected)
   {
-    renderer.drawCircle(m_x, m_y, 1 * m_zoom_level, GREEN);
-    renderer.drawText(m_x, m_y - 40, 20, m_system->getIdAsString().substr(0, 10), DYSTOPIC_YELLOW);
-    renderer.drawText(m_x,
-                      m_y - 20,
-                      20,
-                      "Num Planets: " + std::to_string(m_system->getPlanets().size()),
-                      DYSTOPIC_YELLOW);
+    SDL_Rect src = m_tex.getFrame(2);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
   }
   else
   {
-    renderer.drawCircle(m_x, m_y, 1 * m_zoom_level, WHITE);
+    SDL_Rect src = m_tex.getFrame(0);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
   }
+  return m_dst;
+}
+
+SDL_Rect StarUI::draw()
+{
+  if (m_selected)
+  {
+    SDL_Rect src = m_tex.getFrame(2);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
+  }
+  else
+  {
+    SDL_Rect src = m_tex.getFrame(0);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
+  }
+  return m_dst;
+}
+
+SDL_Rect TextLabelUI::draw()
+{
+  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
+  SDL_Surface* surface_message =
+    TTF_RenderText_Blended(font.medium, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
+  m_dst.w = std::min(surface_message->w, m_dst.w);
+  m_dst.h = std::min(surface_message->h, m_dst.h);
+  SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
+  SDL_RenderCopy(UI::render, message, nullptr, &m_dst);
+  SDL_FreeSurface(surface_message);
+
+  SDL_DestroyTexture(message);
+  return m_dst;
+}
+
+SDL_Rect TextBoxUI::draw()
+{
+  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
+  SDL_Surface* surface_message =
+    TTF_RenderText_Blended_Wrapped(font.small, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
+  m_dst.h = std::min(surface_message->h, m_dst.h);
+  SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
+  SDL_RenderCopy(UI::render, message, nullptr, &m_dst);
+  SDL_FreeSurface(surface_message);
+
+  SDL_DestroyTexture(message);
+  return m_dst;
+}
+
+
+SDL_Rect OrbitRingUI::draw()
+{
+  // SDL_RenderCopy(UI::render, m_tex.getTexture(), nullptr, &m_dst);
+  int center_x = m_dst.x + m_dst.w / 2;
+  int center_y = m_dst.y + m_dst.h / 2;
+  int radius   = m_dst.w / 2;
+  drawCircle(center_x, center_y, radius, GRAY);
+  return m_dst;
+}
+
+SDL_Rect ButtonUI::draw() {
+  if (m_selected) {
+    SDL_Rect frame = m_tex.getFrame(1);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &frame, &m_dst);
+  } else {
+    SDL_Rect frame = m_tex.getFrame(0);
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), &frame, &m_dst);
+  }
+  return m_dst;
 }

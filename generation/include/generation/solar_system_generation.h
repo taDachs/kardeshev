@@ -9,6 +9,7 @@ namespace kardeshev {
 class SolarSystemGenerator
 {
 public:
+  using Ptr = std::shared_ptr<SolarSystemGenerator>;
   virtual std::shared_ptr<SolarSystem> generateSolarSystem() const = 0;
 };
 

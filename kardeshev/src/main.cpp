@@ -1,3 +1,4 @@
+#include "main.h"
 #include "generation/galaxy_generation.h"
 #include "generation/planet_generation.h"
 #include "generation/solar_system_generation.h"
@@ -8,34 +9,28 @@
 #include "lib/solar_systems.h"
 #include "lib/stars.h"
 #include "ui/artists.h"
+#include "ui/assets.h"
 #include "ui/render.h"
 #include "ui/window.h"
 #include <SDL.h>
 #include <iostream>
 #include <map>
 #include <memory>
-const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
-                                                  kardeshev::GAS_DWARF,
-                                                  kardeshev::GAS_GIANT,
-                                                  kardeshev::HYCEAN,
-                                                  kardeshev::ICE_GIANT,
-                                                  kardeshev::ICE,
-                                                  kardeshev::IRON,
-                                                  kardeshev::LAVA,
-                                                  kardeshev::OCEAN,
-                                                  kardeshev::PROTO,
-                                                  kardeshev::TERRESTIAL};
-const std::vector<kardeshev::StarClass> STARS{kardeshev::O, kardeshev::B, kardeshev::G};
+
+void setupGenerators()
+{
+  pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
+  sg  = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
+  ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(pg, sg, 3, 10);
+  gg  = std::make_shared<kardeshev::NaiveGalaxyGenerator>(ssg, 1000, 1001);
+}
 
 int main()
 {
-  auto game = std::make_shared<kardeshev::Game>();
-  std::cout << "Setting up generators" << std::endl;
-  auto pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
-  auto sg  = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
-  auto ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(pg, sg, 3, 10);
+  game = std::make_shared<kardeshev::Game>();
 
-  auto gg = std::make_shared<kardeshev::NaiveGalaxyGenerator>(ssg, 500, 1000);
+  std::cout << "Setting up generators" << std::endl;
+  setupGenerators();
 
   std::cout << "generating galaxy" << std::endl;
   std::shared_ptr<kardeshev::Galaxy> g = gg->generateGalaxy();
@@ -51,25 +46,27 @@ int main()
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
   std::cout << "Creating system artist" << std::endl;
-  auto ui_state = std::make_shared<kardeshev::UIState>();
 
-  auto system_artist      = std::make_shared<kardeshev::SystemView>(ui_state, game);
-  auto galaxy_artist      = std::make_shared<kardeshev::GalaxyViewArtist>(ui_state, game);
-  auto system_info_artist = std::make_shared<kardeshev::SystemInfoViewArtist>(ui_state, game);
-  auto planet_info_artist = std::make_shared<kardeshev::PlanetInfoViewArtist>(ui_state, game);
-
-  galaxy_artist->setGalaxy(g);
+  std::cout << "Init SDL" << std::endl;
+  kardeshev::initSDL();
 
   std::cout << "Creating window" << std::endl;
   auto main_window = std::make_shared<kardeshev::GameWindow>();
-  main_window->setGame(game);
-  main_window->setUIState(ui_state);
-  main_window->init();
 
-  main_window->setGalaxyViewArtist(galaxy_artist);
-  main_window->setSystemViewArtist(system_artist);
-  main_window->getSidebarRender()->setArtist(system_info_artist);
-  main_window->getBottomBarRender()->setArtist(planet_info_artist);
+  main_window->init();
+  kardeshev::UI::game = game;
+
+  kardeshev::UI::assets->addFont(
+    kardeshev::Font::DEFAULT_FONT, "assets/aerial.ttf", 12, 26, 52);
+  kardeshev::UI::assets->addTexture("planet", "assets/test_planet.png");
+  kardeshev::UI::assets->addTexture("planet_simple", "assets/planet_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture("system_simple", "assets/system_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture("orbit_ring", "assets/orbit_ring.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture("main_view_border", "assets/main_view_border.png");
+  kardeshev::UI::assets->addTexture("star_simple", "assets/star_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture("galaxy_button", "assets/galaxy_button.png", 128, 64, 2);
+
+  main_window->setupViews();
   main_window->display();
 
   std::cout << "killing" << std::endl;

@@ -1,23 +1,29 @@
 #include "ui/window.h"
+#include "SDL_image.h"
+#include "ui/render.h"
+#include "ui/view.h"
+#include <SDL_timer.h>
 
 using namespace kardeshev;
 
-void GameWindow::init()
+void kardeshev::initSDL()
 {
   if (TTF_Init() < 0)
   {
-    std::cout << "TTF init failed" << std::endl;
-    throw SDLException();
+    throw SDLException("TTF init failed");
   }
-
-  Fonts::loadFonts();
-
+  if (IMG_Init(IMG_INIT_PNG) < 0)
+  {
+    throw SDLException("Image init failed");
+  }
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
-    std::cout << "SDL init failed" << std::endl;
-    throw SDLException();
+    throw SDLException("SDL init failed");
   }
+}
 
+void GameWindow::init()
+{
   m_window = SDL_CreateWindow("Kardeshev",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -27,27 +33,25 @@ void GameWindow::init()
 
   if (m_window == nullptr)
   {
-    std::cout << "Window creation failed" << std::endl;
-    throw SDLException();
+    throw SDLException("Window creation failed");
   }
 
 
-  m_renderer =
+  UI::render =
     SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (m_renderer == nullptr)
-  {
-    std::cout << "sidebar renderer creation failed" << std::endl;
-    throw SDLException();
-  }
+}
 
+void GameWindow::setupViews()
+{
   m_sidebar_viewport = std::make_shared<SDL_Rect>();
-  m_sidebar_render   = std::make_shared<Render>(m_renderer, m_sidebar_viewport);
 
   m_main_view_viewport = std::make_shared<SDL_Rect>();
-  m_main_view_render   = std::make_shared<Render>(m_renderer, m_main_view_viewport);
+  m_galaxy_view        = std::make_shared<GalaxyView>();
+  m_galaxy_view->setViewport(m_main_view_viewport);
+  m_system_view = std::make_shared<SystemView>();
+  m_system_view->setViewport(m_main_view_viewport);
 
   m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
-  m_bottom_bar_render   = std::make_shared<Render>(m_renderer, m_bottom_bar_viewport);
   setViewports();
 }
 
@@ -71,11 +75,13 @@ void GameWindow::setViewports()
   m_bottom_bar_viewport->w =
     m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   m_bottom_bar_viewport->h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+
+  UI::current_viewport = m_main_view_viewport;
 }
 
 void GameWindow::kill()
 {
-  SDL_DestroyRenderer(m_renderer);
+  SDL_DestroyRenderer(UI::render);
   SDL_DestroyWindow(m_window);
   SDL_Quit();
 }
@@ -83,9 +89,13 @@ void GameWindow::kill()
 void GameWindow::display()
 {
   SDL_Event e;
+  long framestart;
+  long framedelay = 33; // 30 fps
+
   bool quit = false;
   while (!quit)
   {
+    framestart = SDL_GetTicks();
     while (SDL_PollEvent(&e))
     {
       if (e.type == SDL_QUIT)
@@ -99,41 +109,43 @@ void GameWindow::display()
           if (e.window.event == SDL_WINDOWEVENT_RESIZED)
           {
             std::cout << "MESSAGE:Resizing window..." << std::endl;
-            m_window_width  = e.window.data1;
-            m_window_height = e.window.data2;
+            UI::window_size.w = e.window.data1;
+            UI::window_size.h = e.window.data2;
+            m_window_width    = e.window.data1;
+            m_window_height   = e.window.data2;
             setViewports();
           }
           break;
         }
-        if (m_sidebar_render->handleEvent(&e))
+        if (UI::state->focused_system == nullptr)
         {
-          break;
+          m_galaxy_view->handleEvent(&e);
         }
-        if (m_main_view_render->handleEvent(&e))
+        else
         {
-          break;
-        }
-        if (m_bottom_bar_render->handleEvent(&e))
-        {
-          break;
+          m_system_view->handleEvent(&e);
         }
       }
     }
-    if (m_state->focused_system == nullptr)
+    UI::game->step(Duration(1));
+    SDL_SetRenderDrawColor(UI::render, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
+    SDL_RenderClear(UI::render);
+    if (UI::state->focused_system == nullptr)
     {
-      m_main_view_render->setArtist(m_galaxy_view_artist);
+      m_galaxy_view->update();
+      m_galaxy_view->draw();
     }
     else
     {
-      m_main_view_render->setArtist(m_system_view_artist);
+      m_system_view->update();
+      m_system_view->draw();
     }
-    m_game->step(Duration(1));
-    SDL_SetRenderDrawColor(m_renderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
-    SDL_RenderClear(m_renderer);
-    m_sidebar_render->display();
-    m_main_view_render->display();
-    m_bottom_bar_render->display();
-    SDL_RenderPresent(m_renderer);
-    /* SDL_Delay(10); */
+    SDL_RenderPresent(UI::render);
+
+    long frametime = SDL_GetTicks() - framestart;
+    if (framedelay > frametime)
+    {
+      SDL_Delay(framedelay - frametime);
+    }
   }
 }

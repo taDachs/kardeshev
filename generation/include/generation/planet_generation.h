@@ -12,6 +12,7 @@ namespace kardeshev {
 class PlanetGenerator
 {
 public:
+  using Ptr = std::shared_ptr<PlanetGenerator>;
   virtual std::shared_ptr<Planet> generatePlanet() const = 0;
 };
 

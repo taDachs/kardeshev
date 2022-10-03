@@ -10,6 +10,7 @@ namespace kardeshev {
 class GalaxyGenerator
 {
 public:
+  using Ptr = std::shared_ptr<GalaxyGenerator>;
   virtual std::shared_ptr<Galaxy> generateGalaxy() const = 0;
 };
 

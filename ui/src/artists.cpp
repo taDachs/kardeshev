@@ -1,4 +1,5 @@
 #include "ui/artists.h"
+#include "ui/render.h"
 #include "util/util.h"
 #include <iomanip>
 #include <sstream>
@@ -7,7 +8,7 @@ using namespace kardeshev;
 
 void PlanetInfoViewArtist::draw(Render& renderer)
 {
-  if (m_state->focused_planet == nullptr)
+  if (UI::state->focused_planet == nullptr)
   {
     renderer.drawText(10, 20, 40, "No planet selected", DYSTOPIC_YELLOW);
     return;
@@ -16,14 +17,14 @@ void PlanetInfoViewArtist::draw(Render& renderer)
                     20,
                     15,
                     "Planet Name: " +
-                      m_state->focused_planet->getInfo()->getNameOrId().substr(0, 10),
+                      UI::state->focused_planet->getInfo()->getNameOrId().substr(0, 10),
                     DYSTOPIC_YELLOW);
   renderer.drawText(10,
                     40,
                     15,
-                    "Planet Class: " + m_state->focused_planet->getInfo()->planet_class.getName(),
+                    "Planet Class: " + UI::state->focused_planet->getInfo()->planet_class.getName(),
                     DYSTOPIC_YELLOW);
-  std::vector<Population> pops = m_state->focused_planet->getPops();
+  std::vector<Population> pops = UI::state->focused_planet->getPops();
   renderer.drawText(10, 60, 15, "Population Size: " + std::to_string(pops.size()), DYSTOPIC_YELLOW);
   sort(pops.begin(), pops.end(), [](const Population& x, const Population& y) {
     return (x.getReproductionProgress() > y.getReproductionProgress());
@@ -41,7 +42,7 @@ void PlanetInfoViewArtist::draw(Render& renderer)
                            30,
                            renderer.getWidth() * 0.4,
                            100,
-                           m_state->focused_planet->getInfo()->planet_class.getDescription(),
+                           UI::state->focused_planet->getInfo()->planet_class.getDescription(),
                            DYSTOPIC_YELLOW);
 
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
@@ -51,7 +52,7 @@ bool PlanetInfoViewArtist::handleEvent(SDL_Event* e)
 {
   if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
   {
-    m_state->focused_system = nullptr;
+    UI::state->focused_system = nullptr;
     return true;
   }
   return false;
@@ -62,7 +63,7 @@ void SystemInfoViewArtist::draw(Render& renderer)
   renderer.drawText(
     10, 20, 15, "Time: " + std::to_string(m_game->getTime().getTicks()), DYSTOPIC_YELLOW);
 
-  std::shared_ptr<SolarSystem> system = m_state->focused_system;
+  std::shared_ptr<SolarSystem> system = UI::state->focused_system;
 
   if (system == nullptr)
   {
@@ -91,36 +92,41 @@ bool SystemInfoViewArtist::handleEvent(SDL_Event* e)
   return false;
 }
 
-void SystemView::draw(Render& renderer)
+void SystemViewArtist::draw(Render& renderer)
 {
-  if (m_current_system != m_state->focused_system)
+  if (m_current_system != UI::state->focused_system)
   {
-    m_current_system = m_state->focused_system;
+    m_current_system = UI::state->focused_system;
     resetSystem();
   }
   std::vector<std::shared_ptr<Planet> > planets = m_current_system->getPlanets();
   int orbit                                     = 75;
-  int mid_x                                     = renderer.getWidth() / 2 + m_offset.x;
-  int mid_y                                     = renderer.getHeight() / 2 + m_offset.y;
+  int screen_mid_x                              = renderer.getWidth() / 2 + m_offset.x;
+  int screen_mid_y                              = renderer.getHeight() / 2 + m_offset.y;
   // draw sun
-  renderer.drawCircle(mid_x, mid_y, 20 * m_zoom_level, RED);
+  drawCircle(screen_mid_x, screen_mid_y, 20 * UI::zoom_level, RED);
   for (const auto& p : planets)
   {
-    // draw orbit rings
-    renderer.drawCircle(mid_x, mid_y, orbit * m_zoom_level, GRAY);
+    drawCircle(screen_mid_x, screen_mid_y, orbit * UI::zoom_level + 1, GRAY);
+    drawCircle(screen_mid_x, screen_mid_y, orbit * UI::zoom_level, GRAY);
+    drawCircle(screen_mid_x, screen_mid_y, orbit * UI::zoom_level - 1, GRAY);
+
     // draws planet
-    glm::vec2 cors = polarToCart(static_cast<double>(orbit * m_zoom_level),
+    glm::vec2 cors = polarToCart(static_cast<double>(orbit * UI::zoom_level),
                                  p->getInfo()->getCurrentAngle(m_game->getTime()));
+    int mid_x      = screen_mid_x + cors.x;
+    int mid_y      = screen_mid_y + cors.y;
+    // if ((mid_x < 0 || mid_x > renderer.getWidth()) || (mid_y < 0 || mid_y >
+    // renderer.getHeight())) {
+    //   continue;
+    // }
     for (auto& uip : m_planets)
     {
       if (*uip.getPlanet() == *p)
       {
-        uip.setX(mid_x + cors.x);
-        uip.setY(mid_y + cors.y);
-        uip.setTotalX(renderer.getOriginX() + mid_x + cors.x);
-        uip.setTotalY(renderer.getOriginY() + mid_y + cors.y);
-        uip.setZoomLevel(m_zoom_level);
-        uip.display(renderer);
+        // uip.setPosition(mid_x, mid_y);
+        uip.update();
+        uip.draw();
         break;
       }
     }
@@ -130,7 +136,7 @@ void SystemView::draw(Render& renderer)
   renderer.drawRect(0, 0, renderer.getWidth(), renderer.getHeight(), false, WHITE);
 }
 
-bool SystemView::handleEvent(SDL_Event* e)
+bool SystemViewArtist::handleEvent(SDL_Event* e)
 {
   for (auto& pui : m_planets)
   {
@@ -148,13 +154,13 @@ bool SystemView::handleEvent(SDL_Event* e)
   {
     if (e->wheel.y > 0)
     {
-      m_zoom_level *= 1.1;
-      m_zoom_level = std::min(5.0, m_zoom_level);
+      UI::zoom_level *= 1.1;
+      UI::zoom_level = std::min(5.0, UI::zoom_level);
     }
     else if (e->wheel.y < 0)
     {
-      m_zoom_level /= 1.1;
-      m_zoom_level = std::max(0.3, m_zoom_level);
+      UI::zoom_level /= 1.1;
+      UI::zoom_level = std::max(0.3, UI::zoom_level);
     }
     return true;
   }
@@ -189,22 +195,26 @@ bool SystemView::handleEvent(SDL_Event* e)
 void GalaxyViewArtist::draw(Render& renderer)
 {
   std::vector<std::shared_ptr<SolarSystem> > systems = m_galaxy->getSystems();
-  int mid_x                                          = renderer.getWidth() / 2 + m_offset.x;
-  int mid_y                                          = renderer.getHeight() / 2 + m_offset.y;
+  int screen_mid_x                                   = renderer.getWidth() / 2 + m_offset.x;
+  int screen_mid_y                                   = renderer.getHeight() / 2 + m_offset.y;
   for (const auto& s : systems)
   {
     // draws planet
     glm::vec2 cors = s->getInfo()->pos;
+    int mid_x      = screen_mid_x + cors.x * UI::zoom_level;
+    int mid_y      = screen_mid_y + cors.y * UI::zoom_level;
+    if ((mid_x < 0 || mid_x > renderer.getWidth()) || (mid_y < 0 || mid_y > renderer.getHeight()))
+    {
+      continue;
+    }
     for (auto& sip : m_systems)
     {
-      if (*sip.getSystem() == *s)
+      if (sip.getSystem() == s)
       {
-        sip.setX(mid_x + cors.x * m_zoom_level);
-        sip.setY(mid_y + cors.y * m_zoom_level);
-        sip.setTotalX(renderer.getOriginX() + mid_x + cors.x * m_zoom_level);
-        sip.setTotalY(renderer.getOriginY() + mid_y + cors.y * m_zoom_level);
-        sip.setZoomLevel(m_zoom_level);
-        sip.display(renderer);
+        // sip.setPosition(mid_x, mid_y);
+        sip.update();
+        UI::zoom_level = UI::zoom_level;
+        sip.draw();
         break;
       }
     }
@@ -225,13 +235,13 @@ bool GalaxyViewArtist::handleEvent(SDL_Event* e)
   {
     if (e->wheel.y > 0)
     {
-      m_zoom_level *= 1.1;
-      m_zoom_level = std::min(10.0, m_zoom_level);
+      UI::zoom_level *= 1.1;
+      UI::zoom_level = std::min(10.0, UI::zoom_level);
     }
     else if (e->wheel.y < 0)
     {
-      m_zoom_level /= 1.1;
-      m_zoom_level = std::max(1.0, m_zoom_level);
+      UI::zoom_level /= 1.1;
+      UI::zoom_level = std::max(1.0, UI::zoom_level);
     }
     return true;
   }

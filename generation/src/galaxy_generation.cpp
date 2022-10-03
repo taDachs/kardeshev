@@ -2,6 +2,7 @@
 #include "lib/galaxy.h"
 #include "lib/solar_systems.h"
 #include "util/util.h"
+#include <iostream>
 
 using namespace kardeshev;
 

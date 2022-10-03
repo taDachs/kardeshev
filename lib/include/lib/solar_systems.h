@@ -17,6 +17,9 @@ struct SolarSystemInfo
 
 class SolarSystem : public GameObject
 {
+public:
+  using Ptr = std::shared_ptr<SolarSystem>;
+
 private:
   std::shared_ptr<Star> m_star;
   std::vector<std::shared_ptr<Planet> > m_planets;

@@ -1,8 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 #include "SDL_ttf.h"
-#include "lib/planets.h"
 #include "lib/game.h"
+#include "lib/planets.h"
 #include "lib/solar_systems.h"
 #include <SDL.h>
 #include <exception>
@@ -16,21 +16,8 @@
 namespace kardeshev {
 
 // it's either this or implementing a UI framework
-struct UIState
-{
-  std::shared_ptr<Planet> focused_planet      = nullptr;
-  std::shared_ptr<SolarSystem> focused_system = nullptr;
-};
 
 bool isInRect(int x, int y, SDL_Rect rect);
-
-struct Fonts
-{
-  static TTF_Font* sans_small;
-  static TTF_Font* sans_medium;
-  static TTF_Font* sans_large;
-  static void loadFonts();
-};
 
 struct Color
 {
@@ -45,34 +32,23 @@ struct Color
 
 const Color WHITE(0xFF, 0xFF, 0xFF);
 const Color GREEN(0x00, 0xFF, 0x00);
-const Color GRAY(15, 15, 15);
+const Color GRAY(30, 30, 30);
 const Color RED(0xFF, 0, 0);
 const Color BLACK(0, 0, 0);
 const Color DYSTOPIC_GREEN(16, 69, 17);
 const Color DYSTOPIC_YELLOW(204, 163, 27);
 
-struct SDLException : public std::exception
-{
-  std::string s;
-  SDLException()
-    : s(SDL_GetError())
-  {
-  }
-  ~SDLException() noexcept override = default; // Updated
-  const char* what() const noexcept override { return s.c_str(); }
-};
-
+void drawCircle(const int centre_x,
+                const int centre_y,
+                const int radius,
+                const Color& color = WHITE,
+                const bool filled  = false);
 
 class Render;
 
 class Artist
 {
-protected:
-  std::shared_ptr<UIState> m_state = nullptr;
-
 public:
-  Artist(std::shared_ptr<UIState> state)
-    : m_state(std::move(state)){};
   virtual void draw(Render& renderer)    = 0;
   virtual bool handleEvent(SDL_Event* e) = 0;
 };
@@ -81,21 +57,14 @@ class Render
 {
 private:
   bool m_active;
-  SDL_Renderer* m_renderer = nullptr;
   std::shared_ptr<Artist> m_artist;
   std::shared_ptr<SDL_Rect> m_viewport;
 
 public:
-  Render(SDL_Renderer* renderer, std::shared_ptr<SDL_Rect> viewport)
-    : m_renderer(renderer)
-    , m_viewport(std::move(viewport))
+  Render(std::shared_ptr<SDL_Rect> viewport)
+    : m_viewport(std::move(viewport))
   {
   }
-  void drawCircle(const int centre_x,
-                  const int centre_y,
-                  const int radius,
-                  const Color& color = WHITE,
-                  const bool filled  = false);
   void drawText(
     const int x, const int y, const int h, const std::string& text, const Color& color = WHITE);
   void drawWrappedText(const int x,
