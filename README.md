@@ -6,7 +6,8 @@ Kardshev is supposed to be a minimal 4X game set in space.
 I play way too much Stellaris but I always wanted something that is both
 smaller and more in depth in certain areas.
 
-![kardeshev](./images/kardeshev_demo.png)
+![kardeshev](./images/kardeshev_demo_system.png)
+![kardeshev](./images/kardeshev_demo_galaxy.png)
 
 ## What is missing?
 Everything.
