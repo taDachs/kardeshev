@@ -1,4 +1,11 @@
-# kardeshev
+```
+ _  __             _           _
+| |/ /__ _ _ __ __| | ___  ___| |__   _____   __
+| ' // _` | '__/ _` |/ _ \/ __| '_ \ / _ \ \ / /
+| . \ (_| | | | (_| |  __/\__ \ | | |  __/\ V /
+|_|\_\__,_|_|  \__,_|\___||___/_| |_|\___| \_/
+```
+
 [![CI](https://github.com/taDachs/kardeshev/actions/workflows/ci.yml/badge.svg)](https://github.com/taDachs/kardeshev/actions/workflows/ci.yml)
 
 ## What is this supposed to be?
