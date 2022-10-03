@@ -14,6 +14,7 @@ class Component : public std::enable_shared_from_this<Component>
 {
 public:
   using Ptr = std::shared_ptr<Component>;
+
 protected:
   bool m_alive = true;
   SDL_Rect m_dst;
@@ -40,10 +41,10 @@ public:
     p.y = y;
     return SDL_PointInRect(&p, &m_dst);
   }
-  int getDepth() const {
-    return m_depth;
-  }
-  bool isVisible(const SDL_Rect& viewport) {
+  void setDepth(int depth) { m_depth = depth; }
+  int getDepth() const { return m_depth; }
+  bool isVisible(const SDL_Rect& viewport)
+  {
     SDL_Rect res;
     return SDL_IntersectRect(&viewport, &m_dst, &res);
   }
@@ -63,7 +64,7 @@ public:
   TextLabelUI(std::string text)
     : m_text(std::move(text))
   {
-    m_depth = 0;
+    m_depth = 1;
   }
 
   void setText(const std::string& text) { m_text = text; }
@@ -87,7 +88,7 @@ public:
   TextBoxUI(std::string text)
     : m_text(std::move(text))
   {
-    m_depth = 0;
+    m_depth = 1;
   }
 
   void setText(const std::string& text) { m_text = text; }
@@ -98,26 +99,27 @@ public:
 };
 
 
-class PlanetUI : public Component
+class TextureComponent : public Component
 {
 public:
-  using Ptr = std::shared_ptr<PlanetUI>;
+  using Ptr = std::shared_ptr<TextureComponent>;
 
 private:
-  std::shared_ptr<Planet> m_planet;
-  bool m_selected = false;
   Texture m_tex;
-
+  int m_frame = -1;
 
 public:
-  PlanetUI(std::shared_ptr<Planet> planet)
-    : m_planet(std::move(planet))
-    , m_tex(UI::assets->getTexture("planet_simple"))
+  TextureComponent(Texture tex, int frame = -1)
+    : m_tex(std::move(tex))
+    , m_frame(frame)
   {
   }
-  std::shared_ptr<Planet> getPlanet() const { return m_planet; }
+  TextureComponent(const std::string& name, int frame = -1)
+    : m_tex(UI::assets->getTexture(name))
+    , m_frame(frame)
+  {
+  }
   SDL_Rect draw() override;
-  void setSelected(bool selected) { m_selected = selected; }
 };
 
 class OrbitRingUI : public Component
@@ -137,63 +139,6 @@ public:
   }
   SDL_Rect draw() override;
   void setSelected(bool selected) { m_selected = selected; }
-};
-
-class SystemUI : public Component
-{
-public:
-  using Ptr = std::shared_ptr<SystemUI>;
-
-private:
-  std::shared_ptr<SolarSystem> m_system;
-  bool m_selected = false;
-  Texture m_tex;
-
-public:
-  SystemUI(std::shared_ptr<SolarSystem> system)
-    : m_system(std::move(system))
-    , m_tex(UI::assets->getTexture("system_simple"))
-  {
-  }
-  std::shared_ptr<SolarSystem> getSystem() const { return m_system; }
-  SDL_Rect draw() override;
-  void setSelected(const bool selected) { m_selected = selected; }
-};
-
-class StarUI : public Component
-{
-public:
-  using Ptr = std::shared_ptr<StarUI>;
-
-private:
-  Star::Ptr m_star;
-  bool m_selected = false;
-  Texture m_tex;
-
-public:
-  StarUI(Star::Ptr star)
-    : m_star(std::move(star))
-    , m_tex(UI::assets->getTexture("star_simple"))
-  {
-  }
-  Star::Ptr getStar() const { return m_star; }
-  SDL_Rect draw() override;
-  void setSelected(const bool selected) { m_selected = selected; }
-};
-
-class ButtonUI : public Component
-{
-public:
-  using Ptr = std::shared_ptr<ButtonUI>;
-private:
-  Texture m_tex;
-  bool m_selected = false;
-public:
-  ButtonUI(const std::string& texture): m_tex(UI::assets->getTexture(texture)) {
-    m_depth = 250;
-  }
-  SDL_Rect draw() override;
-  void setSelected(const bool selected) { m_selected = selected; }
 };
 
 } // namespace kardeshev

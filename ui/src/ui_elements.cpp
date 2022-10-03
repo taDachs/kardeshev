@@ -7,53 +7,12 @@
 
 using namespace kardeshev;
 
-SDL_Rect PlanetUI::draw()
-{
-  if (m_selected)
-  {
-    SDL_Rect src = m_tex.getFrame(2);
+SDL_Rect TextureComponent::draw() {
+  if (m_frame >= 0) {
+    SDL_Rect src = m_tex.getFrame(m_frame);
     SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  else if (m_planet == UI::state->focused_planet)
-  {
-    SDL_Rect src = m_tex.getFrame(1);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  else
-  {
-    SDL_Rect src = m_tex.getFrame(0);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  return m_dst;
-}
-
-
-SDL_Rect SystemUI::draw()
-{
-  if (m_selected)
-  {
-    SDL_Rect src = m_tex.getFrame(2);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  else
-  {
-    SDL_Rect src = m_tex.getFrame(0);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  return m_dst;
-}
-
-SDL_Rect StarUI::draw()
-{
-  if (m_selected)
-  {
-    SDL_Rect src = m_tex.getFrame(2);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  }
-  else
-  {
-    SDL_Rect src = m_tex.getFrame(0);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
+  } else {
+    SDL_RenderCopy(UI::render, m_tex.getTexture(), nullptr, &m_dst);
   }
   return m_dst;
 }
@@ -105,16 +64,5 @@ SDL_Rect OrbitRingUI::draw()
   drawCircle(center_x, center_y, radius - 1, GRAY);
   drawCircle(center_x, center_y, radius, GRAY);
   drawCircle(center_x, center_y, radius + 1, GRAY);
-  return m_dst;
-}
-
-SDL_Rect ButtonUI::draw() {
-  if (m_selected) {
-    SDL_Rect frame = m_tex.getFrame(1);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &frame, &m_dst);
-  } else {
-    SDL_Rect frame = m_tex.getFrame(0);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &frame, &m_dst);
-  }
   return m_dst;
 }

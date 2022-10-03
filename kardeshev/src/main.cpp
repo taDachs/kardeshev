@@ -9,6 +9,7 @@
 #include "lib/solar_systems.h"
 #include "lib/stars.h"
 #include "ui/assets.h"
+#include "ui/entities.h"
 #include "ui/render.h"
 #include "ui/window.h"
 #include <SDL.h>
@@ -59,12 +60,11 @@ int main()
   //   kardeshev::Font::DEFAULT_FONT, "assets/aerial.ttf", 12, 26, 52);
   kardeshev::UI::assets->addFont(
     kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
-  kardeshev::UI::assets->addTexture("planet", "assets/test_planet.png");
-  kardeshev::UI::assets->addTexture("planet_simple", "assets/planet_simple.png", 128, 128, 3);
-  kardeshev::UI::assets->addTexture("system_simple", "assets/system_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture(kardeshev::PlanetEntity::PLANET_SPRITE, "assets/planet_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture(kardeshev::SystemEntity::SYSTEM_SPRITE, "assets/system_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("orbit_ring", "assets/orbit_ring.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("main_view_border", "assets/main_view_border.png");
-  kardeshev::UI::assets->addTexture("star_simple", "assets/star_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture(kardeshev::StarEntity::STAR_SPRITE, "assets/star_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("galaxy_button", "assets/galaxy_button.png", 128, 64, 2);
 
   main_window->setupViews();

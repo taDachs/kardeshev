@@ -20,12 +20,22 @@ bool MoveableView::handleEvent(SDL_Event* e)
     if (e->wheel.y > 0)
     {
       m_scale *= 1.1;
-      m_scale = std::min(5.0, m_scale);
+      if (m_scale < 5.0) {
+        m_offset.x *= 1.1;
+        m_offset.y *= 1.1;
+      } else {
+        m_scale = 5.0;
+      }
     }
     else if (e->wheel.y < 0)
     {
       m_scale /= 1.1;
-      m_scale = std::max(0.3, m_scale);
+      if (m_scale > 0.3) {
+        m_offset.x /= 1.1;
+        m_offset.y /= 1.1;
+      } else {
+        m_scale = 0.3;
+      }
     }
     return true;
   }

@@ -148,6 +148,12 @@ void GameWindow::display()
       m_system_view->update();
       m_system_view->draw();
     }
+
+    m_galaxy_info_view->update();
+    m_galaxy_info_view->draw();
+    m_bottom_bar_view->update();
+    m_bottom_bar_view->draw();
+
     SDL_RenderPresent(UI::render);
 
     long frametime = SDL_GetTicks() - framestart;

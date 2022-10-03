@@ -64,14 +64,14 @@ const PlanetClass HYCEAN("hycean",
                          "water-covered planet with a hydrogen-rich atmosphere.",
                          std::pair<double, double>(300, 350));
 /**
- * @brief A giant planet composed mainly of 'ices'—volatile substances heavier than hydrogen and
- * helium, such as water, methane, and ammonia—as opposed to 'gas' (hydrogen and helium).
+ * @brief A giant planet composed mainly of 'ices'-volatile substances heavier than hydrogen and
+ * helium, such as water, methane, and ammonia-as opposed to 'gas' (hydrogen and helium).
  */
 const PlanetClass ICE_GIANT(
   "ice giant",
   "ice_giant_planet",
-  "A giant planet composed mainly of 'ices'—volatile substances heavier than hydrogen and helium, "
-  "such as water, methane, and ammonia—as opposed to 'gas' (hydrogen and helium)",
+  "A giant planet composed mainly of 'ices'-volatile substances heavier than hydrogen and helium, "
+  "such as water, methane, and ammonia-as opposed to 'gas' (hydrogen and helium)",
   std::pair<double, double>(50, 150));
 /**
  * @brief A theoretical planet with an icy surface and consists of a global cryosphere.

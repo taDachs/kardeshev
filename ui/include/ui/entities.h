@@ -52,25 +52,36 @@ public:
 
 class SystemEntity : public Entity
 {
+public:
+  const static std::string SYSTEM_SPRITE;
+  const static int SYSTEM_SPRITE_SELECTED_FRAME;
+  const static int SYSTEM_SPRITE_NOT_SELECTED_FRAME;
 private:
   SolarSystem::Ptr m_system;
   TextLabelUI::Ptr m_system_name_label;
   TextLabelUI::Ptr m_number_planets_label;
-  SystemUI::Ptr m_system_icon;
+  TextureComponent::Ptr m_system_not_selected_icon;
+  TextureComponent::Ptr m_system_selected_icon;
   bool m_selected = false;
 
 public:
   SystemEntity(SolarSystem::Ptr system)
     : m_system(std::move(system))
   {
-    m_system_icon = std::make_shared<SystemUI>(m_system);
+    m_system_selected_icon = std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_SELECTED_FRAME);
+    m_system_not_selected_icon = std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_NOT_SELECTED_FRAME);
+    m_system_selected_icon->setAlive(false);
+
     m_system_name_label =
       std::make_shared<TextLabelUI>(m_system->getInfo()->getNameOrId().substr(0, 10));
     m_system_name_label->setAlive(false);
     m_number_planets_label = std::make_shared<TextLabelUI>(
       "Num Planets: " + std::to_string(m_system->getPlanets().size()));
     m_number_planets_label->setAlive(false);
-    m_components.push_back(m_system_icon);
+
+    m_components.push_back(m_system_selected_icon);
+    m_components.push_back(m_system_not_selected_icon);
+
     m_components.push_back(m_system_name_label);
     m_components.push_back(m_number_planets_label);
   }
@@ -81,10 +92,17 @@ public:
 
 class PlanetEntity : public Entity
 {
+public:
+  const static std::string PLANET_SPRITE;
+  const static int PLANET_SPRITE_SELECTED_FRAME;
+  const static int PLANET_SPRITE_FOCUSED_FRAME;
+  const static int PLANET_SPRITE_NOT_SELECTED_FRAME;
 private:
   Planet::Ptr m_planet;
   TextLabelUI::Ptr m_planet_name_label;
-  PlanetUI::Ptr m_planet_icon;
+  TextureComponent::Ptr m_selected_icon;
+  TextureComponent::Ptr m_focused_icon;
+  TextureComponent::Ptr m_not_selected_icon;
   OrbitRingUI::Ptr m_orbit_ring;
   TextBoxUI::Ptr m_description_box;
   bool m_selected = false;
@@ -93,7 +111,10 @@ public:
   PlanetEntity(Planet::Ptr planet)
     : m_planet(std::move(planet))
   {
-    m_planet_icon = std::make_shared<PlanetUI>(m_planet);
+    m_selected_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_SELECTED_FRAME);
+    m_not_selected_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_NOT_SELECTED_FRAME);
+    m_focused_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_FOCUSED_FRAME);
+
     m_planet_name_label =
       std::make_shared<TextLabelUI>(m_planet->getInfo()->getNameOrId().substr(0, 10));
     m_orbit_ring = std::make_shared<OrbitRingUI>();
@@ -101,7 +122,11 @@ public:
     m_description_box =
       std::make_shared<TextBoxUI>(m_planet->getInfo()->planet_class.getDescription());
     m_components.push_back(m_orbit_ring);
-    m_components.push_back(m_planet_icon);
+
+    m_components.push_back(m_selected_icon);
+    m_components.push_back(m_not_selected_icon);
+    m_components.push_back(m_focused_icon);
+
     m_components.push_back(m_planet_name_label);
     m_components.push_back(m_description_box);
   }
@@ -112,21 +137,29 @@ public:
 
 class StarEntity : public Entity
 {
+public:
+  const static std::string STAR_SPRITE;
+  const static int STAR_SPRITE_SELECTED_FRAME;
+  const static int STAR_SPRITE_NOT_SELECTED_FRAME;
 private:
   Star::Ptr m_star;
   TextLabelUI::Ptr m_star_name_label;
-  StarUI::Ptr m_star_icon;
+  TextureComponent::Ptr m_selected_icon;
+  TextureComponent::Ptr m_not_selected_icon;
   bool m_selected = false;
 
 public:
   StarEntity(Star::Ptr star)
     : m_star(std::move(star))
   {
-    m_star_icon = std::make_shared<StarUI>(m_star);
+    m_selected_icon = std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_SELECTED_FRAME);
+    m_selected_icon->setAlive(false);
+    m_not_selected_icon = std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_NOT_SELECTED_FRAME);
     m_star_name_label =
       std::make_shared<TextLabelUI>(m_star->getInfo()->getNameOrId().substr(0, 10));
     m_star_name_label->setAlive(false);
-    m_components.push_back(m_star_icon);
+    m_components.push_back(m_selected_icon);
+    m_components.push_back(m_not_selected_icon);
     m_components.push_back(m_star_name_label);
   }
   void update() override;
@@ -137,14 +170,18 @@ public:
 class BackButtonEntity : public Entity
 {
 private:
-  ButtonUI::Ptr m_button;
+  TextureComponent::Ptr m_button_not_selected;
+  TextureComponent::Ptr m_button_selected;
   bool m_selected = false;
 
 public:
   BackButtonEntity()
   {
-    m_button = std::make_shared<ButtonUI>("galaxy_button");
-    m_components.push_back(m_button);
+    m_button_selected = std::make_shared<TextureComponent>("galaxy_button", 1);
+    m_button_selected->setAlive(false);
+    m_button_not_selected = std::make_shared<TextureComponent>("galaxy_button", 0);
+    m_components.push_back(m_button_not_selected);
+    m_components.push_back(m_button_selected);
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override;
