@@ -6,6 +6,8 @@ Kardshev is supposed to be a minimal 4X game set in space.
 I play way too much Stellaris but I always wanted something that is both
 smaller and more in depth in certain areas.
 
+![kardeshev](./images/kardeshev_demo.png)
+
 ## What is missing?
 Everything.
 
@@ -22,7 +24,7 @@ Everything.
 - find a way to make it look like a computer monitor from an old scifi movie (picture the computer screens of the Nostromo in Alien) without touching opengl if possible
 - client-server architecture
     - my frontend is going to be terrible and I want to be able to exchange it later
-    
+
 # build
 ```sh
 # on ubuntu
