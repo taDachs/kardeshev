@@ -5,6 +5,7 @@
 #include "lib/planets.h"
 #include "lib/solar_systems.h"
 #include "ui/assets.h"
+#include <SDL_image.h>
 #include <SDL_render.h>
 #include <memory>
 
@@ -37,6 +38,22 @@ struct TTFException : public std::exception
   {
   }
   ~TTFException() noexcept override = default; // Updated
+  const char* what() const noexcept override { return s.c_str(); }
+};
+
+
+struct IMGException : public std::exception
+{
+  std::string s;
+  IMGException()
+    : s(SDL_GetError())
+  {
+  }
+  IMGException(const std::string& msg)
+    : s("Error: " + msg + ", IMG_GetError(): " + IMG_GetError())
+  {
+  }
+  ~IMGException() noexcept override = default; // Updated
   const char* what() const noexcept override { return s.c_str(); }
 };
 

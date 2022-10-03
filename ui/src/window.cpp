@@ -11,11 +11,11 @@ void kardeshev::initSDL()
 {
   if (TTF_Init() < 0)
   {
-    throw SDLException("TTF init failed");
+    throw TTFException("TTF init failed");
   }
   if (IMG_Init(IMG_INIT_PNG) < 0)
   {
-    throw SDLException("Image init failed");
+    throw IMGException("Image init failed");
   }
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
