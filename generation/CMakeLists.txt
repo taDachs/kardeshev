@@ -4,6 +4,7 @@ add_library(kardeshev_generation
   src/planet_generation.cpp
   src/solar_system_generation.cpp
   src/star_generation.cpp
+  src/name_generation.cpp
 )
 
 add_dependencies(kardeshev_generation kardeshev_lib kardeshev_util)

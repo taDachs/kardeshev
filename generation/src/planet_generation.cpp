@@ -10,6 +10,7 @@ const double KELVIN_ZERO = 273;
 std::shared_ptr<Planet> NaivePlanetGenerator::generatePlanet() const
 {
   auto info                = std::make_shared<PlanetInfo>();
+  info->name               = m_name_generator->generateName();
   PlanetClass planet_class = m_classes[rand() % m_classes.size()];
   info->planet_class       = planet_class;
   double min_temp          = planet_class.getTempRange().first;

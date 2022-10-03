@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "generation/galaxy_generation.h"
+#include "generation/name_generation.h"
 #include "generation/planet_generation.h"
 #include "generation/solar_system_generation.h"
 #include "generation/star_generation.h"
@@ -24,6 +25,7 @@ kardeshev::PlanetGenerator::Ptr pg;
 kardeshev::StarGenerator::Ptr sg;
 kardeshev::SolarSystemGenerator::Ptr ssg;
 kardeshev::GalaxyGenerator::Ptr gg;
+kardeshev::NameGenerator::Ptr ng;
 
 kardeshev::Game::Ptr game;
 

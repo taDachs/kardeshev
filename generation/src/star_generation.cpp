@@ -6,6 +6,7 @@ using namespace kardeshev;
 std::shared_ptr<Star> NaiveStarGenerator::generateStar() const
 {
   auto info               = std::make_shared<StarInfo>();
+  info->name              = m_name_generator->generateName();
   int randval             = RandomDistribution::sample(0, m_classes.size());
   StarClass star_class    = m_classes[randval];
   info->star_class        = star_class;

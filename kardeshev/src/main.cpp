@@ -1,5 +1,6 @@
 #include "main.h"
 #include "generation/galaxy_generation.h"
+#include "generation/name_generation.h"
 #include "generation/planet_generation.h"
 #include "generation/solar_system_generation.h"
 #include "generation/star_generation.h"
@@ -19,9 +20,10 @@
 
 void setupGenerators()
 {
-  pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(PLANETS);
-  sg  = std::make_shared<kardeshev::NaiveStarGenerator>(STARS);
-  ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(pg, sg, 3, 10);
+  ng  = std::make_shared<kardeshev::NaiveNameGenerator>(5, 10, 1, 1);
+  pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(ng, PLANETS);
+  sg  = std::make_shared<kardeshev::NaiveStarGenerator>(ng, STARS);
+  ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(ng, pg, sg, 3, 10);
   gg  = std::make_shared<kardeshev::NaiveGalaxyGenerator>(ssg, 1000, 1001);
 }
 

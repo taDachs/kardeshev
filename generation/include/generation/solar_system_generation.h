@@ -20,13 +20,16 @@ private:
   std::shared_ptr<StarGenerator> m_star_generator;
   int m_min_planets;
   int m_max_planets;
+  NameGenerator::Ptr m_name_generator;
 
 public:
-  NaiveSolarSystemGenerator(std::shared_ptr<PlanetGenerator> planet_generator,
+  NaiveSolarSystemGenerator(NameGenerator::Ptr name_generator,
+                            std::shared_ptr<PlanetGenerator> planet_generator,
                             std::shared_ptr<StarGenerator> star_generator,
                             int min_planets,
                             int max_planets)
-    : m_planet_generator(std::move(planet_generator))
+    : m_name_generator(std::move(name_generator))
+    , m_planet_generator(std::move(planet_generator))
     , m_star_generator(std::move(star_generator))
     , m_min_planets(min_planets)
     , m_max_planets(max_planets)

@@ -6,6 +6,7 @@ using namespace kardeshev;
 std::shared_ptr<SolarSystem> NaiveSolarSystemGenerator::generateSolarSystem() const
 {
   auto info                  = std::make_shared<SolarSystemInfo>();
+  info->name                 = m_name_generator->generateName();
   std::shared_ptr<Star> star = m_star_generator->generateStar();
 
   int num_planets = RandomDistribution::sample(m_min_planets, m_max_planets);

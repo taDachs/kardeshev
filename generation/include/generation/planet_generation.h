@@ -3,12 +3,13 @@
 
 #include <utility>
 
+#include "generation/name_generation.h"
 #include "lib/planets.h"
+namespace kardeshev {
 
 struct PlanetEnvironemnt
 {
 };
-namespace kardeshev {
 class PlanetGenerator
 {
 public:
@@ -20,10 +21,12 @@ class NaivePlanetGenerator : public PlanetGenerator
 {
 private:
   std::vector<PlanetClass> m_classes;
+  NameGenerator::Ptr m_name_generator;
 
 public:
-  NaivePlanetGenerator(std::vector<PlanetClass> classes)
-    : m_classes(std::move(classes))
+  NaivePlanetGenerator(NameGenerator::Ptr name_generator, std::vector<PlanetClass> classes)
+    : m_name_generator(std::move(name_generator))
+    , m_classes(std::move(classes))
   {
   }
   std::shared_ptr<Planet> generatePlanet() const override;
