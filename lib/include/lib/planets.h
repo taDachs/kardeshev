@@ -131,6 +131,7 @@ class Planet;
 
 struct PlanetInfo
 {
+  using Ptr = std::shared_ptr<PlanetInfo>;
   std::string name;
   std::shared_ptr<Planet> planet;
   PlanetClass planet_class;

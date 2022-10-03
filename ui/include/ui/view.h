@@ -160,6 +160,13 @@ class GalaxyInfoView : public View
 };
 
 
+class PlanetInfoView : public View
+{
+  void updateView() override;
+};
+
+
+
 } // namespace kardeshev
 
 #endif // !VIEW_H

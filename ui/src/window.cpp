@@ -2,6 +2,7 @@
 #include "SDL_image.h"
 #include "ui/render.h"
 #include "ui/view.h"
+#include <SDL_blendmode.h>
 #include <SDL_timer.h>
 
 using namespace kardeshev;
@@ -54,7 +55,7 @@ void GameWindow::setupViews()
   m_galaxy_info_view->setViewport(m_sidebar_viewport);
 
   m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
-  m_bottom_bar_view     = std::make_shared<GalaxyInfoView>();
+  m_bottom_bar_view     = std::make_shared<PlanetInfoView>();
   m_bottom_bar_view->setViewport(m_bottom_bar_viewport);
 
   setViewports();
@@ -84,16 +85,125 @@ void GameWindow::setViewports()
 
 void GameWindow::kill()
 {
+  if (m_scan_lines && m_scan_line_texture != nullptr)
+  {
+    SDL_DestroyTexture(m_scan_line_texture);
+  }
+  if (m_color_filter && m_color_filter_tex != nullptr)
+  {
+    SDL_DestroyTexture(m_color_filter_tex);
+  }
   SDL_DestroyRenderer(UI::render);
   SDL_DestroyWindow(m_window);
   SDL_Quit();
+}
+
+void GameWindow::renderScreen()
+{
+  if (UI::state->focused_system == nullptr)
+  {
+    m_galaxy_view->update();
+    m_galaxy_view->draw();
+  }
+  else
+  {
+    m_system_view->update();
+    m_system_view->draw();
+  }
+
+  m_galaxy_info_view->update();
+  m_galaxy_info_view->draw();
+  m_bottom_bar_view->update();
+  m_bottom_bar_view->draw();
+}
+
+void GameWindow::generateColorFilterTex()
+{
+  m_color_filter_tex = SDL_CreateTexture(UI::render,
+                                          SDL_PIXELFORMAT_RGBA32,
+                                          SDL_TEXTUREACCESS_TARGET,
+                                          UI::window_size.w,
+                                          UI::window_size.h);
+  if (m_color_filter_tex == nullptr)
+  {
+    throw SDLException("Creation of color filter texture failed");
+  }
+  if (SDL_SetTextureBlendMode(m_color_filter_tex, SDL_BLENDMODE_MOD))
+  {
+    throw SDLException("Failed setting texture blend mode");
+  }
+
+  if (SDL_SetRenderTarget(UI::render, m_color_filter_tex))
+  {
+    throw SDLException("Failed setting render to color filters texture");
+  }
+
+  SDL_SetRenderDrawColor(UI::render,
+                         m_color_filter_color.r,
+                         m_color_filter_color.g,
+                         m_color_filter_color.b,
+                         m_color_filter_alpha);
+  SDL_RenderClear(UI::render);
+  SDL_RenderPresent(UI::render);
+  if (SDL_SetRenderTarget(UI::render, nullptr))
+  {
+    throw SDLException("Failed resetting render target from color filters texture");
+  }
+}
+
+void GameWindow::generateScanLineTex()
+{
+  int texture_height = UI::window_size.h + m_scan_line_thickness + m_distance_between_scan_lines;
+  m_scan_line_texture = SDL_CreateTexture(UI::render,
+                                          SDL_PIXELFORMAT_RGBA32,
+                                          SDL_TEXTUREACCESS_TARGET,
+                                          UI::window_size.w,
+                                          texture_height);
+  if (m_scan_line_texture == nullptr)
+  {
+    throw SDLException("Creation of scan line texture failed");
+  }
+  if (SDL_SetTextureBlendMode(m_scan_line_texture, SDL_BLENDMODE_BLEND))
+  {
+    throw SDLException("Failed setting texture blend mode");
+  }
+
+  if (SDL_SetRenderTarget(UI::render, m_scan_line_texture))
+  {
+    throw SDLException("Failed setting render to scan line texture");
+  }
+
+  SDL_SetRenderDrawColor(UI::render, 0, 0, 0, 0);
+  SDL_RenderClear(UI::render);
+
+  SDL_SetRenderDrawColor(UI::render,
+                         m_scan_lines_color.r,
+                         m_scan_lines_color.g,
+                         m_scan_lines_color.b,
+                         m_scan_lines_alpha);
+  for (int i = 0; i < texture_height; i += m_distance_between_scan_lines + m_scan_line_thickness)
+  {
+    for (int j = 0; j < m_scan_line_thickness; j++)
+    {
+      SDL_RenderDrawLine(UI::render, 0, i + j, UI::window_size.w, i + j);
+    }
+  }
+  SDL_RenderPresent(UI::render);
+  if (SDL_SetRenderTarget(UI::render, nullptr))
+  {
+    throw SDLException("Failed resetting render target from scan line texture");
+  }
 }
 
 void GameWindow::display()
 {
   SDL_Event e;
   long framestart;
-  long framedelay = 33; // 30 fps
+  long framedelay   = 33; // 30 fps
+  UI::window_size.w = m_window_width;
+  UI::window_size.h = m_window_height;
+  generateScanLineTex();
+  generateColorFilterTex();
 
   bool quit = false;
   while (!quit)
@@ -118,13 +228,15 @@ void GameWindow::display()
             m_window_width                        = e.window.data1;
             m_window_height                       = e.window.data2;
             setViewports();
+            generateScanLineTex();
+            generateColorFilterTex();
           }
           break;
         }
         bool handeled;
         if (UI::state->focused_system == nullptr)
         {
-          m_galaxy_view->handleEvent(&e);
+          handeled = m_galaxy_view->handleEvent(&e);
         }
         else
         {
@@ -132,29 +244,39 @@ void GameWindow::display()
         }
         if (!handeled)
         {
-          m_galaxy_info_view->handleEvent(&e);
+          handeled = m_galaxy_info_view->handleEvent(&e);
+        }
+        if (!handeled)
+        {
+          handeled = m_bottom_bar_view->handleEvent(&e);
         }
       }
     }
+
     UI::game->step(Duration(1));
+
     SDL_SetRenderDrawColor(UI::render, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
     SDL_RenderClear(UI::render);
-    if (UI::state->focused_system == nullptr)
+
+    renderScreen();
+
+    if (m_scan_lines)
     {
-      m_galaxy_view->update();
-      m_galaxy_view->draw();
-    }
-    else
-    {
-      m_system_view->update();
-      m_system_view->draw();
+      SDL_Rect src;
+      src.x = 0;
+      src.y = static_cast<int>(static_cast<int>(m_scan_line_step * m_scan_line_speed) %
+                                  (m_scan_line_thickness + m_distance_between_scan_lines));
+      src.w = UI::window_size.w;
+      src.h = UI::window_size.h;
+
+      SDL_RenderCopy(UI::render, m_scan_line_texture, &src, nullptr);
+      m_scan_line_step++;
     }
 
-    m_galaxy_info_view->update();
-    m_galaxy_info_view->draw();
-    m_bottom_bar_view->update();
-    m_bottom_bar_view->draw();
-
+    if (m_color_filter)
+    {
+      SDL_RenderCopy(UI::render, m_color_filter_tex, nullptr, nullptr);
+    }
     SDL_RenderPresent(UI::render);
 
     long frametime = SDL_GetTicks() - framestart;

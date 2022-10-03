@@ -33,6 +33,7 @@ struct Color
 const Color WHITE(0xFF, 0xFF, 0xFF);
 const Color GREEN(0x00, 0xFF, 0x00);
 const Color GRAY(30, 30, 30);
+const Color SCAN_LINE_GRAY(128, 128, 128, 16);
 const Color RED(0xFF, 0, 0);
 const Color BLACK(0, 0, 0);
 const Color DYSTOPIC_GREEN(16, 69, 17);

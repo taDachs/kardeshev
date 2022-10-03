@@ -17,6 +17,20 @@ private:
   int m_window_width   = 1920;
   int m_window_height  = 1080;
 
+  bool m_scan_lines = true;
+  SDL_Texture* m_scan_line_texture = nullptr;
+  unsigned int m_scan_line_step = 0;
+  Color m_scan_lines_color = GRAY;
+  int m_scan_lines_alpha = 64;
+  int m_distance_between_scan_lines = 20;
+  int m_scan_line_thickness = 20;
+  double m_scan_line_speed = 0.5;
+
+  bool m_color_filter = false;
+  SDL_Texture* m_color_filter_tex = nullptr;
+  Color m_color_filter_color = DYSTOPIC_YELLOW;
+  int m_color_filter_alpha = 32;
+
   constexpr const static double SIDEBAR_WIDTH_PERCENT = 0.3;
   constexpr const static double BOTTOM_HEIGHT_PERCENT = 0.3;
 
@@ -32,6 +46,9 @@ private:
   View::Ptr m_galaxy_info_view;
   View::Ptr m_bottom_bar_view;
 
+  void renderScreen();
+  void generateScanLineTex();
+  void generateColorFilterTex();
 
 public:
   void setupViews();

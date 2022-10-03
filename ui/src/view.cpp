@@ -174,3 +174,16 @@ void GalaxyInfoView::updateView()
     e->update();
   }
 }
+
+void PlanetInfoView::updateView()
+{
+  if (m_entities.empty())
+  {
+    Entity::Ptr text = std::make_shared<PlanetInfoEntity>();
+    m_entities.push_back(text);
+  }
+  for (auto& e : m_entities)
+  {
+    e->update();
+  }
+}

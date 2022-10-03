@@ -1,6 +1,7 @@
 #include "ui/entities.h"
 #include "ui/window.h"
 #include "util/util.h"
+#include <sstream>
 
 using namespace kardeshev;
 
@@ -274,4 +275,52 @@ bool BackButtonEntity::handleEvent(SDL_Event* e)
     }
   }
   return false;
+}
+
+void PlanetInfoEntity::generateText() {
+  PlanetInfo::Ptr info = m_current_planet->getInfo();
+  std::stringstream s;
+  s << "Planet Class: " << info->planet_class.getName() << "\n";
+  s << "Class Description: " << info->planet_class.getDescription() << "\n";
+  s << "Temperature: " << info->temperature - 273.0 << " C\n";
+  s << "Orbit Duration: " << info->orbit_duration.getTicks() << " Days\n";
+  s << "Orbit Distance: " << info->orbit_distance << " km\n";
+  m_text = s.str();
+}
+
+void PlanetInfoEntity::update() {
+  if (UI::state->focused_planet != m_current_planet) {
+    m_current_planet = UI::state->focused_planet;
+    if (m_current_planet != nullptr) {
+      m_planet_name_label->setText("Planet Name: " + m_current_planet->getInfo()->getNameOrId().substr(0, 10));
+      generateText();
+      m_info_box->setText(m_text);
+    }
+  }
+  if (UI::state->focused_planet != nullptr) {
+    SDL_Rect size = UI::getRenderSize();
+    SDL_Rect name_dst;
+    name_dst.x = name_dst.y = 0;
+    name_dst.w              = size.w / 2;
+    name_dst.h              = size.h * 0.1;
+    m_planet_name_label->setDst(name_dst);
+    m_planet_name_label->setAlive(true);
+
+    SDL_Rect info_dst;
+    info_dst.x = 0;
+    info_dst.y = name_dst.h;
+    info_dst.w = size.w / 2;
+    info_dst.h = size.h - name_dst.h;
+    m_info_box->setDst(info_dst);
+    m_info_box->setAlive(true);
+
+    m_nothing_selected_label->setAlive(false);
+  } else {
+    m_planet_name_label->setAlive(false);
+    m_info_box->setAlive(false);
+    SDL_Rect nothing_label_dst = UI::getRenderSize();
+    nothing_label_dst.x = nothing_label_dst.y = 0;
+    m_nothing_selected_label->setDst(nothing_label_dst);
+    m_nothing_selected_label->setAlive(true);
+  }
 }
