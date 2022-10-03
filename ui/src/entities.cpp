@@ -59,6 +59,7 @@ bool SystemEntity::handleEvent(SDL_Event* e)
 
 void PlanetEntity::update()
 {
+  bool selected = m_selected || UI::state->focused_planet == m_planet;
   int orbit_radius = m_planet->getInfo()->orbit_distance * m_scale;
   glm::vec2 cors =
     polarToCart(orbit_radius, m_planet->getInfo()->getCurrentAngle(UI::game->getTime()));
@@ -77,7 +78,7 @@ void PlanetEntity::update()
   description_dst.w = 300;
   description_dst.h = 300;
   m_description_box->setDst(description_dst);
-  m_description_box->setAlive(m_selected);
+  m_description_box->setAlive(selected);
 
   SDL_Rect label_dst;
   label_dst.x = icon_dst.x + m_scale * 20 + 10;
@@ -85,7 +86,7 @@ void PlanetEntity::update()
   label_dst.w = 200;
   label_dst.h = 20;
   m_planet_name_label->setDst(label_dst);
-  m_planet_name_label->setAlive(m_selected);
+  m_planet_name_label->setAlive(selected);
 
   SDL_Rect orbit_ring_dst;
   orbit_ring_dst.x = m_offset.x - orbit_radius;
@@ -111,11 +112,15 @@ bool PlanetEntity::handleEvent(SDL_Event* e)
     // should not be counted as handled
     return false;
   }
-  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  if (e->type == SDL_MOUSEBUTTONDOWN)
   {
     if (selected)
     {
-      UI::state->focused_planet = m_planet;
+      if (UI::state->focused_planet == m_planet) {
+        UI::state->focused_planet = nullptr;
+      } else {
+        UI::state->focused_planet = m_planet;
+      }
       return true;
     }
   }
@@ -216,3 +221,4 @@ bool BackButtonEntity::handleEvent(SDL_Event* e) {
   }
   return false;
 }
+

@@ -64,10 +64,7 @@ bool MoveableView::handleEvent(SDL_Event* e)
 
 void GalaxyView::drawView()
 {
-  for (auto& e : m_entities)
-  {
-    e->draw();
-  }
+  View::drawView();
   Texture border = UI::assets->getTexture("main_view_border");
   SDL_RenderCopy(UI::render, border.getTexture(), nullptr, nullptr);
 }
@@ -99,10 +96,7 @@ void GalaxyView::updateView()
 
 void SystemView::drawView()
 {
-  for (auto& e : m_entities)
-  {
-    e->draw();
-  }
+  View::drawView();
   Texture border = UI::assets->getTexture("main_view_border");
   SDL_RenderCopy(UI::render, border.getTexture(), nullptr, nullptr);
 }
@@ -149,5 +143,15 @@ void SystemView::updateView()
       e->setScale(m_scale);
       e->update();
     }
+  }
+}
+
+void GalaxyInfoView::updateView() {
+  if (m_entities.empty()) {
+    Entity::Ptr text = std::make_shared<GalaxyInfoEntity>();
+    m_entities.push_back(text);
+  }
+  for (auto& e : m_entities) {
+    e->update();
   }
 }

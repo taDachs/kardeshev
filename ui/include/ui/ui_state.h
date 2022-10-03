@@ -25,6 +25,22 @@ struct SDLException : public std::exception
   const char* what() const noexcept override { return s.c_str(); }
 };
 
+struct TTFException : public std::exception
+{
+  std::string s;
+  TTFException()
+    : s(SDL_GetError())
+  {
+  }
+  TTFException(const std::string& msg)
+    : s("Error: " + msg + ", TTF_GetError(): " + TTF_GetError())
+  {
+  }
+  ~TTFException() noexcept override = default; // Updated
+  const char* what() const noexcept override { return s.c_str(); }
+};
+
+
 struct UIState
 {
   using Ptr                                   = std::shared_ptr<UIState>;
@@ -49,6 +65,8 @@ struct UI
   static Game::Ptr game;
   static Context::Ptr current_context;
   static double zoom_level;
+
+  static SDL_Rect getRenderSize();
 };
 
 

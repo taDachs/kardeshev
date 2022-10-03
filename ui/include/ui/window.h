@@ -24,13 +24,13 @@ private:
   std::shared_ptr<SDL_Rect> m_main_view_viewport;
   std::shared_ptr<SDL_Rect> m_bottom_bar_viewport;
 
-  // std::shared_ptr<Artist> m_system_view_artist;
-  // std::shared_ptr<Artist> m_galaxy_view_artist;
   void setViewports();
 
 
   View::Ptr m_galaxy_view;
   View::Ptr m_system_view;
+  View::Ptr m_galaxy_info_view;
+  View::Ptr m_bottom_bar_view;
 
 
 public:

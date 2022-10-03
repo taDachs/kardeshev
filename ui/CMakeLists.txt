@@ -1,7 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/ui/include/ ${PROJECT_SOURCE_DIR}/lib/include/ ${PROJECT_SOURCE_DIR}/util/include/)
 
 add_library(kardeshev_ui
-  src/artists.cpp
   src/render.cpp
   src/ui_elements.cpp
   src/window.cpp

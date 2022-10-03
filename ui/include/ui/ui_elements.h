@@ -12,9 +12,14 @@ namespace kardeshev {
 
 class Component : public std::enable_shared_from_this<Component>
 {
+public:
+  using Ptr = std::shared_ptr<Component>;
 protected:
   bool m_alive = true;
   SDL_Rect m_dst;
+  // 0 is foreground
+  // 1000 is background
+  int m_depth = 500;
 
 public:
   virtual SDL_Rect draw() = 0;
@@ -35,6 +40,13 @@ public:
     p.y = y;
     return SDL_PointInRect(&p, &m_dst);
   }
+  int getDepth() const {
+    return m_depth;
+  }
+  bool isVisible(const SDL_Rect& viewport) {
+    SDL_Rect res;
+    return SDL_IntersectRect(&viewport, &m_dst, &res);
+  }
 };
 
 class TextLabelUI : public Component
@@ -51,6 +63,7 @@ public:
   TextLabelUI(std::string text)
     : m_text(std::move(text))
   {
+    m_depth = 0;
   }
 
   void setText(const std::string& text) { m_text = text; }
@@ -74,6 +87,7 @@ public:
   TextBoxUI(std::string text)
     : m_text(std::move(text))
   {
+    m_depth = 0;
   }
 
   void setText(const std::string& text) { m_text = text; }
@@ -119,6 +133,7 @@ public:
   OrbitRingUI()
     : m_tex(UI::assets->getTexture("orbit_ring"))
   {
+    m_depth = 1000;
   }
   SDL_Rect draw() override;
   void setSelected(bool selected) { m_selected = selected; }
@@ -174,7 +189,9 @@ private:
   Texture m_tex;
   bool m_selected = false;
 public:
-  ButtonUI(const std::string& texture): m_tex(UI::assets->getTexture(texture)) {}
+  ButtonUI(const std::string& texture): m_tex(UI::assets->getTexture(texture)) {
+    m_depth = 250;
+  }
   SDL_Rect draw() override;
   void setSelected(const bool selected) { m_selected = selected; }
 };

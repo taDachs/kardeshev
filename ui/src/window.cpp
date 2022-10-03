@@ -43,15 +43,20 @@ void GameWindow::init()
 
 void GameWindow::setupViews()
 {
-  m_sidebar_viewport = std::make_shared<SDL_Rect>();
-
   m_main_view_viewport = std::make_shared<SDL_Rect>();
   m_galaxy_view        = std::make_shared<GalaxyView>();
   m_galaxy_view->setViewport(m_main_view_viewport);
   m_system_view = std::make_shared<SystemView>();
   m_system_view->setViewport(m_main_view_viewport);
 
+  m_sidebar_viewport = std::make_shared<SDL_Rect>();
+  m_galaxy_info_view = std::make_shared<GalaxyInfoView>();
+  m_galaxy_info_view->setViewport(m_sidebar_viewport);
+
   m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
+  m_bottom_bar_view = std::make_shared<GalaxyInfoView>();
+  m_bottom_bar_view->setViewport(m_bottom_bar_viewport);
+
   setViewports();
 }
 
@@ -75,8 +80,6 @@ void GameWindow::setViewports()
   m_bottom_bar_viewport->w =
     m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
   m_bottom_bar_viewport->h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
-
-  UI::current_viewport = m_main_view_viewport;
 }
 
 void GameWindow::kill()
@@ -109,6 +112,7 @@ void GameWindow::display()
           if (e.window.event == SDL_WINDOWEVENT_RESIZED)
           {
             std::cout << "MESSAGE:Resizing window..." << std::endl;
+            UI::window_size.x = UI::window_size.y = 0;
             UI::window_size.w = e.window.data1;
             UI::window_size.h = e.window.data2;
             m_window_width    = e.window.data1;
@@ -117,6 +121,7 @@ void GameWindow::display()
           }
           break;
         }
+        bool handeled;
         if (UI::state->focused_system == nullptr)
         {
           m_galaxy_view->handleEvent(&e);
@@ -124,6 +129,9 @@ void GameWindow::display()
         else
         {
           m_system_view->handleEvent(&e);
+        }
+        if (!handeled) {
+          m_galaxy_info_view->handleEvent(&e);
         }
       }
     }

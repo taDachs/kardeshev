@@ -26,8 +26,26 @@ protected:
     }
   }
 
+  virtual void drawView()
+  {
+    std::vector<Component::Ptr> draw_list;
+    for (auto& e : m_entities)
+    {
+      std::vector<Component::Ptr> entity_list = e->getDrawList();
+      draw_list.insert(draw_list.end(), entity_list.begin(), entity_list.end());
+    }
+
+    std::sort(draw_list.begin(), draw_list.end(), [&](const Component::Ptr& a, const Component::Ptr& b) {
+      return a->getDepth() > b->getDepth();
+    });
+
+    for (auto& d : draw_list)
+    {
+      d->draw();
+    }
+  };
+
 public:
-  virtual void drawView() = 0;
   void draw()
   {
     if (m_viewport != nullptr)
@@ -132,6 +150,10 @@ private:
   SolarSystem::Ptr m_current_system = nullptr;
 
   void drawView() override;
+  void updateView() override;
+};
+
+class GalaxyInfoView : public View {
   void updateView() override;
 };
 

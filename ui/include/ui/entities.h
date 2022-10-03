@@ -16,7 +16,7 @@ public:
   using Ptr = std::shared_ptr<Entity>;
 
 protected:
-  std::vector<std::shared_ptr<kardeshev::Component> > m_components;
+  std::vector<std::shared_ptr<Component> > m_components;
   SDL_Point m_position;
   SDL_Point m_offset;
   double m_scale;
@@ -28,6 +28,20 @@ public:
     {
       c->drawIfAlive();
     }
+  }
+  std::vector<Component::Ptr> getDrawList()
+  {
+    std::vector<Component::Ptr> alive;
+    for (const auto& c : m_components)
+    {
+      SDL_Rect viewport = UI::getRenderSize();
+      viewport.x = viewport.y = 0;
+      if (c->isAlive() && c->isVisible(viewport))
+      {
+        alive.push_back(c);
+      }
+    }
+    return alive;
   }
   virtual void update()                  = 0;
   virtual bool handleEvent(SDL_Event* e) = 0;
@@ -84,7 +98,8 @@ public:
       std::make_shared<TextLabelUI>(m_planet->getInfo()->getNameOrId().substr(0, 10));
     m_orbit_ring = std::make_shared<OrbitRingUI>();
     m_planet_name_label->setAlive(false);
-    m_description_box = std::make_shared<TextBoxUI>(m_planet->getInfo()->planet_class.getDescription());
+    m_description_box =
+      std::make_shared<TextBoxUI>(m_planet->getInfo()->planet_class.getDescription());
     m_components.push_back(m_orbit_ring);
     m_components.push_back(m_planet_icon);
     m_components.push_back(m_planet_name_label);
@@ -124,13 +139,52 @@ class BackButtonEntity : public Entity
 private:
   ButtonUI::Ptr m_button;
   bool m_selected = false;
+
 public:
-  BackButtonEntity() {
+  BackButtonEntity()
+  {
     m_button = std::make_shared<ButtonUI>("galaxy_button");
     m_components.push_back(m_button);
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override;
+};
+
+class GalaxyInfoEntity : public Entity
+{
+private:
+  TextBoxUI::Ptr m_text_box;
+
+public:
+  GalaxyInfoEntity()
+  {
+    std::string text =
+      "I'd just like to interject for a moment. What you're referring to as Linux, is in fact, "
+      "GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an "
+      "operating system unto itself, but rather another free component of a fully functioning GNU "
+      "system made useful by the GNU corelibs, shell utilities and vital system components "
+      "comprising a full OS as defined by POSIX.\n"
+      "Many computer users run a modified version of the GNU system every day, without realizing "
+      "it. Through a peculiar turn of events, the version of GNU which is widely used today is "
+      "often called \"Linux\", and many of its users are not aware that it is basically the GNU "
+      "system, developed by the GNU Project."
+      "There really is a Linux, and these people are using it, but it is just a part of the system "
+      "they use. Linux is the kernel: the program in the system that allocates the machine's "
+      "resources to the other programs that you run. The kernel is an essential part of an "
+      "operating system, but useless by itself; it can only function in the context of a complete "
+      "operating system. Linux is normally used in combination with the GNU operating system: the "
+      "whole system is basically GNU with Linux added, or GNU/Linux. All the so-called \"Linux\" "
+      "distributions are really distributions of GNU/Linux.";
+    m_text_box = std::make_shared<TextBoxUI>(text);
+    m_components.push_back(m_text_box);
+  }
+  void update() override {
+    SDL_Rect dst = UI::getRenderSize();
+    dst.x = 0;
+    dst.y = 0;
+    m_text_box->setDst(dst);
+  }
+  bool handleEvent(SDL_Event* e) override { return false; }
 };
 
 } // namespace kardeshev
