@@ -56,9 +56,9 @@ int main()
   main_window->init();
   kardeshev::UI::game = game;
 
-  // kardeshev::UI::assets->addFont(
-  //   kardeshev::Font::DEFAULT_FONT, "assets/aerial.ttf", 12, 26, 52);
   kardeshev::UI::assets->addFont(kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
+  kardeshev::UI::assets->addTexture(
+    "planet_portrait", "assets/test_planet.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture(
     kardeshev::PlanetEntity::PLANET_SPRITE, "assets/planet_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture(

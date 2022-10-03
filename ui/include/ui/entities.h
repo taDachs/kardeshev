@@ -224,6 +224,7 @@ private:
   TextLabelUI::Ptr m_planet_name_label;
   TextLabelUI::Ptr m_nothing_selected_label;
   TextBoxUI::Ptr m_info_box;
+  TextureComponent::Ptr m_planet_portrait;
   std::string m_text;
   Planet::Ptr m_current_planet;
   void generateText();
@@ -235,12 +236,16 @@ public:
 
     m_planet_name_label = std::make_shared<TextLabelUI>();
     m_info_box          = std::make_shared<TextBoxUI>();
+    m_planet_portrait   = std::make_shared<TextureComponent>("planet_portrait");
     m_planet_name_label->setAlive(false);
     m_info_box->setAlive(false);
+    m_planet_portrait->setAlive(false);
+
 
     m_components.push_back(m_planet_name_label);
     m_components.push_back(m_nothing_selected_label);
     m_components.push_back(m_info_box);
+    m_components.push_back(m_planet_portrait);
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override { return false; }

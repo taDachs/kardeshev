@@ -314,6 +314,13 @@ void PlanetInfoEntity::update() {
     m_info_box->setDst(info_dst);
     m_info_box->setAlive(true);
 
+    SDL_Rect portrait_dst;
+    portrait_dst.w = portrait_dst.h = std::min(size.w / 2, size.h);
+    portrait_dst.x = size.w - portrait_dst.w;
+    portrait_dst.y = 0;
+    m_planet_portrait->setDst(portrait_dst);
+    m_planet_portrait->setAlive(true);
+
     m_nothing_selected_label->setAlive(false);
   } else {
     m_planet_name_label->setAlive(false);
