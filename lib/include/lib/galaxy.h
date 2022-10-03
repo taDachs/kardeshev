@@ -9,6 +9,7 @@ class Galaxy : public GameObject
 {
 public:
   using Ptr = std::shared_ptr<Galaxy>;
+
 private:
   std::vector<std::shared_ptr<SolarSystem> > m_systems;
 

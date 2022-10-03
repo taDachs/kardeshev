@@ -56,6 +56,7 @@ public:
   const static std::string SYSTEM_SPRITE;
   const static int SYSTEM_SPRITE_SELECTED_FRAME;
   const static int SYSTEM_SPRITE_NOT_SELECTED_FRAME;
+
 private:
   SolarSystem::Ptr m_system;
   TextLabelUI::Ptr m_system_name_label;
@@ -68,8 +69,10 @@ public:
   SystemEntity(SolarSystem::Ptr system)
     : m_system(std::move(system))
   {
-    m_system_selected_icon = std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_SELECTED_FRAME);
-    m_system_not_selected_icon = std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_NOT_SELECTED_FRAME);
+    m_system_selected_icon =
+      std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_SELECTED_FRAME);
+    m_system_not_selected_icon =
+      std::make_shared<TextureComponent>(SYSTEM_SPRITE, SYSTEM_SPRITE_NOT_SELECTED_FRAME);
     m_system_selected_icon->setAlive(false);
 
     m_system_name_label =
@@ -97,6 +100,7 @@ public:
   const static int PLANET_SPRITE_SELECTED_FRAME;
   const static int PLANET_SPRITE_FOCUSED_FRAME;
   const static int PLANET_SPRITE_NOT_SELECTED_FRAME;
+
 private:
   Planet::Ptr m_planet;
   TextLabelUI::Ptr m_planet_name_label;
@@ -111,8 +115,10 @@ public:
   PlanetEntity(Planet::Ptr planet)
     : m_planet(std::move(planet))
   {
-    m_selected_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_SELECTED_FRAME);
-    m_not_selected_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_NOT_SELECTED_FRAME);
+    m_selected_icon =
+      std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_SELECTED_FRAME);
+    m_not_selected_icon =
+      std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_NOT_SELECTED_FRAME);
     m_focused_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_FOCUSED_FRAME);
 
     m_planet_name_label =
@@ -141,6 +147,7 @@ public:
   const static std::string STAR_SPRITE;
   const static int STAR_SPRITE_SELECTED_FRAME;
   const static int STAR_SPRITE_NOT_SELECTED_FRAME;
+
 private:
   Star::Ptr m_star;
   TextLabelUI::Ptr m_star_name_label;
@@ -154,7 +161,8 @@ public:
   {
     m_selected_icon = std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_SELECTED_FRAME);
     m_selected_icon->setAlive(false);
-    m_not_selected_icon = std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_NOT_SELECTED_FRAME);
+    m_not_selected_icon =
+      std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_NOT_SELECTED_FRAME);
     m_star_name_label =
       std::make_shared<TextLabelUI>(m_star->getInfo()->getNameOrId().substr(0, 10));
     m_star_name_label->setAlive(false);
@@ -215,10 +223,11 @@ public:
     m_text_box = std::make_shared<TextBoxUI>(text);
     m_components.push_back(m_text_box);
   }
-  void update() override {
+  void update() override
+  {
     SDL_Rect dst = UI::getRenderSize();
-    dst.x = 0;
-    dst.y = 0;
+    dst.x        = 0;
+    dst.y        = 0;
     m_text_box->setDst(dst);
   }
   bool handleEvent(SDL_Event* e) override { return false; }

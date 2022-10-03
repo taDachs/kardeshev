@@ -48,6 +48,7 @@ class Star : public GameObject
 {
 public:
   using Ptr = std::shared_ptr<Star>;
+
 private:
   std::shared_ptr<StarInfo> m_info;
 

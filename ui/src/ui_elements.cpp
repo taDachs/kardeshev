@@ -7,11 +7,15 @@
 
 using namespace kardeshev;
 
-SDL_Rect TextureComponent::draw() {
-  if (m_frame >= 0) {
+SDL_Rect TextureComponent::draw()
+{
+  if (m_frame >= 0)
+  {
     SDL_Rect src = m_tex.getFrame(m_frame);
     SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
-  } else {
+  }
+  else
+  {
     SDL_RenderCopy(UI::render, m_tex.getTexture(), nullptr, &m_dst);
   }
   return m_dst;
@@ -22,8 +26,8 @@ SDL_Rect TextLabelUI::draw()
   Font font = UI::assets->getFont(Font::DEFAULT_FONT);
   SDL_Surface* surface_message =
     TTF_RenderText_Blended(font.medium, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
-  m_dst.w = std::min(surface_message->w, m_dst.w);
-  m_dst.h = std::min(surface_message->h, m_dst.h);
+  m_dst.w              = std::min(surface_message->w, m_dst.w);
+  m_dst.h              = std::min(surface_message->h, m_dst.h);
   SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
   SDL_RenderCopy(UI::render, message, nullptr, &m_dst);
   SDL_FreeSurface(surface_message);
@@ -34,18 +38,21 @@ SDL_Rect TextLabelUI::draw()
 
 SDL_Rect TextBoxUI::draw()
 {
-  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
-  SDL_Surface* surface_message =
-    TTF_RenderText_Blended_Wrapped(font.small, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
-  if (surface_message == nullptr) {
+  Font font                    = UI::assets->getFont(Font::DEFAULT_FONT);
+  SDL_Surface* surface_message = TTF_RenderText_Blended_Wrapped(
+    font.small, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
+  if (surface_message == nullptr)
+  {
     throw TTFException("failed drawing text");
   }
-  m_dst.h = std::min(surface_message->h, m_dst.h);
+  m_dst.h              = std::min(surface_message->h, m_dst.h);
   SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
-  if (message == nullptr) {
+  if (message == nullptr)
+  {
     throw SDLException("failed creating texture from text message");
   }
-  if (SDL_RenderCopy(UI::render, message, nullptr, &m_dst)) {
+  if (SDL_RenderCopy(UI::render, message, nullptr, &m_dst))
+  {
     throw SDLException("Failed copying text message to screen");
   }
 

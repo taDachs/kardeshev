@@ -165,8 +165,8 @@ bool PlanetEntity::handleEvent(SDL_Event* e)
   return false;
 }
 
-const std::string StarEntity::STAR_SPRITE = "star_simple";
-const int StarEntity::STAR_SPRITE_SELECTED_FRAME = 2;
+const std::string StarEntity::STAR_SPRITE            = "star_simple";
+const int StarEntity::STAR_SPRITE_SELECTED_FRAME     = 2;
 const int StarEntity::STAR_SPRITE_NOT_SELECTED_FRAME = 0;
 
 void StarEntity::update()

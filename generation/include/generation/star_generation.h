@@ -6,7 +6,7 @@ namespace kardeshev {
 class StarGenerator
 {
 public:
-  using Ptr = std::shared_ptr<StarGenerator>;
+  using Ptr                                          = std::shared_ptr<StarGenerator>;
   virtual std::shared_ptr<Star> generateStar() const = 0;
 };
 

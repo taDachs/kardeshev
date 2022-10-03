@@ -143,7 +143,7 @@ struct PlanetInfo
   int getCurrentAngle(const Duration& time) const
   {
     // this is okay because the orbit duraiton shouldn't be that large
-    auto day_of_year    = static_cast<double>(time.getTicks() % orbit_duration.getTicks());
+    auto day_of_year     = static_cast<double>(time.getTicks() % orbit_duration.getTicks());
     auto orbit_duration_ = static_cast<double>(orbit_duration.getTicks());
 
     return static_cast<int>((day_of_year / orbit_duration_) * 360.0);
@@ -154,6 +154,7 @@ class Planet : public GameObject
 {
 public:
   using Ptr = std::shared_ptr<Planet>;
+
 private:
   std::vector<Population> m_pops;
   std::vector<std::shared_ptr<Building> > m_buildings;

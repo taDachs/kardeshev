@@ -58,13 +58,15 @@ int main()
 
   // kardeshev::UI::assets->addFont(
   //   kardeshev::Font::DEFAULT_FONT, "assets/aerial.ttf", 12, 26, 52);
-  kardeshev::UI::assets->addFont(
-    kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
-  kardeshev::UI::assets->addTexture(kardeshev::PlanetEntity::PLANET_SPRITE, "assets/planet_simple.png", 128, 128, 3);
-  kardeshev::UI::assets->addTexture(kardeshev::SystemEntity::SYSTEM_SPRITE, "assets/system_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addFont(kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
+  kardeshev::UI::assets->addTexture(
+    kardeshev::PlanetEntity::PLANET_SPRITE, "assets/planet_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture(
+    kardeshev::SystemEntity::SYSTEM_SPRITE, "assets/system_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("orbit_ring", "assets/orbit_ring.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("main_view_border", "assets/main_view_border.png");
-  kardeshev::UI::assets->addTexture(kardeshev::StarEntity::STAR_SPRITE, "assets/star_simple.png", 128, 128, 3);
+  kardeshev::UI::assets->addTexture(
+    kardeshev::StarEntity::STAR_SPRITE, "assets/star_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("galaxy_button", "assets/galaxy_button.png", 128, 64, 2);
 
   main_window->setupViews();

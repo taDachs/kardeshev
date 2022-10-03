@@ -16,8 +16,8 @@ std::shared_ptr<Planet> NaivePlanetGenerator::generatePlanet() const
   double max_temp          = planet_class.getTempRange().second;
   info->temperature        = static_cast<double>(
     RandomDistribution::sample(static_cast<int>(min_temp), static_cast<int>(max_temp)));
-  info->orbit_duration    = Duration(RandomDistribution::sample(360, 9999));
-  info->orbit_distance    = static_cast<double>(RandomDistribution::sample(100, 500));
+  info->orbit_duration      = Duration(RandomDistribution::sample(360, 9999));
+  info->orbit_distance      = static_cast<double>(RandomDistribution::sample(100, 500));
   std::shared_ptr<Planet> p = std::make_shared<Planet>(info);
   p->getInfo()->planet      = p;
 

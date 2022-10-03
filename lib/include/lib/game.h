@@ -11,6 +11,7 @@ class Game
 {
 public:
   using Ptr = std::shared_ptr<Game>;
+
 private:
   Duration m_time;
   Galaxy::Ptr m_galaxy;

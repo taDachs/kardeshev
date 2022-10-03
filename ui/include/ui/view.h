@@ -35,9 +35,10 @@ protected:
       draw_list.insert(draw_list.end(), entity_list.begin(), entity_list.end());
     }
 
-    std::sort(draw_list.begin(), draw_list.end(), [&](const Component::Ptr& a, const Component::Ptr& b) {
-      return a->getDepth() > b->getDepth();
-    });
+    std::sort(
+      draw_list.begin(), draw_list.end(), [&](const Component::Ptr& a, const Component::Ptr& b) {
+        return a->getDepth() > b->getDepth();
+      });
 
     for (auto& d : draw_list)
     {
@@ -153,7 +154,8 @@ private:
   void updateView() override;
 };
 
-class GalaxyInfoView : public View {
+class GalaxyInfoView : public View
+{
   void updateView() override;
 };
 

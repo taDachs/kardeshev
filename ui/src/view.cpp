@@ -20,20 +20,26 @@ bool MoveableView::handleEvent(SDL_Event* e)
     if (e->wheel.y > 0)
     {
       m_scale *= 1.1;
-      if (m_scale < 5.0) {
+      if (m_scale < 5.0)
+      {
         m_offset.x *= 1.1;
         m_offset.y *= 1.1;
-      } else {
+      }
+      else
+      {
         m_scale = 5.0;
       }
     }
     else if (e->wheel.y < 0)
     {
       m_scale /= 1.1;
-      if (m_scale > 0.3) {
+      if (m_scale > 0.3)
+      {
         m_offset.x /= 1.1;
         m_offset.y /= 1.1;
-      } else {
+      }
+      else
+      {
         m_scale = 0.3;
       }
     }
@@ -113,17 +119,18 @@ void SystemView::drawView()
 
 void SystemView::updateView()
 {
-  if (m_current_system != UI::state->focused_system) {
+  if (m_current_system != UI::state->focused_system)
+  {
     m_entities.clear();
     m_current_system = UI::state->focused_system;
-    m_scale = 1;
-    m_offset.x = 0;
-    m_offset.y = 0;
+    m_scale          = 1;
+    m_offset.x       = 0;
+    m_offset.y       = 0;
   }
   if (m_entities.empty())
   {
-    Star::Ptr s = UI::state->focused_system->getStar();
-    Entity::Ptr e      = std::make_shared<StarEntity>(s);
+    Star::Ptr s   = UI::state->focused_system->getStar();
+    Entity::Ptr e = std::make_shared<StarEntity>(s);
     m_entities.push_back(e);
     e->setOffset(getCenterOffset());
     e->setScale(m_scale);
@@ -143,7 +150,6 @@ void SystemView::updateView()
     e->setOffset(getCenterOffset());
     e->setScale(m_scale);
     e->update();
-
   }
   else
   {
@@ -156,12 +162,15 @@ void SystemView::updateView()
   }
 }
 
-void GalaxyInfoView::updateView() {
-  if (m_entities.empty()) {
+void GalaxyInfoView::updateView()
+{
+  if (m_entities.empty())
+  {
     Entity::Ptr text = std::make_shared<GalaxyInfoEntity>();
     m_entities.push_back(text);
   }
-  for (auto& e : m_entities) {
+  for (auto& e : m_entities)
+  {
     e->update();
   }
 }
