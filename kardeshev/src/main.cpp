@@ -73,7 +73,6 @@ int main()
   ss->getPlanets()[0]->addPop(pop);
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
-  main_window->setupViews();
   main_window->display();
 
   kardeshev::UI::logger->logInfo("killing");

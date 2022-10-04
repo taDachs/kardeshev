@@ -8,6 +8,7 @@ add_library(kardeshev_ui
   src/entities.cpp
   src/view.cpp
   src/ui_state.cpp
+  src/screen.cpp
 )
 add_dependencies(kardeshev_ui kardeshev_lib kardeshev_util kardeshev_generation)
 target_link_libraries(kardeshev_ui kardeshev_lib kardeshev_util kardeshev_generation SDL2::Main SDL2::TTF SDL2::Image ${GLM_LIBRARIES})

@@ -38,46 +38,8 @@ void kardeshev::initSDL()
     SDL_CreateRenderer(UI::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
-void GameWindow::setupViews()
-{
-  m_main_view_viewport = std::make_shared<SDL_Rect>();
-  m_galaxy_view        = std::make_shared<GalaxyView>();
-  m_galaxy_view->setViewport(m_main_view_viewport);
-  m_system_view = std::make_shared<SystemView>();
-  m_system_view->setViewport(m_main_view_viewport);
 
-  m_sidebar_viewport = std::make_shared<SDL_Rect>();
-  m_galaxy_info_view = std::make_shared<GalaxyInfoView>();
-  m_galaxy_info_view->setViewport(m_sidebar_viewport);
 
-  m_bottom_bar_viewport = std::make_shared<SDL_Rect>();
-  m_bottom_bar_view     = std::make_shared<PlanetInfoView>();
-  m_bottom_bar_view->setViewport(m_bottom_bar_viewport);
-
-  setViewports();
-}
-
-void GameWindow::setViewports()
-{
-  m_sidebar_viewport->x = 0;
-  m_sidebar_viewport->y = 0;
-  m_sidebar_viewport->w = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
-  m_sidebar_viewport->h = UI::window_size.h;
-
-  m_main_view_viewport->x = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
-  m_main_view_viewport->y = 0;
-  m_main_view_viewport->w =
-    UI::window_size.w - static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
-  m_main_view_viewport->h =
-    UI::window_size.h - static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
-
-  m_bottom_bar_viewport->x = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
-  m_bottom_bar_viewport->y =
-    UI::window_size.h - static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
-  m_bottom_bar_viewport->w =
-    UI::window_size.w - static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
-  m_bottom_bar_viewport->h = static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
-}
 
 void GameWindow::kill()
 {
@@ -92,25 +54,6 @@ void GameWindow::kill()
   SDL_DestroyRenderer(UI::render);
   SDL_DestroyWindow(UI::window);
   SDL_Quit();
-}
-
-void GameWindow::renderScreen()
-{
-  if (UI::state->focused_system == nullptr)
-  {
-    m_galaxy_view->update();
-    m_galaxy_view->draw();
-  }
-  else
-  {
-    m_system_view->update();
-    m_system_view->draw();
-  }
-
-  m_galaxy_info_view->update();
-  m_galaxy_info_view->draw();
-  m_bottom_bar_view->update();
-  m_bottom_bar_view->draw();
 }
 
 void GameWindow::generateColorFilterTex()
@@ -198,6 +141,7 @@ void GameWindow::display()
   long framedelay   = 33; // 30 fps
   generateScanLineTex();
   generateColorFilterTex();
+  m_current_view->resize();
 
   bool quit = false;
   while (!quit)
@@ -219,29 +163,12 @@ void GameWindow::display()
             UI::window_size.x = UI::window_size.y = 0;
             UI::window_size.w                     = e.window.data1;
             UI::window_size.h                     = e.window.data2;
-            setViewports();
+            m_current_view->resize();
             generateScanLineTex();
             generateColorFilterTex();
           }
-          break;
         }
-        bool handeled;
-        if (UI::state->focused_system == nullptr)
-        {
-          handeled = m_galaxy_view->handleEvent(&e);
-        }
-        else
-        {
-          m_system_view->handleEvent(&e);
-        }
-        if (!handeled)
-        {
-          handeled = m_galaxy_info_view->handleEvent(&e);
-        }
-        if (!handeled)
-        {
-          handeled = m_bottom_bar_view->handleEvent(&e);
-        }
+        m_current_view->handleEvent(&e);
       }
     }
 
@@ -250,7 +177,7 @@ void GameWindow::display()
     SDL_SetRenderDrawColor(UI::render, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
     SDL_RenderClear(UI::render);
 
-    renderScreen();
+    m_current_view->draw();
 
     if (m_scan_lines)
     {

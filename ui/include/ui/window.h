@@ -3,6 +3,7 @@
 #include "lib/game.h"
 #include "render.h"
 #include "ui/assets.h"
+#include "ui/screen.h"
 #include "ui/ui_state.h"
 #include "ui/view.h"
 
@@ -27,27 +28,16 @@ private:
   Color m_color_filter_color = DYSTOPIC_YELLOW;
   int m_color_filter_alpha = 32;
 
-  constexpr const static double SIDEBAR_WIDTH_PERCENT = 0.3;
-  constexpr const static double BOTTOM_HEIGHT_PERCENT = 0.3;
+  Screen::Ptr m_main_screen;
+  Screen::Ptr m_current_view;
 
-  std::shared_ptr<SDL_Rect> m_sidebar_viewport;
-  std::shared_ptr<SDL_Rect> m_main_view_viewport;
-  std::shared_ptr<SDL_Rect> m_bottom_bar_viewport;
-
-  void setViewports();
-
-
-  View::Ptr m_galaxy_view;
-  View::Ptr m_system_view;
-  View::Ptr m_galaxy_info_view;
-  View::Ptr m_bottom_bar_view;
-
-  void renderScreen();
   void generateScanLineTex();
   void generateColorFilterTex();
-
 public:
-  void setupViews();
+  GameWindow() {
+    m_main_screen = std::make_shared<MainScreen>();
+    m_current_view = m_main_screen;
+  }
   void kill();
   void display();
 };
