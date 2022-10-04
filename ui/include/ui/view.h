@@ -46,6 +46,16 @@ protected:
       d->draw();
     }
   };
+  virtual bool handleEventView(SDL_Event *e) {
+    for (auto& entity : m_entities)
+    {
+      if (entity->handleEvent(e))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
 
 public:
   void draw()
@@ -89,18 +99,10 @@ public:
     }
     SDL_RenderSetViewport(UI::render, m_viewport.get());
     UI::current_viewport = m_viewport;
-    for (auto& entity : m_entities)
-    {
-      if (entity->handleEvent(e))
-      {
-        SDL_RenderSetViewport(UI::render, nullptr);
-        UI::current_viewport = nullptr;
-        return true;
-      }
-    }
+    bool handled = handleEventView(e);
     SDL_RenderSetViewport(UI::render, nullptr);
     UI::current_viewport = nullptr;
-    return false;
+    return handled;
   }
 
   virtual void setViewport(std::shared_ptr<SDL_Rect> viewport) { m_viewport = std::move(viewport); }
@@ -133,9 +135,9 @@ protected:
     }
     return offset;
   }
+  bool handleEventView(SDL_Event* e) override;
 
 public:
-  bool handleEvent(SDL_Event* e) override;
   void setViewport(std::shared_ptr<SDL_Rect> viewport) override
   {
     m_viewport = std::move(viewport);
@@ -154,6 +156,7 @@ protected:
 class SystemView : public MoveableView
 {
 private:
+  ButtonEntity::Ptr m_back_button;
   SolarSystem::Ptr m_current_system = nullptr;
 
   void drawView() override;
@@ -162,15 +165,15 @@ private:
 
 class GalaxyInfoView : public View
 {
+private:
+  ButtonEntity::Ptr m_settings_button;
   void updateView() override;
 };
-
 
 class PlanetInfoView : public View
 {
   void updateView() override;
 };
-
 
 class LoadingScreenView : public View
 {
@@ -186,6 +189,21 @@ public:
       m_entity->setText(s);
     }
   }
+};
+
+class GameSettingsView : public View
+{
+public:
+  using Ptr = std::shared_ptr<GameSettingsView>;
+private:
+  ButtonEntity::Ptr m_settings_button;
+  TextEntity::Ptr m_title_label;
+  std::map<std::string, bool*> m_toggle_options;
+  std::string m_title;
+  void updateView() override;
+  std::vector<CheckBoxOptionEntity::Ptr> m_options;
+public:
+  GameSettingsView(std::string title, std::map<std::string, bool*>  toggle_options): m_title(std::move(title)), m_toggle_options(std::move(toggle_options)) {}
 };
 
 } // namespace kardeshev

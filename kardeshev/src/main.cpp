@@ -32,6 +32,8 @@ int loadAssets(void *data) {
   kardeshev::UI::assets->addTexture(
     kardeshev::StarEntity::STAR_SPRITE, "assets/star_simple.png", 128, 128, 3);
   kardeshev::UI::assets->addTexture("galaxy_button", "assets/galaxy_button.png", 128, 64, 2);
+  kardeshev::UI::assets->addTexture(kardeshev::CheckBoxOptionEntity::CHECKBOX_SPRITE, "assets/checkbox.png", 64, 64, 4);
+  kardeshev::UI::assets->addTexture("settings_icon", "assets/settings_icon.png", 128, 64, 2);
 
   kardeshev::UI::logger->logInfo("Setting up generators");
   setupGenerators();
@@ -50,13 +52,13 @@ int loadAssets(void *data) {
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
   kardeshev::UI::logger->logInfo("Finished initialization");
-  kardeshev::UI::done_initializing = true;
+  kardeshev::UI::state->current_screen = kardeshev::UI::screen_list.main_screen;
 
   return 0;
 }
 
 int gameThread(void* data) {
-  while (!kardeshev::UI::done_initializing) {
+  while (kardeshev::UI::state->current_screen == kardeshev::UI::screen_list.loading_screen) {
     // poll until game is done initializing
     // TODO: put the thread to sleep and wake it up you piece of shit, this wastes cpu cycles
     //       and brings us close to the heat death of the universe
@@ -95,6 +97,8 @@ int main()
   kardeshev::initSDL();
   kardeshev::UI::assets->addFont(kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
 
+  kardeshev::UI::settings.ui_settings.toggle_options.insert({"Scan Lines", &kardeshev::UI::settings.ui_settings.scan_lines});
+  kardeshev::UI::settings.ui_settings.toggle_options.insert({"Color Filter", &kardeshev::UI::settings.ui_settings.color_filter});
 
   kardeshev::UI::logger->logInfo("Creating window");
   auto main_window = std::make_shared<kardeshev::GameWindow>();

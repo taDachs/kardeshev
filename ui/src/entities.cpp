@@ -217,27 +217,27 @@ bool StarEntity::handleEvent(SDL_Event* e)
   return false;
 }
 
-void BackButtonEntity::update()
+void ButtonEntity::update()
 {
-  SDL_Rect screen;
-
-  if (UI::current_viewport != nullptr)
-  {
-    screen = *UI::current_viewport;
-  }
-  else
-  {
-    screen = UI::window_size;
-  }
-
-  int padding = 10;
-  SDL_Rect button_dst;
-  button_dst.y = screen.h - 64 - padding;
-  button_dst.x = padding;
-  button_dst.w = 128;
-  button_dst.h = 64;
-  m_button_not_selected->setDst(button_dst);
-  m_button_selected->setDst(button_dst);
+  // SDL_Rect screen;
+  //
+  // if (UI::current_viewport != nullptr)
+  // {
+  //   screen = *UI::current_viewport;
+  // }
+  // else
+  // {
+  //   screen = UI::window_size;
+  // }
+  //
+  // int padding = 10;
+  // SDL_Rect button_dst;
+  // button_dst.y = screen.h - 64 - padding;
+  // button_dst.x = padding;
+  // button_dst.w = 128;
+  // button_dst.h = 64;
+  m_button_not_selected->setDst(m_dst);
+  m_button_selected->setDst(m_dst);
 
   m_button_not_selected->setDepth(0);
   m_button_selected->setDepth(0);
@@ -246,7 +246,7 @@ void BackButtonEntity::update()
   m_button_not_selected->setAlive(!m_selected);
 }
 
-bool BackButtonEntity::handleEvent(SDL_Event* e)
+bool ButtonEntity::handleEvent(SDL_Event* e)
 {
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
@@ -266,18 +266,16 @@ bool BackButtonEntity::handleEvent(SDL_Event* e)
     // should not be counted as handled
     return false;
   }
-  if (e->type == SDL_MOUSEBUTTONUP)
+  if (e->type == SDL_MOUSEBUTTONUP && selected)
   {
-    if (selected)
-    {
-      UI::state->focused_system = nullptr;
-      return true;
-    }
+    onClick();
+    return true;
   }
   return false;
 }
 
-void PlanetInfoEntity::generateText() {
+void PlanetInfoEntity::generateText()
+{
   PlanetInfo::Ptr info = m_current_planet->getInfo();
   std::stringstream s;
   s << "Planet Class: " << info->planet_class.getName() << "\n";
@@ -288,16 +286,21 @@ void PlanetInfoEntity::generateText() {
   m_text = s.str();
 }
 
-void PlanetInfoEntity::update() {
-  if (UI::state->focused_planet != m_current_planet) {
+void PlanetInfoEntity::update()
+{
+  if (UI::state->focused_planet != m_current_planet)
+  {
     m_current_planet = UI::state->focused_planet;
-    if (m_current_planet != nullptr) {
-      m_planet_name_label->setText("Planet Name: " + m_current_planet->getInfo()->getNameOrId().substr(0, 10));
+    if (m_current_planet != nullptr)
+    {
+      m_planet_name_label->setText("Planet Name: " +
+                                   m_current_planet->getInfo()->getNameOrId().substr(0, 10));
       generateText();
       m_info_box->setText(m_text);
     }
   }
-  if (UI::state->focused_planet != nullptr) {
+  if (UI::state->focused_planet != nullptr)
+  {
     SDL_Rect size = UI::getRenderSize();
     SDL_Rect name_dst;
     name_dst.x = name_dst.y = 0;
@@ -316,13 +319,15 @@ void PlanetInfoEntity::update() {
 
     SDL_Rect portrait_dst;
     portrait_dst.w = portrait_dst.h = std::min(size.w / 2, size.h);
-    portrait_dst.x = size.w - portrait_dst.w;
-    portrait_dst.y = 0;
+    portrait_dst.x                  = size.w - portrait_dst.w;
+    portrait_dst.y                  = 0;
     m_planet_portrait->setDst(portrait_dst);
     m_planet_portrait->setAlive(true);
 
     m_nothing_selected_label->setAlive(false);
-  } else {
+  }
+  else
+  {
     m_planet_name_label->setAlive(false);
     m_info_box->setAlive(false);
     SDL_Rect nothing_label_dst = UI::getRenderSize();
@@ -332,7 +337,8 @@ void PlanetInfoEntity::update() {
   }
 }
 
-void LoadingTextEntity::update() {
+void LoadingTextEntity::update()
+{
   SDL_Rect size = UI::getRenderSize();
   SDL_Rect loading_label_dst;
   loading_label_dst.x = 0.05 * size.w;
@@ -349,4 +355,77 @@ void LoadingTextEntity::update() {
   title_label_dst.h = 0.6 * size.h;
   m_title_label->setDst(title_label_dst);
   m_title_label->setAlive(true);
+}
+
+
+const std::string CheckBoxOptionEntity::CHECKBOX_SPRITE                                = "checkbox";
+const int CheckBoxOptionEntity::CHECKBOX_SPRITE_NOT_SELECTED_OFF_FRAME = 0;
+const int CheckBoxOptionEntity::CHECKBOX_SPRITE_SELECTED_OFF_FRAME     = 1;
+const int CheckBoxOptionEntity::CHECKBOX_SPRITE_NOT_SELECTED_ON_FRAME  = 2;
+const int CheckBoxOptionEntity::CHECKBOX_SPRITE_SELECTED_ON_FRAME      = 3;
+
+void CheckBoxOptionEntity::update() {
+  bool on = *m_val;
+
+  SDL_Rect checkbox_dst;
+  checkbox_dst.h = checkbox_dst.w = m_dst.h;
+  checkbox_dst.x = m_dst.x + m_dst.w - m_dst.h;
+  checkbox_dst.y = m_dst.y;
+  m_checkbox_selected_on->setDst(checkbox_dst);
+  m_checkbox_selected_off->setDst(checkbox_dst);
+  m_checkbox_not_selected_on->setDst(checkbox_dst);
+  m_checkbox_not_selected_off->setDst(checkbox_dst);
+  m_checkbox_selected_on->setAlive(m_selected && on);
+  m_checkbox_selected_off->setAlive(m_selected && !on);
+  m_checkbox_not_selected_on->setAlive(!m_selected && on);
+  m_checkbox_not_selected_off->setAlive(!m_selected && !on);
+
+  SDL_Rect title_dst;
+  title_dst.x = m_dst.x;
+  title_dst.y = m_dst.y;
+  title_dst.w = m_dst.w - checkbox_dst.w * 2;
+  title_dst.h = m_dst.h;
+  m_title_label->setDst(title_dst);
+  m_title_label->setAlive(true);
+}
+
+bool CheckBoxOptionEntity::handleEvent(SDL_Event* e) {
+  SDL_Point mouse;
+  SDL_GetMouseState(&mouse.x, &mouse.y);
+
+  if (UI::current_viewport != nullptr)
+  {
+    mouse.x -= UI::current_viewport->x;
+    mouse.y -= UI::current_viewport->y;
+  }
+
+  bool selected = m_checkbox_not_selected_off->isUnderMouse(mouse.x, mouse.y);
+
+  if (e->type == SDL_MOUSEMOTION)
+  {
+    m_selected = selected;
+
+    return false;
+  }
+  if (e->type == SDL_MOUSEBUTTONUP)
+  {
+    if (selected)
+    {
+      *m_val = !(*m_val);
+      return true;
+    }
+  }
+  return false;
+}
+
+void TextEntity::update() {
+  m_label->setFontSize(m_size);
+  m_label->setText(m_text);
+  m_label->setDst(m_dst);
+  m_label->setAlive(!m_wrapping);
+
+  m_box->setFontSize(m_size);
+  m_box->setText(m_text);
+  m_box->setDst(m_dst);
+  m_box->setAlive(m_wrapping);
 }

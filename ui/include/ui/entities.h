@@ -32,11 +32,11 @@ public:
   }
   std::vector<Component::Ptr> getDrawList()
   {
+    SDL_Rect viewport = UI::getRenderSize();
+    viewport.x = viewport.y = 0;
     std::vector<Component::Ptr> alive;
     for (const auto& c : m_components)
     {
-      SDL_Rect viewport = UI::getRenderSize();
-      viewport.x = viewport.y = 0;
       if (c->isAlive() && c->isVisible(viewport))
       {
         alive.push_back(c);
@@ -46,7 +46,6 @@ public:
   }
   virtual void update()                  = 0;
   virtual bool handleEvent(SDL_Event* e) = 0;
-  SDL_Point getPositon() const { return m_position; }
   void setScale(double scale) { m_scale = scale; }
   void setOffset(SDL_Point offset) { m_offset = offset; }
 };
@@ -176,24 +175,61 @@ public:
   Star::Ptr getStar() const { return m_star; }
 };
 
-class BackButtonEntity : public Entity
+class ButtonEntity : public Entity
 {
-private:
+public:
+  using Ptr = std::shared_ptr<ButtonEntity>;
+protected:
   TextureComponent::Ptr m_button_not_selected;
   TextureComponent::Ptr m_button_selected;
   bool m_selected = false;
+  virtual void onClick() = 0;
+  SDL_Rect m_dst;
 
 public:
-  BackButtonEntity()
+  ButtonEntity(TextureComponent::Ptr button_not_selected, TextureComponent::Ptr button_selected)
+    : m_button_selected(std::move(button_selected))
+    , m_button_not_selected(std::move(button_not_selected))
   {
-    m_button_selected = std::make_shared<TextureComponent>("galaxy_button", 1);
     m_button_selected->setAlive(false);
-    m_button_not_selected = std::make_shared<TextureComponent>("galaxy_button", 0);
     m_components.push_back(m_button_not_selected);
     m_components.push_back(m_button_selected);
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override;
+  void setDst(SDL_Rect dst) { m_dst = dst; }
+};
+
+
+class SettingsButtonEntity : public ButtonEntity
+{
+private:
+  void onClick() override {
+    if (UI::state->current_screen == UI::screen_list.settings_screen) {
+      UI::state->current_screen = UI::screen_list.main_screen;
+    } else {
+      UI::state->current_screen = UI::screen_list.settings_screen;
+    }
+  }
+public:
+  SettingsButtonEntity()
+    : ButtonEntity(std::make_shared<TextureComponent>(UI::assets->getTexture("settings_icon"), 0),
+                   std::make_shared<TextureComponent>(UI::assets->getTexture("settings_icon"), 1))
+  {
+  }
+};
+
+
+class BackButtonEntity : public ButtonEntity
+{
+private:
+  void onClick() override { UI::state->focused_system = nullptr; }
+public:
+  BackButtonEntity()
+    : ButtonEntity(std::make_shared<TextureComponent>(UI::assets->getTexture("galaxy_button"), 0),
+                   std::make_shared<TextureComponent>(UI::assets->getTexture("galaxy_button"), 1))
+  {
+  }
 };
 
 class GalaxyInfoEntity : public Entity
@@ -212,7 +248,7 @@ public:
     SDL_Rect dst = UI::getRenderSize();
     dst.x        = 0;
     dst.y        = dst.h * 0.01;
-    dst.w = std::min(dst.w, 200);
+    dst.w        = std::min(dst.w, 200);
     m_text_box->setText("Time: " + std::to_string(UI::game->getTime().getTicks()));
     m_text_box->setDst(dst);
   }
@@ -256,24 +292,107 @@ class LoadingTextEntity : public Entity
 {
 public:
   using Ptr = std::shared_ptr<LoadingTextEntity>;
+
 private:
   TextLabelUI::Ptr m_loading_label;
   TextLabelUI::Ptr m_title_label;
+
 public:
   LoadingTextEntity()
   {
     m_loading_label = std::make_shared<TextLabelUI>("Loading");
-    m_title_label = std::make_shared<TextLabelUI>("Kardeshev");
+    m_title_label   = std::make_shared<TextLabelUI>("Kardeshev");
     m_title_label->setFontSize(Font::Size::LARGE);
     m_components.push_back(m_loading_label);
     m_components.push_back(m_title_label);
   }
   void update() override;
-  void setText(const std::string& s) {
-    m_loading_label->setText(s);
-  }
+  void setText(const std::string& s) { m_loading_label->setText(s); }
   bool handleEvent(SDL_Event* e) override { return false; }
 };
+
+
+class CheckBoxOptionEntity : public Entity
+{
+public:
+  using Ptr = std::shared_ptr<CheckBoxOptionEntity>;
+  const static std::string CHECKBOX_SPRITE;
+  const static int CHECKBOX_SPRITE_SELECTED_OFF_FRAME;
+  const static int CHECKBOX_SPRITE_SELECTED_ON_FRAME;
+  const static int CHECKBOX_SPRITE_NOT_SELECTED_ON_FRAME;
+  const static int CHECKBOX_SPRITE_NOT_SELECTED_OFF_FRAME;
+
+private:
+  std::string m_title;
+  TextLabelUI::Ptr m_title_label;
+  TextureComponent::Ptr m_checkbox_selected_on;
+  TextureComponent::Ptr m_checkbox_not_selected_on;
+  TextureComponent::Ptr m_checkbox_selected_off;
+  TextureComponent::Ptr m_checkbox_not_selected_off;
+  bool m_selected = false;
+  bool* m_val;
+
+  SDL_Rect m_dst;
+
+public:
+  CheckBoxOptionEntity(std::string title, bool* val)
+    : m_title(std::move(title))
+    , m_val(val)
+  {
+    m_title_label          = std::make_shared<TextLabelUI>(m_title);
+    m_checkbox_selected_on = std::make_shared<TextureComponent>(
+      UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_SELECTED_ON_FRAME);
+    m_checkbox_selected_off = std::make_shared<TextureComponent>(
+      UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_SELECTED_OFF_FRAME);
+    m_checkbox_not_selected_on = std::make_shared<TextureComponent>(
+      UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_NOT_SELECTED_ON_FRAME);
+    m_checkbox_not_selected_off = std::make_shared<TextureComponent>(
+      UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_NOT_SELECTED_OFF_FRAME);
+    m_title_label->setFontSize(Font::Size::LARGE);
+    m_components.push_back(m_title_label);
+    m_components.push_back(m_checkbox_selected_on);
+    m_components.push_back(m_checkbox_selected_off);
+    m_components.push_back(m_checkbox_not_selected_on);
+    m_components.push_back(m_checkbox_not_selected_off);
+  }
+  void update() override;
+  bool handleEvent(SDL_Event* e) override;
+  void setDst(const SDL_Rect& dst) { m_dst = dst; }
+};
+
+
+class TextEntity : public Entity
+{
+public:
+  using Ptr = std::shared_ptr<TextEntity>;
+
+private:
+  std::string m_text;
+  bool m_wrapping = false;
+  TextLabelUI::Ptr m_label;
+  TextBoxUI::Ptr m_box;
+  Font::Size m_size = Font::Size::SMALL;
+  SDL_Rect m_dst;
+
+public:
+  TextEntity(std::string text)
+    : m_text(std::move(text))
+  {
+    m_label = std::make_shared<TextLabelUI>(m_text);
+    m_box   = std::make_shared<TextBoxUI>(m_text);
+    m_label->setFontSize(m_size);
+    m_box->setFontSize(m_size);
+    m_components.push_back(m_label);
+    m_components.push_back(m_box);
+  }
+  void update() override;
+  void setText(const std::string& s) { m_text = s; }
+  bool handleEvent(SDL_Event* e) override { return false; }
+  void setDst(const SDL_Rect& dst) { m_dst = dst; }
+  void setWrapping(const bool wrapping) { m_wrapping = wrapping; }
+  void setFontSize(Font::Size size) { m_size = size; }
+};
+
 
 } // namespace kardeshev
 #endif // !ENTITIES_H

@@ -58,6 +58,7 @@ struct IMGException : public std::exception
   const char* what() const noexcept override { return s.c_str(); }
 };
 
+class Screen;
 
 struct UIState
 {
@@ -65,8 +66,25 @@ struct UIState
 
   std::shared_ptr<Planet> focused_planet      = nullptr;
   std::shared_ptr<SolarSystem> focused_system = nullptr;
-  bool paused = false;
+  std::shared_ptr<Screen> current_screen = nullptr;
+};
 
+struct UISettings
+{
+  bool scan_lines = true;
+  bool color_filter = false;
+  std::map<std::string, bool*> toggle_options;
+};
+
+struct Settings
+{
+  UISettings ui_settings;
+};
+
+struct ScreenList {
+  std::shared_ptr<Screen> main_screen;
+  std::shared_ptr<Screen> loading_screen;
+  std::shared_ptr<Screen> settings_screen;
 };
 
 struct UI
@@ -79,8 +97,9 @@ struct UI
   static SDL_Rect window_size;
   static Game::Ptr game;
   static Logger::Ptr logger;
-  static bool done_initializing;
   static bool running;
+  static Settings settings;
+  static ScreenList screen_list;
 
   static SDL_Rect getRenderSize();
 };

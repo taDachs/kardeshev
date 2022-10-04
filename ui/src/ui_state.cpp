@@ -10,8 +10,9 @@ std::shared_ptr<SDL_Rect> UI::current_viewport = nullptr;
 Game::Ptr UI::game                             = nullptr;
 Logger::Ptr UI::logger                         = nullptr;
 SDL_Rect UI::window_size;
-bool UI::done_initializing                     = false;
 bool UI::running                               = false;
+Settings UI::settings;
+ScreenList UI::screen_list;
 
 SDL_Rect UI::getRenderSize()
 {

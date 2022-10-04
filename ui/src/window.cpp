@@ -41,11 +41,11 @@ void kardeshev::initSDL()
 
 void GameWindow::kill()
 {
-  if (m_scan_lines && m_scan_line_texture != nullptr)
+  if (UI::settings.ui_settings.scan_lines && m_scan_line_texture != nullptr)
   {
     SDL_DestroyTexture(m_scan_line_texture);
   }
-  if (m_color_filter && m_color_filter_tex != nullptr)
+  if (UI::settings.ui_settings.color_filter && m_color_filter_tex != nullptr)
   {
     SDL_DestroyTexture(m_color_filter_tex);
   }
@@ -151,12 +151,12 @@ void GameWindow::handleEvents()
           UI::window_size.x = UI::window_size.y = 0;
           UI::window_size.w                     = e.window.data1;
           UI::window_size.h                     = e.window.data2;
-          m_current_view->resize();
+          UI::state->current_screen->resize();
           generateScanLineTex();
           generateColorFilterTex();
         }
       }
-      m_current_view->handleEvent(&e);
+      UI::state->current_screen->handleEvent(&e);
     }
   }
 }
@@ -167,26 +167,26 @@ void GameWindow::display()
   long framedelay = 33; // 30 fps
   generateScanLineTex();
   generateColorFilterTex();
-  m_current_view->resize();
+  UI::state->current_screen->resize();
 
   UI::running = true;
   while (UI::running)
   {
-    if (UI::done_initializing)
-    {
-      m_current_view = m_main_screen;
-      m_current_view->resize();
-    }
     framestart = SDL_GetTicks();
 
     handleEvents();
 
+    if (m_last_screen != UI::state->current_screen) {
+      m_last_screen = UI::state->current_screen;
+      UI::state->current_screen->resize();
+    }
+
     SDL_SetRenderDrawColor(UI::render, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
     SDL_RenderClear(UI::render);
 
-    m_current_view->draw();
+    UI::state->current_screen->draw();
 
-    if (m_scan_lines)
+    if (UI::settings.ui_settings.scan_lines)
     {
       SDL_Rect src;
       src.x = 0;
@@ -199,7 +199,7 @@ void GameWindow::display()
       m_scan_line_step++;
     }
 
-    if (m_color_filter)
+    if (UI::settings.ui_settings.color_filter)
     {
       SDL_RenderCopy(UI::render, m_color_filter_tex, nullptr, nullptr);
     }

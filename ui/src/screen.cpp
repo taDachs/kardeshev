@@ -1,8 +1,10 @@
 #include "ui/screen.h"
+#include "ui/view.h"
 
 using namespace kardeshev;
 
-MainScreen::MainScreen() {
+MainScreen::MainScreen()
+{
   m_main_view_viewport = std::make_shared<SDL_Rect>();
   m_galaxy_view        = std::make_shared<GalaxyView>();
   m_galaxy_view->setViewport(m_main_view_viewport);
@@ -19,6 +21,25 @@ MainScreen::MainScreen() {
 
   resize();
 }
+
+SettingsScreen::SettingsScreen()
+{
+  m_settings_view =
+    std::make_shared<GameSettingsView>("Graphic Settings", UI::settings.ui_settings.toggle_options);
+}
+
+bool SettingsScreen::handleEvent(SDL_Event* e)
+{
+  return m_settings_view->handleEvent(e);
+}
+
+void SettingsScreen::draw()
+{
+  m_settings_view->update();
+  m_settings_view->draw();
+}
+
+void SettingsScreen::resize() {}
 
 void MainScreen::resize()
 {
@@ -61,7 +82,8 @@ void MainScreen::draw()
   m_bottom_bar_view->draw();
 }
 
-bool MainScreen::handleEvent(SDL_Event* e) {
+bool MainScreen::handleEvent(SDL_Event* e)
+{
   bool handeled;
   if (UI::state->focused_system == nullptr)
   {
@@ -82,3 +104,11 @@ bool MainScreen::handleEvent(SDL_Event* e) {
   return handeled;
 }
 
+void LoadingScreen::draw()
+{
+  if (UI::assets->isFontLoaded(Font::DEFAULT_FONT))
+  {
+    m_loading_screen_view->update();
+    m_loading_screen_view->draw();
+  }
+}

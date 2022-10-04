@@ -1,12 +1,13 @@
 #include "ui/view.h"
+#include "ui/assets.h"
 #include "ui/entities.h"
 #include "ui/window.h"
 
 using namespace kardeshev;
 
-bool MoveableView::handleEvent(SDL_Event* e)
+bool MoveableView::handleEventView(SDL_Event* e)
 {
-  if (View::handleEvent(e))
+  if (View::handleEventView(e))
   {
     return true;
   }
@@ -145,14 +146,21 @@ void SystemView::updateView()
       e->update();
     }
 
-    e = std::make_shared<BackButtonEntity>();
-    m_entities.push_back(e);
-    e->setOffset(getCenterOffset());
-    e->setScale(m_scale);
+    m_back_button = std::make_shared<BackButtonEntity>();
+    m_entities.push_back(std::static_pointer_cast<Entity>(m_back_button));
     e->update();
   }
   else
   {
+    SDL_Rect screen = UI::getRenderSize();
+
+    int padding = 10;
+    SDL_Rect button_dst;
+    button_dst.y = screen.h - 64 - padding;
+    button_dst.x = padding;
+    button_dst.w = 128;
+    button_dst.h = 64;
+    m_back_button->setDst(button_dst);
     for (auto& e : m_entities)
     {
       e->setOffset(getCenterOffset());
@@ -168,7 +176,15 @@ void GalaxyInfoView::updateView()
   {
     Entity::Ptr text = std::make_shared<GalaxyInfoEntity>();
     m_entities.push_back(text);
+    m_settings_button = std::make_shared<SettingsButtonEntity>();
+    m_entities.push_back(std::static_pointer_cast<Entity>(m_settings_button));
   }
+  SDL_Rect size = UI::getRenderSize();
+  SDL_Rect settings_button_dst;
+  settings_button_dst.w = settings_button_dst.h = 0.1 * size.w;
+  settings_button_dst.x = settings_button_dst.w;
+  settings_button_dst.y = size.h - settings_button_dst.h * 1.5;
+  m_settings_button->setDst(settings_button_dst);
   for (auto& e : m_entities)
   {
     e->update();
@@ -188,7 +204,8 @@ void PlanetInfoView::updateView()
   }
 }
 
-void LoadingScreenView::updateView() {
+void LoadingScreenView::updateView()
+{
   if (m_entities.empty())
   {
     Entity::Ptr text = std::make_shared<LoadingTextEntity>();
@@ -198,5 +215,46 @@ void LoadingScreenView::updateView() {
   for (auto& e : m_entities)
   {
     e->update();
+  }
+}
+
+void GameSettingsView::updateView()
+{
+  if (m_entities.empty())
+  {
+    m_title_label = std::make_shared<TextEntity>(m_title);
+    m_entities.push_back(std::static_pointer_cast<Entity>(m_title_label));
+    m_settings_button = std::make_shared<SettingsButtonEntity>();
+    m_entities.push_back(std::static_pointer_cast<Entity>(m_settings_button));
+    for (auto& o : UI::settings.ui_settings.toggle_options)
+    {
+      CheckBoxOptionEntity::Ptr option = std::make_shared<CheckBoxOptionEntity>(o.first, o.second);
+      m_options.push_back(option);
+      m_entities.push_back(std::static_pointer_cast<Entity>(option));
+    }
+  }
+  SDL_Rect size = UI::getRenderSize();
+  SDL_Rect settings_button_dst;
+  settings_button_dst.w = settings_button_dst.h = 0.05 * size.w;
+  settings_button_dst.x = settings_button_dst.w;
+  settings_button_dst.y = size.h - settings_button_dst.h * 1.5;
+  m_settings_button->setDst(settings_button_dst);
+  m_settings_button->update();
+
+  SDL_Rect title_dst;
+  title_dst.w = size.w / 3.0; // 8:1 aspect ration for options
+  title_dst.h = title_dst.w / 8.0;
+  title_dst.x = size.w / 2 - title_dst.w / 2;
+  title_dst.y = size.h * 0.2;
+  m_title_label->setFontSize(Font::Size::LARGE);
+  m_title_label->setDst(title_dst);
+  m_title_label->update();
+
+  SDL_Rect option_dst = title_dst;
+  for (auto& o : m_options)
+  {
+    option_dst.y += option_dst.h * 1.5;
+    o->setDst(option_dst);
+    o->update();
   }
 }

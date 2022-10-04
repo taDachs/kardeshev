@@ -39,6 +39,9 @@ SDL_Rect TextLabelUI::draw()
 
   SDL_Surface* surface_message =
     TTF_RenderText_Blended(font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
+  if (surface_message == nullptr) {
+    throw TTFException("Falied to render text to surface");
+  }
   m_dst.w              = std::min(surface_message->w, m_dst.w);
   m_dst.h              = std::min(surface_message->h, m_dst.h);
   SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);

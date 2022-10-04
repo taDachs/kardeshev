@@ -14,7 +14,6 @@ void initSDL();
 class GameWindow
 {
 private:
-  bool m_scan_lines = true;
   SDL_Texture* m_scan_line_texture = nullptr;
   unsigned int m_scan_line_step = 0;
   Color m_scan_lines_color = GRAY;
@@ -23,24 +22,21 @@ private:
   int m_scan_line_thickness = 20;
   double m_scan_line_speed = 0.5;
 
-  bool m_color_filter = false;
   SDL_Texture* m_color_filter_tex = nullptr;
   Color m_color_filter_color = DYSTOPIC_YELLOW;
   int m_color_filter_alpha = 32;
-
-  Screen::Ptr m_main_screen;
-  Screen::Ptr m_current_view;
-  Screen::Ptr m_loading_screen;
+  Screen::Ptr m_last_screen = nullptr;
 
   void generateScanLineTex();
   void generateColorFilterTex();
 public:
   GameWindow() {
-    m_main_screen = std::make_shared<MainScreen>();
+    UI::screen_list.main_screen = std::make_shared<MainScreen>();
     LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
     UI::logger->addLogger(std::static_pointer_cast<LoggerOutput>(loading_screen));
-    m_loading_screen = loading_screen;
-    m_current_view = m_loading_screen;
+    UI::screen_list.loading_screen = loading_screen;
+    UI::screen_list.settings_screen = std::make_shared<SettingsScreen>();
+    UI::state->current_screen = UI::screen_list.loading_screen;
   }
   void kill();
   void display();

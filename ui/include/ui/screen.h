@@ -40,6 +40,18 @@ public:
   bool handleEvent(SDL_Event* e) final;
 };
 
+class SettingsScreen : public Screen
+{
+private:
+  View::Ptr m_settings_view;
+public:
+  SettingsScreen();
+  void draw() final;
+  void resize() final;
+  bool handleEvent(SDL_Event* e) final;
+};
+
+
 class LoadingScreen
   : public Screen
   , public LoggerOutput
@@ -52,14 +64,7 @@ private:
 
 public:
   LoadingScreen() { m_loading_screen_view = std::make_shared<LoadingScreenView>(); };
-  void draw() final
-  {
-    if (UI::assets->isFontLoaded(Font::DEFAULT_FONT))
-    {
-      m_loading_screen_view->update();
-      m_loading_screen_view->draw();
-    }
-  }
+  void draw() final;
   void resize() final{};
   bool handleEvent(SDL_Event* e) final { return false; };
   void logInfo(const std::string& s) override { m_loading_screen_view->setText(s); }
