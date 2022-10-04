@@ -69,6 +69,15 @@ public:
   }
 };
 
+class MainMenuScreen : public SingleViewScreen
+{
+public:
+  MainMenuScreen()
+    : SingleViewScreen(std::make_shared<MainMenuView>())
+  {
+  }
+};
+
 class LoadingScreen
   : public Screen
   , public LoggerOutput

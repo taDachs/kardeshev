@@ -42,6 +42,10 @@ SDL_Rect TextLabelUI::draw()
   if (surface_message == nullptr) {
     throw TTFException("Falied to render text to surface");
   }
+  if (m_centered) {
+    m_dst.x = m_dst.x + (m_dst.w / 2) - std::min(surface_message->w, m_dst.w) / 2;
+    m_dst.y = m_dst.y + (m_dst.h / 2) - std::min(surface_message->h, m_dst.h) / 2;
+  }
   m_dst.w              = std::min(surface_message->w, m_dst.w);
   m_dst.h              = std::min(surface_message->h, m_dst.h);
   SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);

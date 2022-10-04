@@ -11,6 +11,8 @@ namespace kardeshev {
 
 void initSDL();
 
+void setupScreens();
+
 class GameWindow
 {
 private:
@@ -30,14 +32,6 @@ private:
   void generateScanLineTex();
   void generateColorFilterTex();
 public:
-  GameWindow() {
-    UI::screen_list.main_screen = std::make_shared<MainScreen>();
-    LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
-    UI::logger->addLogger(std::static_pointer_cast<LoggerOutput>(loading_screen));
-    UI::screen_list.loading_screen = loading_screen;
-    UI::screen_list.settings_screen = std::make_shared<SettingsScreen>();
-    UI::state->current_screen = UI::screen_list.loading_screen;
-  }
   void kill();
   void display();
   void handleEvents();

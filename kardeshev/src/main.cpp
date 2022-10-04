@@ -52,7 +52,8 @@ int loadAssets(void *data) {
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
   kardeshev::UI::logger->logInfo("Finished initialization");
-  kardeshev::UI::state->current_screen = kardeshev::UI::screen_list.main_screen;
+  // kardeshev::UI::state->current_screen = kardeshev::UI::screen_list.main_screen;
+  kardeshev::UI::state->current_screen = kardeshev::UI::screen_list.main_menu_screen;
 
   return 0;
 }
@@ -95,6 +96,7 @@ int main()
 
   kardeshev::UI::logger->logInfo("Init SDL");
   kardeshev::initSDL();
+  kardeshev::setupScreens();
   kardeshev::UI::assets->addFont(kardeshev::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
 
   kardeshev::UI::settings.ui_settings.toggle_options.insert({"Scan Lines", &kardeshev::UI::settings.ui_settings.scan_lines});

@@ -85,6 +85,7 @@ struct ScreenList {
   std::shared_ptr<Screen> main_screen;
   std::shared_ptr<Screen> loading_screen;
   std::shared_ptr<Screen> settings_screen;
+  std::shared_ptr<Screen> main_menu_screen;
 };
 
 struct UI

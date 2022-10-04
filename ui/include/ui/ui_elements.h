@@ -59,6 +59,7 @@ private:
   std::string m_text;
   Color m_color = WHITE;
   Font::Size m_size = Font::Size::MEDIUM;
+  bool m_centered = false;
 
 public:
   TextLabelUI() = default;
@@ -69,6 +70,7 @@ public:
   }
 
   void setText(const std::string& text) { m_text = text; }
+  void setCentered(const bool centered) { m_centered = centered; }
 
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }

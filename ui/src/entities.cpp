@@ -219,23 +219,6 @@ bool StarEntity::handleEvent(SDL_Event* e)
 
 void ButtonEntity::update()
 {
-  // SDL_Rect screen;
-  //
-  // if (UI::current_viewport != nullptr)
-  // {
-  //   screen = *UI::current_viewport;
-  // }
-  // else
-  // {
-  //   screen = UI::window_size;
-  // }
-  //
-  // int padding = 10;
-  // SDL_Rect button_dst;
-  // button_dst.y = screen.h - 64 - padding;
-  // button_dst.x = padding;
-  // button_dst.w = 128;
-  // button_dst.h = 64;
   m_button_not_selected->setDst(m_dst);
   m_button_selected->setDst(m_dst);
 
@@ -423,6 +406,7 @@ void TextEntity::update() {
   m_label->setText(m_text);
   m_label->setDst(m_dst);
   m_label->setAlive(!m_wrapping);
+  m_label->setCentered(m_centered);
 
   m_box->setFontSize(m_size);
   m_box->setText(m_text);

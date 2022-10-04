@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "entities.h"
+#include "ui/assets.h"
 #include "ui_state.h"
 #include "util/logger.h"
 #include <utility>
@@ -204,6 +205,17 @@ private:
   std::vector<CheckBoxOptionEntity::Ptr> m_options;
 public:
   GameSettingsView(std::string title, std::map<std::string, bool*>  toggle_options): m_title(std::move(title)), m_toggle_options(std::move(toggle_options)) {}
+};
+
+class MainMenuView : public View
+{
+public:
+  using Ptr = std::shared_ptr<MainMenuView>;
+private:
+  TextEntity::Ptr m_title_label;
+  TextButton::Ptr m_play_label;
+  TextButton::Ptr m_quit_label;
+  void updateView() override;
 };
 
 } // namespace kardeshev

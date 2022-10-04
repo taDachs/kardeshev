@@ -4,6 +4,7 @@
 #include "lib/solar_systems.h"
 #include "lib/stars.h"
 #include "ui/assets.h"
+#include "ui/render.h"
 #include "ui_elements.h"
 #include <memory>
 #include <utility>
@@ -179,15 +180,16 @@ class ButtonEntity : public Entity
 {
 public:
   using Ptr = std::shared_ptr<ButtonEntity>;
+
 protected:
-  TextureComponent::Ptr m_button_not_selected;
-  TextureComponent::Ptr m_button_selected;
-  bool m_selected = false;
+  Component::Ptr m_button_not_selected;
+  Component::Ptr m_button_selected;
+  bool m_selected        = false;
   virtual void onClick() = 0;
   SDL_Rect m_dst;
 
 public:
-  ButtonEntity(TextureComponent::Ptr button_not_selected, TextureComponent::Ptr button_selected)
+  ButtonEntity(Component::Ptr button_not_selected, Component::Ptr button_selected)
     : m_button_selected(std::move(button_selected))
     , m_button_not_selected(std::move(button_not_selected))
   {
@@ -200,17 +202,21 @@ public:
   void setDst(SDL_Rect dst) { m_dst = dst; }
 };
 
-
 class SettingsButtonEntity : public ButtonEntity
 {
 private:
-  void onClick() override {
-    if (UI::state->current_screen == UI::screen_list.settings_screen) {
+  void onClick() override
+  {
+    if (UI::state->current_screen == UI::screen_list.settings_screen)
+    {
       UI::state->current_screen = UI::screen_list.main_screen;
-    } else {
+    }
+    else
+    {
       UI::state->current_screen = UI::screen_list.settings_screen;
     }
   }
+
 public:
   SettingsButtonEntity()
     : ButtonEntity(std::make_shared<TextureComponent>(UI::assets->getTexture("settings_icon"), 0),
@@ -224,6 +230,7 @@ class BackButtonEntity : public ButtonEntity
 {
 private:
   void onClick() override { UI::state->focused_system = nullptr; }
+
 public:
   BackButtonEntity()
     : ButtonEntity(std::make_shared<TextureComponent>(UI::assets->getTexture("galaxy_button"), 0),
@@ -372,6 +379,7 @@ private:
   TextLabelUI::Ptr m_label;
   TextBoxUI::Ptr m_box;
   Font::Size m_size = Font::Size::SMALL;
+  bool m_centered   = false;
   SDL_Rect m_dst;
 
 public:
@@ -391,6 +399,60 @@ public:
   void setDst(const SDL_Rect& dst) { m_dst = dst; }
   void setWrapping(const bool wrapping) { m_wrapping = wrapping; }
   void setFontSize(Font::Size size) { m_size = size; }
+  void setCentered(const bool centered) { m_centered = centered; }
+};
+
+class TextButton : public ButtonEntity
+{
+public:
+  using Ptr = std::shared_ptr<TextButton>;
+private:
+  TextLabelUI::Ptr m_not_selected_text;
+  TextLabelUI::Ptr m_selected_text;
+  std::string m_text;
+  Color m_not_selected_color = WHITE;
+  Color m_selected_color = DYSTOPIC_YELLOW;
+  Font::Size m_size = Font::Size::MEDIUM;
+
+public:
+  TextButton(const std::string& text)
+    : ButtonEntity(std::make_shared<TextLabelUI>(text), std::make_shared<TextLabelUI>(text))
+    , m_text(text)
+  {
+    m_not_selected_text = std::static_pointer_cast<TextLabelUI>(m_button_not_selected);
+    m_not_selected_text->setColor(m_not_selected_color);
+    m_not_selected_text->setCentered(true);
+    m_selected_text = std::static_pointer_cast<TextLabelUI>(m_button_selected);
+    m_selected_text->setColor(m_selected_color);
+    m_selected_text->setCentered(true);
+  }
+
+  void setFontSize(const Font::Size size) {
+    m_size = size;
+    m_selected_text->setFontSize(m_size);
+    m_not_selected_text->setFontSize(m_size);
+  }
+};
+
+class PlayButton : public TextButton
+{
+private:
+  void onClick() override {
+    UI::state->current_screen = UI::screen_list.main_screen;
+  }
+public:
+  PlayButton(): TextButton("Play") {}
+};
+
+
+class QuitButton : public TextButton
+{
+private:
+  void onClick() override {
+    UI::running = false;
+  }
+public:
+  QuitButton(): TextButton("Quit") {}
 };
 
 
