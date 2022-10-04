@@ -3,6 +3,7 @@
 
 #include "lib/solar_systems.h"
 #include "lib/stars.h"
+#include "ui/assets.h"
 #include "ui_elements.h"
 #include <memory>
 #include <utility>
@@ -248,6 +249,29 @@ public:
     m_components.push_back(m_planet_portrait);
   }
   void update() override;
+  bool handleEvent(SDL_Event* e) override { return false; }
+};
+
+class LoadingTextEntity : public Entity
+{
+public:
+  using Ptr = std::shared_ptr<LoadingTextEntity>;
+private:
+  TextLabelUI::Ptr m_loading_label;
+  TextLabelUI::Ptr m_title_label;
+public:
+  LoadingTextEntity()
+  {
+    m_loading_label = std::make_shared<TextLabelUI>("Loading");
+    m_title_label = std::make_shared<TextLabelUI>("Kardeshev");
+    m_title_label->setFontSize(Font::Size::LARGE);
+    m_components.push_back(m_loading_label);
+    m_components.push_back(m_title_label);
+  }
+  void update() override;
+  void setText(const std::string& s) {
+    m_loading_label->setText(s);
+  }
   bool handleEvent(SDL_Event* e) override { return false; }
 };
 

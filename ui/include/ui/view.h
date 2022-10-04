@@ -5,6 +5,7 @@
 
 #include "entities.h"
 #include "ui_state.h"
+#include "util/logger.h"
 #include <utility>
 
 namespace kardeshev {
@@ -112,6 +113,11 @@ protected:
   SDL_Point m_mouse_pos_on_click;
   double m_scale            = 1;
   bool m_left_mouse_pressed = false;
+
+  double m_max_scale = 8.0;
+  double m_min_scale = 0.3;
+  double m_scale_step = 1.1;
+
   SDL_Point getCenterOffset()
   {
     SDL_Point offset = m_offset;
@@ -166,6 +172,21 @@ class PlanetInfoView : public View
 };
 
 
+class LoadingScreenView : public View
+{
+public:
+  using Ptr = std::shared_ptr<LoadingScreenView>;
+private:
+  void updateView() override;
+  LoadingTextEntity::Ptr m_entity;
+  std::string m_text;
+public:
+  void setText(const std::string& s) {
+    if (m_entity != nullptr) {
+      m_entity->setText(s);
+    }
+  }
+};
 
 } // namespace kardeshev
 

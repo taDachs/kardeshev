@@ -7,12 +7,20 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <algorithm>
 #include "generation/name_generation.h"
 namespace kardeshev {
 
 struct Font
 {
   const static std::string DEFAULT_FONT;
+
+  enum Size {
+    SMALL,
+    MEDIUM,
+    LARGE
+  };
+
 
   TTF_Font* small;
   TTF_Font* medium;
@@ -101,6 +109,7 @@ public:
   void addTexture(const std::string& name, const std::string& path, int w, int h, int frames);
   void addTokenList(const std::string& name, const std::string& path);
   Font getFont(const std::string& name) const { return m_fonts.at(name); }
+  bool isFontLoaded(const std::string& name) const { return m_fonts.find(name) != m_fonts.end(); }
   Texture getTexture(const std::string& name) const { return m_textures.at(name); }
   TokenList::Ptr getTokenList(const std::string& name) const { return m_token_lists.at(name); }
 };

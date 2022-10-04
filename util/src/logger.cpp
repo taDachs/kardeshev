@@ -2,7 +2,7 @@
 #include <cstring>
 
 using namespace kardeshev;
-std::string Logger::getStamp()
+std::string StdOutLogger::getStamp()
 {
   std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 

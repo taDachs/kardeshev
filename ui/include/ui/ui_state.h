@@ -62,8 +62,11 @@ struct IMGException : public std::exception
 struct UIState
 {
   using Ptr                                   = std::shared_ptr<UIState>;
+
   std::shared_ptr<Planet> focused_planet      = nullptr;
   std::shared_ptr<SolarSystem> focused_system = nullptr;
+  bool paused = false;
+
 };
 
 struct UI
@@ -75,8 +78,9 @@ struct UI
   static std::shared_ptr<SDL_Rect> current_viewport;
   static SDL_Rect window_size;
   static Game::Ptr game;
-  static double zoom_level;
   static Logger::Ptr logger;
+  static bool done_initializing;
+  static bool running;
 
   static SDL_Rect getRenderSize();
 };

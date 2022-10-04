@@ -58,6 +58,7 @@ public:
 private:
   std::string m_text;
   Color m_color = WHITE;
+  Font::Size m_size = Font::Size::MEDIUM;
 
 public:
   TextLabelUI() = default;
@@ -72,6 +73,7 @@ public:
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;
+  void setFontSize(Font::Size size) { m_size = size; }
 };
 
 class TextBoxUI : public Component
@@ -82,6 +84,7 @@ public:
 private:
   std::string m_text;
   Color m_color = WHITE;
+  Font::Size m_size = Font::Size::SMALL;
 
 public:
   TextBoxUI() = default;
@@ -96,6 +99,7 @@ public:
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;
+  void setFontSize(Font::Size size) { m_size = size; }
 };
 
 

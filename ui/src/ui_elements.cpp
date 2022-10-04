@@ -24,8 +24,21 @@ SDL_Rect TextureComponent::draw()
 SDL_Rect TextLabelUI::draw()
 {
   Font font = UI::assets->getFont(Font::DEFAULT_FONT);
+  TTF_Font* font_scaled;
+  switch (m_size) {
+    case Font::Size::SMALL:
+      font_scaled = font.small;
+      break;
+    case Font::Size::MEDIUM:
+      font_scaled = font.medium;
+      break;
+    case Font::Size::LARGE:
+      font_scaled = font.large;
+      break;
+  }
+
   SDL_Surface* surface_message =
-    TTF_RenderText_Blended(font.medium, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
+    TTF_RenderText_Blended(font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
   m_dst.w              = std::min(surface_message->w, m_dst.w);
   m_dst.h              = std::min(surface_message->h, m_dst.h);
   SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
@@ -39,8 +52,21 @@ SDL_Rect TextLabelUI::draw()
 SDL_Rect TextBoxUI::draw()
 {
   Font font                    = UI::assets->getFont(Font::DEFAULT_FONT);
+  TTF_Font* font_scaled;
+  switch (m_size) {
+    case Font::Size::SMALL:
+      font_scaled = font.small;
+      break;
+    case Font::Size::MEDIUM:
+      font_scaled = font.medium;
+      break;
+    case Font::Size::LARGE:
+      font_scaled = font.large;
+      break;
+  }
+
   SDL_Surface* surface_message = TTF_RenderText_Blended_Wrapped(
-    font.small, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
+    font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
   if (surface_message == nullptr)
   {
     throw TTFException("failed drawing text");

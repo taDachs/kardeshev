@@ -8,9 +8,10 @@ SDL_Window* UI::window                         = nullptr;
 AssetHandler::Ptr UI::assets                   = std::make_shared<AssetHandler>();
 std::shared_ptr<SDL_Rect> UI::current_viewport = nullptr;
 Game::Ptr UI::game                             = nullptr;
-double UI::zoom_level                          = 1;
 Logger::Ptr UI::logger                         = nullptr;
 SDL_Rect UI::window_size;
+bool UI::done_initializing                     = false;
+bool UI::running                               = false;
 
 SDL_Rect UI::getRenderSize()
 {

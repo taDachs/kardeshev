@@ -30,16 +30,21 @@ private:
 
   Screen::Ptr m_main_screen;
   Screen::Ptr m_current_view;
+  Screen::Ptr m_loading_screen;
 
   void generateScanLineTex();
   void generateColorFilterTex();
 public:
   GameWindow() {
     m_main_screen = std::make_shared<MainScreen>();
-    m_current_view = m_main_screen;
+    LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
+    UI::logger->addLogger(std::static_pointer_cast<LoggerOutput>(loading_screen));
+    m_loading_screen = loading_screen;
+    m_current_view = m_loading_screen;
   }
   void kill();
   void display();
+  void handleEvents();
 };
 } // namespace kardeshev
 

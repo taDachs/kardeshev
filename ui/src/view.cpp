@@ -19,28 +19,28 @@ bool MoveableView::handleEvent(SDL_Event* e)
   {
     if (e->wheel.y > 0)
     {
-      m_scale *= 1.1;
-      if (m_scale < 5.0)
+      m_scale *= m_scale_step;
+      if (m_scale < m_max_scale)
       {
-        m_offset.x *= 1.1;
-        m_offset.y *= 1.1;
+        m_offset.x *= m_scale_step;
+        m_offset.y *= m_scale_step;
       }
       else
       {
-        m_scale = 5.0;
+        m_scale = m_max_scale;
       }
     }
     else if (e->wheel.y < 0)
     {
-      m_scale /= 1.1;
-      if (m_scale > 0.3)
+      m_scale /= m_scale_step;
+      if (m_scale > m_min_scale)
       {
-        m_offset.x /= 1.1;
-        m_offset.y /= 1.1;
+        m_offset.x /= m_scale_step;
+        m_offset.y /= m_scale_step;
       }
       else
       {
-        m_scale = 0.3;
+        m_scale = m_min_scale;
       }
     }
     return true;
@@ -181,6 +181,19 @@ void PlanetInfoView::updateView()
   {
     Entity::Ptr text = std::make_shared<PlanetInfoEntity>();
     m_entities.push_back(text);
+  }
+  for (auto& e : m_entities)
+  {
+    e->update();
+  }
+}
+
+void LoadingScreenView::updateView() {
+  if (m_entities.empty())
+  {
+    Entity::Ptr text = std::make_shared<LoadingTextEntity>();
+    m_entities.push_back(text);
+    m_entity = std::static_pointer_cast<LoadingTextEntity>(text);
   }
   for (auto& e : m_entities)
   {

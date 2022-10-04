@@ -25,32 +25,34 @@ public:
   using Ptr = std::shared_ptr<Logger>;
 private:
   std::vector<LoggerOutput::Ptr> m_logger;
-  static std::string getStamp();
 public:
   void logInfo(const std::string& s) {
-    std::string prefix = "[" + getStamp() + "][INFO]: " + s;
-    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logInfo(prefix); });
+    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logInfo(s); });
   }
   void logError(const std::string& s) {
-    std::string prefix = "[" + getStamp() + "][ERROR]: " + s;
-    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logError(prefix); });
+    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logError(s); });
   }
   void logDebug(const std::string& s) {
-    std::string prefix = "[" + getStamp() + "][DEBUG]: " + s;
-    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logDebug(prefix); });
+    std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logDebug(s); });
   }
   void addLogger(LoggerOutput::Ptr l) { m_logger.push_back(l); }
 };
 
 class StdOutLogger : public LoggerOutput {
+private:
+  static std::string getStamp();
+public:
   void logInfo(const std::string& s) final {
-    std::cout << s << std::endl;
+    std::string prefix = "[" + getStamp() + "][INFO]: " + s;
+    std::cout << prefix << std::endl;
   }
   void logError(const std::string& s) final {
-    std::cout << s << std::endl;
+    std::string prefix = "[" + getStamp() + "][ERROR]: " + s;
+    std::cout << prefix << std::endl;
   }
   void logDebug(const std::string& s) final {
-    std::cout << s << std::endl;
+    std::string prefix = "[" + getStamp() + "][DEBUG]: " + s;
+    std::cout << prefix << std::endl;
   }
 };
 

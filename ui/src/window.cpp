@@ -22,11 +22,11 @@ void kardeshev::initSDL()
     throw SDLException("SDL init failed");
   }
   UI::window = SDL_CreateWindow("Kardeshev",
-                              SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED,
-                              UI::window_size.w,
-                              UI::window_size.h,
-                              SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+                                SDL_WINDOWPOS_UNDEFINED,
+                                SDL_WINDOWPOS_UNDEFINED,
+                                UI::window_size.w,
+                                UI::window_size.h,
+                                SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
   if (UI::window == nullptr)
   {
@@ -37,8 +37,6 @@ void kardeshev::initSDL()
   UI::render =
     SDL_CreateRenderer(UI::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
-
-
 
 
 void GameWindow::kill()
@@ -59,10 +57,10 @@ void GameWindow::kill()
 void GameWindow::generateColorFilterTex()
 {
   m_color_filter_tex = SDL_CreateTexture(UI::render,
-                                          SDL_PIXELFORMAT_RGBA32,
-                                          SDL_TEXTUREACCESS_TARGET,
-                                          UI::window_size.w,
-                                          UI::window_size.h);
+                                         SDL_PIXELFORMAT_RGBA32,
+                                         SDL_TEXTUREACCESS_TARGET,
+                                         UI::window_size.w,
+                                         UI::window_size.h);
   if (m_color_filter_tex == nullptr)
   {
     throw SDLException("Creation of color filter texture failed");
@@ -92,7 +90,7 @@ void GameWindow::generateColorFilterTex()
 
 void GameWindow::generateScanLineTex()
 {
-  int texture_height = UI::window_size.h + m_scan_line_thickness + m_distance_between_scan_lines;
+  int texture_height  = UI::window_size.h + m_scan_line_thickness + m_distance_between_scan_lines;
   m_scan_line_texture = SDL_CreateTexture(UI::render,
                                           SDL_PIXELFORMAT_RGBA32,
                                           SDL_TEXTUREACCESS_TARGET,
@@ -134,45 +132,54 @@ void GameWindow::generateScanLineTex()
   }
 }
 
-void GameWindow::display()
+void GameWindow::handleEvents()
 {
   SDL_Event e;
+  while (SDL_PollEvent(&e))
+  {
+    if (e.type == SDL_QUIT)
+    {
+      UI::running = false;
+    }
+    else
+    {
+      if (e.type == SDL_WINDOWEVENT)
+      {
+        if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+        {
+          kardeshev::UI::logger->logDebug("Resizing window...");
+          UI::window_size.x = UI::window_size.y = 0;
+          UI::window_size.w                     = e.window.data1;
+          UI::window_size.h                     = e.window.data2;
+          m_current_view->resize();
+          generateScanLineTex();
+          generateColorFilterTex();
+        }
+      }
+      m_current_view->handleEvent(&e);
+    }
+  }
+}
+
+void GameWindow::display()
+{
   long framestart;
-  long framedelay   = 33; // 30 fps
+  long framedelay = 33; // 30 fps
   generateScanLineTex();
   generateColorFilterTex();
   m_current_view->resize();
 
-  bool quit = false;
-  while (!quit)
+  UI::running = true;
+  while (UI::running)
   {
-    framestart = SDL_GetTicks();
-    while (SDL_PollEvent(&e))
+    if (UI::done_initializing)
     {
-      if (e.type == SDL_QUIT)
-      {
-        quit = true;
-      }
-      else
-      {
-        if (e.type == SDL_WINDOWEVENT)
-        {
-          if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-          {
-            kardeshev::UI::logger->logDebug("Resizing window...");
-            UI::window_size.x = UI::window_size.y = 0;
-            UI::window_size.w                     = e.window.data1;
-            UI::window_size.h                     = e.window.data2;
-            m_current_view->resize();
-            generateScanLineTex();
-            generateColorFilterTex();
-          }
-        }
-        m_current_view->handleEvent(&e);
-      }
+      m_current_view = m_main_screen;
+      m_current_view->resize();
     }
+    framestart = SDL_GetTicks();
 
-    UI::game->step(Duration(1));
+    handleEvents();
 
     SDL_SetRenderDrawColor(UI::render, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
     SDL_RenderClear(UI::render);
@@ -184,7 +191,7 @@ void GameWindow::display()
       SDL_Rect src;
       src.x = 0;
       src.y = static_cast<int>(static_cast<int>(m_scan_line_step * m_scan_line_speed) %
-                                  (m_scan_line_thickness + m_distance_between_scan_lines));
+                               (m_scan_line_thickness + m_distance_between_scan_lines));
       src.w = UI::window_size.w;
       src.h = UI::window_size.h;
 

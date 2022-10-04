@@ -59,7 +59,7 @@ bool SystemEntity::handleEvent(SDL_Event* e)
     // should not be counted as handled
     return false;
   }
-  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  if (e->type == SDL_MOUSEBUTTONUP)
   {
     if (selected)
     {
@@ -266,7 +266,7 @@ bool BackButtonEntity::handleEvent(SDL_Event* e)
     // should not be counted as handled
     return false;
   }
-  if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+  if (e->type == SDL_MOUSEBUTTONUP)
   {
     if (selected)
     {
@@ -330,4 +330,23 @@ void PlanetInfoEntity::update() {
     m_nothing_selected_label->setDst(nothing_label_dst);
     m_nothing_selected_label->setAlive(true);
   }
+}
+
+void LoadingTextEntity::update() {
+  SDL_Rect size = UI::getRenderSize();
+  SDL_Rect loading_label_dst;
+  loading_label_dst.x = 0.05 * size.w;
+  loading_label_dst.y = 0.95 * size.h;
+  loading_label_dst.w = 0.3 * size.w;
+  loading_label_dst.h = 0.05 * size.h;
+  m_loading_label->setDst(loading_label_dst);
+  m_loading_label->setAlive(true);
+
+  SDL_Rect title_label_dst;
+  title_label_dst.x = 0.4 * size.w;
+  title_label_dst.y = 0.4 * size.h;
+  title_label_dst.w = 0.6 * size.w;
+  title_label_dst.h = 0.6 * size.h;
+  m_title_label->setDst(title_label_dst);
+  m_title_label->setAlive(true);
 }

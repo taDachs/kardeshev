@@ -30,6 +30,7 @@ void AssetHandler::addFont(const std::string& name,
                            const int medium_size,
                            const int large_size)
 {
+  UI::logger->logDebug("Loading Font " + name);
   TTF_Font* small  = TTF_OpenFont(path.c_str(), small_size);
   TTF_Font* medium = TTF_OpenFont(path.c_str(), medium_size);
   TTF_Font* large  = TTF_OpenFont(path.c_str(), large_size);
@@ -39,6 +40,7 @@ void AssetHandler::addFont(const std::string& name,
 
 void AssetHandler::addTexture(const std::string& name, const std::string& path)
 {
+  UI::logger->logDebug("Loading Texture " + name);
   SDL_Surface* loaded_surface = IMG_Load(path.c_str());
   if (loaded_surface == nullptr)
   {
@@ -53,6 +55,7 @@ void AssetHandler::addTexture(const std::string& name, const std::string& path)
 void AssetHandler::addTexture(
   const std::string& name, const std::string& path, int w, int h, int frames)
 {
+  UI::logger->logDebug("Loading Texture " + name);
   SDL_Surface* loaded_surface = IMG_Load(path.c_str());
   if (loaded_surface == nullptr)
   {
@@ -66,6 +69,7 @@ void AssetHandler::addTexture(
 
 void AssetHandler::addTokenList(const std::string& name, const std::string& path)
 {
+  UI::logger->logDebug("Loading Tokenlist " + name);
   std::ifstream word_file(path);
   std::string line;
   auto token_list = std::make_shared<TokenList>();
