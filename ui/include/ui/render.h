@@ -14,11 +14,6 @@
 #include <vector>
 
 namespace kardeshev {
-
-// it's either this or implementing a UI framework
-
-bool isInRect(int x, int y, SDL_Rect rect);
-
 struct Color
 {
   unsigned char r, g, b;
@@ -44,50 +39,6 @@ void drawCircle(const int centre_x,
                 const int radius,
                 const Color& color = WHITE,
                 const bool filled  = false);
-
-class Render;
-
-class Artist
-{
-public:
-  virtual void draw(Render& renderer)    = 0;
-  virtual bool handleEvent(SDL_Event* e) = 0;
-};
-
-class Render
-{
-private:
-  bool m_active;
-  std::shared_ptr<Artist> m_artist;
-  std::shared_ptr<SDL_Rect> m_viewport;
-
-public:
-  Render(std::shared_ptr<SDL_Rect> viewport)
-    : m_viewport(std::move(viewport))
-  {
-  }
-  void drawText(
-    const int x, const int y, const int h, const std::string& text, const Color& color = WHITE);
-  void drawWrappedText(const int x,
-                       const int y,
-                       const int w,
-                       const int h,
-                       const std::string& text,
-                       const Color& color = WHITE);
-  void drawRect(const int x,
-                const int y,
-                const int w,
-                const int h,
-                const bool filled  = false,
-                const Color& color = WHITE);
-  void display();
-  void setArtist(std::shared_ptr<Artist> artist) { m_artist = std::move(artist); }
-  bool handleEvent(SDL_Event* e);
-  int getWidth() const { return m_viewport->w; }
-  int getHeight() const { return m_viewport->h; }
-  int getOriginX() const { return m_viewport->x; }
-  int getOriginY() const { return m_viewport->y; }
-};
 
 } // namespace kardeshev
 
