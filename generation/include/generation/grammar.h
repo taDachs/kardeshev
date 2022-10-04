@@ -41,7 +41,7 @@ private:
   int m_max_length = -INT32_MAX;
 
 public:
-  NonTerminal(std::vector<std::vector<Symbol::Ptr>> productions)
+  NonTerminal(std::vector<std::vector<Symbol::Ptr> > productions)
     : m_productions(std::move(productions))
   {
     for (const auto& p : m_productions)
