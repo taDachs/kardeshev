@@ -22,25 +22,6 @@ MainScreen::MainScreen()
   resize();
 }
 
-SettingsScreen::SettingsScreen()
-{
-  m_settings_view =
-    std::make_shared<GameSettingsView>("Graphic Settings", UI::settings.ui_settings.toggle_options);
-}
-
-bool SettingsScreen::handleEvent(SDL_Event* e)
-{
-  return m_settings_view->handleEvent(e);
-}
-
-void SettingsScreen::draw()
-{
-  m_settings_view->update();
-  m_settings_view->draw();
-}
-
-void SettingsScreen::resize() {}
-
 void MainScreen::resize()
 {
   m_sidebar_viewport->x = 0;

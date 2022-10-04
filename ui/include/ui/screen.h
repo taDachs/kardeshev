@@ -40,17 +40,34 @@ public:
   bool handleEvent(SDL_Event* e) final;
 };
 
-class SettingsScreen : public Screen
+class SingleViewScreen : public Screen
 {
 private:
-  View::Ptr m_settings_view;
+  View::Ptr m_view;
+
 public:
-  SettingsScreen();
-  void draw() final;
-  void resize() final;
-  bool handleEvent(SDL_Event* e) final;
+  SingleViewScreen(View::Ptr view)
+    : m_view(std::move(view))
+  {
+  }
+  void draw() override
+  {
+    m_view->update();
+    m_view->draw();
+  };
+  void resize() override {}
+  bool handleEvent(SDL_Event* e) override { return m_view->handleEvent(e); };
 };
 
+class SettingsScreen : public SingleViewScreen
+{
+public:
+  SettingsScreen()
+    : SingleViewScreen(std::make_shared<GameSettingsView>("Graphic Settings",
+                                                          UI::settings.ui_settings.toggle_options))
+  {
+  }
+};
 
 class LoadingScreen
   : public Screen
