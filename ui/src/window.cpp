@@ -21,25 +21,21 @@ void kardeshev::initSDL()
   {
     throw SDLException("SDL init failed");
   }
-}
-
-void GameWindow::init()
-{
-  m_window = SDL_CreateWindow("Kardeshev",
+  UI::window = SDL_CreateWindow("Kardeshev",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              m_window_width,
-                              m_window_height,
+                              UI::window_size.w,
+                              UI::window_size.h,
                               SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
-  if (m_window == nullptr)
+  if (UI::window == nullptr)
   {
     throw SDLException("Window creation failed");
   }
 
 
   UI::render =
-    SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_CreateRenderer(UI::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
 void GameWindow::setupViews()
@@ -65,22 +61,22 @@ void GameWindow::setViewports()
 {
   m_sidebar_viewport->x = 0;
   m_sidebar_viewport->y = 0;
-  m_sidebar_viewport->w = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  m_sidebar_viewport->h = m_window_height;
+  m_sidebar_viewport->w = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
+  m_sidebar_viewport->h = UI::window_size.h;
 
-  m_main_view_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_main_view_viewport->x = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
   m_main_view_viewport->y = 0;
   m_main_view_viewport->w =
-    m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+    UI::window_size.w - static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
   m_main_view_viewport->h =
-    m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+    UI::window_size.h - static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
 
-  m_bottom_bar_viewport->x = static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
+  m_bottom_bar_viewport->x = static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
   m_bottom_bar_viewport->y =
-    m_window_height - static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+    UI::window_size.h - static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
   m_bottom_bar_viewport->w =
-    m_window_width - static_cast<int>(m_window_width * SIDEBAR_WIDTH_PERCENT);
-  m_bottom_bar_viewport->h = static_cast<int>(m_window_height * BOTTOM_HEIGHT_PERCENT);
+    UI::window_size.w - static_cast<int>(UI::window_size.w * SIDEBAR_WIDTH_PERCENT);
+  m_bottom_bar_viewport->h = static_cast<int>(UI::window_size.h * BOTTOM_HEIGHT_PERCENT);
 }
 
 void GameWindow::kill()
@@ -94,7 +90,7 @@ void GameWindow::kill()
     SDL_DestroyTexture(m_color_filter_tex);
   }
   SDL_DestroyRenderer(UI::render);
-  SDL_DestroyWindow(m_window);
+  SDL_DestroyWindow(UI::window);
   SDL_Quit();
 }
 
@@ -200,8 +196,6 @@ void GameWindow::display()
   SDL_Event e;
   long framestart;
   long framedelay   = 33; // 30 fps
-  UI::window_size.w = m_window_width;
-  UI::window_size.h = m_window_height;
   generateScanLineTex();
   generateColorFilterTex();
 
@@ -221,12 +215,10 @@ void GameWindow::display()
         {
           if (e.window.event == SDL_WINDOWEVENT_RESIZED)
           {
-            std::cout << "MESSAGE:Resizing window..." << std::endl;
+            kardeshev::UI::logger->logDebug("Resizing window...");
             UI::window_size.x = UI::window_size.y = 0;
             UI::window_size.w                     = e.window.data1;
             UI::window_size.h                     = e.window.data2;
-            m_window_width                        = e.window.data1;
-            m_window_height                       = e.window.data2;
             setViewports();
             generateScanLineTex();
             generateColorFilterTex();

@@ -5,6 +5,7 @@
 #include "lib/planets.h"
 #include "lib/solar_systems.h"
 #include "ui/assets.h"
+#include "util/logger.h"
 #include <SDL_image.h>
 #include <SDL_render.h>
 #include <memory>
@@ -65,23 +66,17 @@ struct UIState
   std::shared_ptr<SolarSystem> focused_system = nullptr;
 };
 
-struct Context
-{
-  using Ptr = std::shared_ptr<Context>;
-  double zoom_level;
-  SDL_Rect camera_rect;
-};
-
 struct UI
 {
   static std::shared_ptr<UIState> state;
   static SDL_Renderer* render;
+  static SDL_Window* window;
   static AssetHandler::Ptr assets;
   static std::shared_ptr<SDL_Rect> current_viewport;
   static SDL_Rect window_size;
   static Game::Ptr game;
-  static Context::Ptr current_context;
   static double zoom_level;
+  static Logger::Ptr logger;
 
   static SDL_Rect getRenderSize();
 };

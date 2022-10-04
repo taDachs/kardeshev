@@ -27,8 +27,6 @@ kardeshev::SolarSystemGenerator::Ptr ssg;
 kardeshev::GalaxyGenerator::Ptr gg;
 kardeshev::NameGenerator::Ptr ng;
 
-kardeshev::Game::Ptr game;
-
 void setupGenerators();
 
 #endif // !MAIN_H

@@ -13,10 +13,6 @@ void initSDL();
 class GameWindow
 {
 private:
-  SDL_Window* m_window = nullptr;
-  int m_window_width   = 1920;
-  int m_window_height  = 1080;
-
   bool m_scan_lines = true;
   SDL_Texture* m_scan_line_texture = nullptr;
   unsigned int m_scan_line_step = 0;
@@ -52,7 +48,6 @@ private:
 
 public:
   void setupViews();
-  void init();
   void kill();
   void display();
 };

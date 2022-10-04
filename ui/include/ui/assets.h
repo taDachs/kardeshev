@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "generation/name_generation.h"
 namespace kardeshev {
 
 struct Font
@@ -87,21 +88,10 @@ public:
 private:
   std::map<std::string, Font> m_fonts;
   std::map<std::string, Texture> m_textures;
+  std::map<std::string, TokenList::Ptr> m_token_lists;
 
 public:
-  ~AssetHandler()
-  {
-    std::cout << "cleaning up fonts" << std::endl;
-    for (auto& font : m_fonts)
-    {
-      font.second.closeFont();
-    }
-    std::cout << "cleaning up texture" << std::endl;
-    for (auto& font : m_textures)
-    {
-      font.second.closeTexture();
-    }
-  }
+  ~AssetHandler();
   void addFont(const std::string& name,
                const std::string& path,
                const int size_small,
@@ -109,8 +99,10 @@ public:
                const int size_large);
   void addTexture(const std::string& name, const std::string& path);
   void addTexture(const std::string& name, const std::string& path, int w, int h, int frames);
+  void addTokenList(const std::string& name, const std::string& path);
   Font getFont(const std::string& name) const { return m_fonts.at(name); }
   Texture getTexture(const std::string& name) const { return m_textures.at(name); }
+  TokenList::Ptr getTokenList(const std::string& name) const { return m_token_lists.at(name); }
 };
 
 } // namespace kardeshev
