@@ -1,6 +1,7 @@
 #include "lib/solar_systems.h"
 
 using namespace kardeshev;
+using namespace lib;
 
 std::string SolarSystemInfo::getNameOrId() const
 {

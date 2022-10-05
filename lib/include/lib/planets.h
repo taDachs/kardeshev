@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace kardeshev {
+namespace lib {
 
 class PlanetClass : public GameClass
 {
@@ -174,6 +175,7 @@ public:
   void addBuilding(const std::shared_ptr<Building>& building) { m_buildings.push_back(building); }
 };
 
+} // namespace lib
 } // namespace kardeshev
 
 #endif // !PLANETS_H

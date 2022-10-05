@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 namespace kardeshev {
+namespace lib {
 class Requirement;
 class ResourceType : public GameClass
 {
@@ -162,6 +163,7 @@ public:
   }
 };
 
+} // namespace lib
 } // namespace kardeshev
 
 #endif // !RESOURCES_H

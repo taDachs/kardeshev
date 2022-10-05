@@ -1,11 +1,13 @@
 #ifndef NAME_GENERATION_H
 #define NAME_GENERATION_H
 
+#include "lib/generators.h"
 #include "util/util.h"
 #include <memory>
 #include <string>
 #include <vector>
 namespace kardeshev {
+namespace generation {
 
 class TokenList
 {
@@ -25,16 +27,8 @@ public:
   }
   std::string getRandomToken()
   {
-    return m_token_list.at(RandomDistribution::sample(0, m_token_list.size() - 1));
+    return m_token_list.at(util::RandomDistribution::sample(0, m_token_list.size() - 1));
   }
-};
-
-class NameGenerator
-{
-public:
-  using Ptr = std::shared_ptr<NameGenerator>;
-
-  virtual std::string generateName() const = 0;
 };
 
 const std::vector<char> VOWELS     = {'a', 'e', 'i', 'o', 'u'};
@@ -84,6 +78,7 @@ public:
   std::string generateName() const override;
 };
 
+} // namespace generation
 } // namespace kardeshev
 
 

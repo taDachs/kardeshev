@@ -38,14 +38,15 @@ void kardeshev::initSDL()
     SDL_CreateRenderer(UI::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
-void kardeshev::setupScreens() {
-  UI::screen_list.main_screen = std::make_shared<MainScreen>();
+void kardeshev::setupScreens()
+{
+  UI::screen_list.main_screen       = std::make_shared<MainScreen>();
   LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
-  UI::logger->addLogger(std::static_pointer_cast<LoggerOutput>(loading_screen));
-  UI::screen_list.loading_screen = loading_screen;
-  UI::screen_list.settings_screen = std::make_shared<SettingsScreen>();
+  UI::logger->addLogger(std::static_pointer_cast<util::LoggerOutput>(loading_screen));
+  UI::screen_list.loading_screen   = loading_screen;
+  UI::screen_list.settings_screen  = std::make_shared<SettingsScreen>();
   UI::screen_list.main_menu_screen = std::make_shared<MainMenuScreen>();
-  UI::state->current_screen = UI::screen_list.loading_screen;
+  UI::state->current_screen        = UI::screen_list.loading_screen;
 }
 
 void GameWindow::kill()
@@ -185,7 +186,8 @@ void GameWindow::display()
 
     handleEvents();
 
-    if (m_last_screen != UI::state->current_screen) {
+    if (m_last_screen != UI::state->current_screen)
+    {
       m_last_screen = UI::state->current_screen;
       UI::state->current_screen->resize();
     }

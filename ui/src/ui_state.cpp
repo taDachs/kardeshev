@@ -7,10 +7,10 @@ SDL_Renderer* UI::render                       = nullptr;
 SDL_Window* UI::window                         = nullptr;
 AssetHandler::Ptr UI::assets                   = std::make_shared<AssetHandler>();
 std::shared_ptr<SDL_Rect> UI::current_viewport = nullptr;
-Game::Ptr UI::game                             = nullptr;
-Logger::Ptr UI::logger                         = nullptr;
+lib::Game::Ptr UI::game                        = nullptr;
+util::Logger::Ptr UI::logger                   = nullptr;
 SDL_Rect UI::window_size;
-bool UI::running                               = false;
+bool UI::running = false;
 Settings UI::settings;
 ScreenList UI::screen_list;
 

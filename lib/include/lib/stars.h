@@ -5,6 +5,7 @@
 #include <memory>
 
 namespace kardeshev {
+namespace lib {
 
 class StarClass : public GameClass
 {
@@ -58,6 +59,7 @@ public:
   std::shared_ptr<StarInfo> getInfo() const { return m_info; }
 };
 
+} // namespace lib
 } // namespace kardeshev
 
 #endif //! STARS_H

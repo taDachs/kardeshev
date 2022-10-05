@@ -64,17 +64,17 @@ class Screen;
 // TODO: clean this all this up
 struct UIState
 {
-  using Ptr                                   = std::shared_ptr<UIState>;
+  using Ptr = std::shared_ptr<UIState>;
 
-  std::shared_ptr<Planet> focused_planet      = nullptr;
-  std::shared_ptr<SolarSystem> focused_system = nullptr;
-  std::shared_ptr<Screen> current_screen = nullptr;
-  bool paused = true;
+  std::shared_ptr<lib::Planet> focused_planet      = nullptr;
+  std::shared_ptr<lib::SolarSystem> focused_system = nullptr;
+  std::shared_ptr<Screen> current_screen           = nullptr;
+  bool paused                                      = true;
 };
 
 struct UISettings
 {
-  bool scan_lines = true;
+  bool scan_lines   = true;
   bool color_filter = false;
   std::map<std::string, bool*> toggle_options;
 };
@@ -84,7 +84,8 @@ struct Settings
   UISettings ui_settings;
 };
 
-struct ScreenList {
+struct ScreenList
+{
   std::shared_ptr<Screen> main_screen;
   std::shared_ptr<Screen> loading_screen;
   std::shared_ptr<Screen> settings_screen;
@@ -99,8 +100,8 @@ struct UI
   static AssetHandler::Ptr assets;
   static std::shared_ptr<SDL_Rect> current_viewport;
   static SDL_Rect window_size;
-  static Game::Ptr game;
-  static Logger::Ptr logger;
+  static lib::Game::Ptr game;
+  static util::Logger::Ptr logger;
   static bool running;
   static Settings settings;
   static ScreenList screen_list;

@@ -47,7 +47,8 @@ protected:
       d->draw();
     }
   };
-  virtual bool handleEventView(SDL_Event *e) {
+  virtual bool handleEventView(SDL_Event* e)
+  {
     for (auto& entity : m_entities)
     {
       if (entity->handleEvent(e))
@@ -100,7 +101,7 @@ public:
     }
     SDL_RenderSetViewport(UI::render, m_viewport.get());
     UI::current_viewport = m_viewport;
-    bool handled = handleEventView(e);
+    bool handled         = handleEventView(e);
     SDL_RenderSetViewport(UI::render, nullptr);
     UI::current_viewport = nullptr;
     return handled;
@@ -117,8 +118,8 @@ protected:
   double m_scale            = 1;
   bool m_left_mouse_pressed = false;
 
-  double m_max_scale = 8.0;
-  double m_min_scale = 0.3;
+  double m_max_scale  = 8.0;
+  double m_min_scale  = 0.3;
   double m_scale_step = 1.1;
 
   SDL_Point getCenterOffset()
@@ -158,7 +159,7 @@ class SystemView : public MoveableView
 {
 private:
   ButtonEntity::Ptr m_back_button;
-  SolarSystem::Ptr m_current_system = nullptr;
+  lib::SolarSystem::Ptr m_current_system = nullptr;
 
   void drawView() override;
   void updateView() override;
@@ -180,13 +181,17 @@ class LoadingScreenView : public View
 {
 public:
   using Ptr = std::shared_ptr<LoadingScreenView>;
+
 private:
   void updateView() override;
   LoadingTextEntity::Ptr m_entity;
   std::string m_text;
+
 public:
-  void setText(const std::string& s) {
-    if (m_entity != nullptr) {
+  void setText(const std::string& s)
+  {
+    if (m_entity != nullptr)
+    {
       m_entity->setText(s);
     }
   }
@@ -196,6 +201,7 @@ class GameSettingsView : public View
 {
 public:
   using Ptr = std::shared_ptr<GameSettingsView>;
+
 private:
   ButtonEntity::Ptr m_settings_button;
   TextEntity::Ptr m_title_label;
@@ -203,14 +209,20 @@ private:
   std::string m_title;
   void updateView() override;
   std::vector<CheckBoxOptionEntity::Ptr> m_options;
+
 public:
-  GameSettingsView(std::string title, std::map<std::string, bool*>  toggle_options): m_title(std::move(title)), m_toggle_options(std::move(toggle_options)) {}
+  GameSettingsView(std::string title, std::map<std::string, bool*> toggle_options)
+    : m_title(std::move(title))
+    , m_toggle_options(std::move(toggle_options))
+  {
+  }
 };
 
 class MainMenuView : public View
 {
 public:
   using Ptr = std::shared_ptr<MainMenuView>;
+
 private:
   TextEntity::Ptr m_title_label;
   TextButton::Ptr m_play_label;

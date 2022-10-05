@@ -4,10 +4,10 @@
 #include "ui/window.h"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <iostream>
-#include <stdexcept>
 #include <fstream>
+#include <iostream>
 #include <regex>
+#include <stdexcept>
 
 using namespace kardeshev;
 const std::string Font::DEFAULT_FONT = "default";
@@ -72,8 +72,9 @@ void AssetHandler::addTokenList(const std::string& name, const std::string& path
   UI::logger->logInfo("Loading Tokenlist " + name);
   std::ifstream word_file(path);
   std::string line;
-  auto token_list = std::make_shared<TokenList>();
-  while (getline(word_file, line)) {
+  auto token_list = std::make_shared<generation::TokenList>();
+  while (getline(word_file, line))
+  {
     line = regex_replace(line, std::regex("^[ |\t|\n|\r|\v|\f]*|[ |\t|\n|\r|\v|\f]*$"), "");
     token_list->addWord(line);
   }

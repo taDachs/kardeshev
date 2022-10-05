@@ -91,7 +91,7 @@ void GalaxyView::updateView()
 {
   if (m_entities.empty())
   {
-    std::vector<std::shared_ptr<SolarSystem> > systems = UI::game->getGalaxy()->getSystems();
+    std::vector<lib::SolarSystem::Ptr> systems = UI::game->getGalaxy()->getSystems();
     for (const auto& s : systems)
     {
       auto e = std::make_shared<SystemEntity>(s);
@@ -131,13 +131,13 @@ void SystemView::updateView()
   }
   if (m_entities.empty())
   {
-    Star::Ptr s   = UI::state->focused_system->getStar();
-    Entity::Ptr e = std::make_shared<StarEntity>(s);
+    lib::Star::Ptr s = UI::state->focused_system->getStar();
+    Entity::Ptr e    = std::make_shared<StarEntity>(s);
     m_entities.push_back(e);
     e->setOffset(getCenterOffset());
     e->setScale(m_scale);
     e->update();
-    std::vector<Planet::Ptr> planets = UI::state->focused_system->getPlanets();
+    std::vector<lib::Planet::Ptr> planets = UI::state->focused_system->getPlanets();
     for (const auto& p : planets)
     {
       auto e = std::make_shared<PlanetEntity>(p);
@@ -183,8 +183,8 @@ void GalaxyInfoView::updateView()
   SDL_Rect size = UI::getRenderSize();
   SDL_Rect settings_button_dst;
   settings_button_dst.w = settings_button_dst.h = 0.1 * size.w;
-  settings_button_dst.x = settings_button_dst.w;
-  settings_button_dst.y = size.h - settings_button_dst.h * 1.5;
+  settings_button_dst.x                         = settings_button_dst.w;
+  settings_button_dst.y                         = size.h - settings_button_dst.h * 1.5;
   m_settings_button->setDst(settings_button_dst);
   for (auto& e : m_entities)
   {
@@ -237,8 +237,8 @@ void GameSettingsView::updateView()
   SDL_Rect size = UI::getRenderSize();
   SDL_Rect settings_button_dst;
   settings_button_dst.w = settings_button_dst.h = 0.05 * size.w;
-  settings_button_dst.x = settings_button_dst.w;
-  settings_button_dst.y = size.h - settings_button_dst.h * 1.5;
+  settings_button_dst.x                         = settings_button_dst.w;
+  settings_button_dst.y                         = size.h - settings_button_dst.h * 1.5;
   m_settings_button->setDst(settings_button_dst);
   m_settings_button->update();
 
@@ -260,9 +260,10 @@ void GameSettingsView::updateView()
   }
 }
 
-void MainMenuView::updateView() {
-
-  if (m_entities.empty()) {
+void MainMenuView::updateView()
+{
+  if (m_entities.empty())
+  {
     m_title_label = std::make_shared<TextEntity>("Kardeshev");
     m_title_label->setFontSize(Font::Size::LARGE);
     m_play_label = std::make_shared<PlayButton>();

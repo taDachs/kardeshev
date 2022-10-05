@@ -8,6 +8,7 @@
 
 
 using namespace kardeshev;
+using namespace lib;
 
 GameObject::GameObject()
 {

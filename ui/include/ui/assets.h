@@ -1,21 +1,22 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
+#include "generation/name_generation.h"
 #include <SDL_ttf.h>
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <utility>
 #include <vector>
-#include <algorithm>
-#include "generation/name_generation.h"
 namespace kardeshev {
 
 struct Font
 {
   const static std::string DEFAULT_FONT;
 
-  enum Size {
+  enum Size
+  {
     SMALL,
     MEDIUM,
     LARGE
@@ -96,7 +97,7 @@ public:
 private:
   std::map<std::string, Font> m_fonts;
   std::map<std::string, Texture> m_textures;
-  std::map<std::string, TokenList::Ptr> m_token_lists;
+  std::map<std::string, generation::TokenList::Ptr> m_token_lists;
 
 public:
   ~AssetHandler();
@@ -111,7 +112,10 @@ public:
   Font getFont(const std::string& name) const { return m_fonts.at(name); }
   bool isFontLoaded(const std::string& name) const { return m_fonts.find(name) != m_fonts.end(); }
   Texture getTexture(const std::string& name) const { return m_textures.at(name); }
-  TokenList::Ptr getTokenList(const std::string& name) const { return m_token_lists.at(name); }
+  generation::TokenList::Ptr getTokenList(const std::string& name) const
+  {
+    return m_token_lists.at(name);
+  }
 };
 
 } // namespace kardeshev

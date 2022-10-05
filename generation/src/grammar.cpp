@@ -22,7 +22,7 @@ std::string NonTerminal::toString(int min_length, int max_length) const
   }
   std::string out;
   std::vector<Symbol::Ptr> production =
-    m_productions.at(RandomDistribution::sample(0, allowed.size()));
+    m_productions.at(util::RandomDistribution::sample(0, allowed.size()));
   // m_productions.at(0);
 
   for (const auto& c : production)

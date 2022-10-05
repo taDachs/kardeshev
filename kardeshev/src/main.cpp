@@ -40,15 +40,16 @@ int loadAssets(void* data)
   setupGenerators();
 
   kardeshev::UI::logger->logInfo("Generating galaxy");
-  std::shared_ptr<kardeshev::Galaxy> g = gg->generateGalaxy();
+  std::shared_ptr<kardeshev::lib::Galaxy> g = gg->generateGalaxy();
   kardeshev::UI::game->setGalaxy(g);
 
-  kardeshev::ResourceType potatoes("potato_resource", "Potatoes");
-  kardeshev::Need food_req(potatoes, 1);
-  std::shared_ptr<kardeshev::Building> potato_farm = std::make_shared<kardeshev::Farm>(potatoes);
-  kardeshev::Species humans("human_species", "Humans", 1.01, {food_req});
-  kardeshev::Population pop(humans, {});
-  std::shared_ptr<kardeshev::SolarSystem> ss = g->getSystems()[0];
+  kardeshev::lib::ResourceType potatoes("potato_resource", "Potatoes");
+  kardeshev::lib::Need food_req(potatoes, 1);
+  std::shared_ptr<kardeshev::lib::Building> potato_farm =
+    std::make_shared<kardeshev::lib::Farm>(potatoes);
+  kardeshev::lib::Species humans("human_species", "Humans", 1.01, {food_req});
+  kardeshev::lib::Population pop(humans, {});
+  std::shared_ptr<kardeshev::lib::SolarSystem> ss = g->getSystems()[0];
   ss->getPlanets()[0]->addPop(pop);
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
@@ -75,7 +76,7 @@ int gameThread(void* data)
       continue;
     }
     long framestart = SDL_GetTicks();
-    kardeshev::UI::game->step(kardeshev::Duration(1));
+    kardeshev::UI::game->step(kardeshev::lib::Duration(1));
     long frametime = SDL_GetTicks() - framestart;
     if (framedelay > frametime)
     {
@@ -95,12 +96,12 @@ int displayThread(void* data)
 
 void setupGenerators()
 {
-  ng = std::make_shared<kardeshev::TokenListNameGenerator>(
+  ng = std::make_shared<kardeshev::generation::TokenListNameGenerator>(
     kardeshev::UI::assets->getTokenList("english"));
-  pg  = std::make_shared<kardeshev::NaivePlanetGenerator>(ng, PLANETS);
-  sg  = std::make_shared<kardeshev::NaiveStarGenerator>(ng, STARS);
-  ssg = std::make_shared<kardeshev::NaiveSolarSystemGenerator>(ng, pg, sg, 3, 10);
-  gg  = std::make_shared<kardeshev::NaiveGalaxyGenerator>(ssg, 1000, 1001);
+  pg  = std::make_shared<kardeshev::generation::NaivePlanetGenerator>(ng, PLANETS);
+  sg  = std::make_shared<kardeshev::generation::NaiveStarGenerator>(ng, STARS);
+  ssg = std::make_shared<kardeshev::generation::NaiveSolarSystemGenerator>(ng, pg, sg, 3, 10);
+  gg  = std::make_shared<kardeshev::generation::NaiveGalaxyGenerator>(ssg, 1000, 1001);
 }
 
 
@@ -108,10 +109,10 @@ int main()
 {
   kardeshev::UI::window_size.w = 1920;
   kardeshev::UI::window_size.h = 1080;
-  kardeshev::UI::game          = std::make_shared<kardeshev::Game>();
+  kardeshev::UI::game          = std::make_shared<kardeshev::lib::Game>();
 
-  kardeshev::UI::logger = std::make_shared<kardeshev::Logger>();
-  kardeshev::UI::logger->addLogger(std::make_shared<kardeshev::StdOutLogger>());
+  kardeshev::UI::logger = std::make_shared<kardeshev::util::Logger>();
+  kardeshev::UI::logger->addLogger(std::make_shared<kardeshev::util::StdOutLogger>());
 
   kardeshev::UI::logger->logInfo("Init SDL");
   kardeshev::initSDL();

@@ -1,7 +1,10 @@
 #include "util/util.h"
 #include <cmath>
 
-std::vector<std::string> splitString(std::string s, const std::string& delimiter)
+using namespace kardeshev;
+using namespace util;
+
+std::vector<std::string> kardeshev::util::splitString(std::string s, const std::string& delimiter)
 {
   size_t pos = 0;
   std::string token;
@@ -16,10 +19,10 @@ std::vector<std::string> splitString(std::string s, const std::string& delimiter
   return out;
 }
 
-std::string joinLines(const std::vector<std::string>& lines,
-                      const std::string& delimiter,
-                      const std::string& prefix,
-                      const std::string& postfix)
+std::string kardeshev::util::joinLines(const std::vector<std::string>& lines,
+                                       const std::string& delimiter,
+                                       const std::string& prefix,
+                                       const std::string& postfix)
 {
   std::string out = prefix;
   bool first      = true;
@@ -42,7 +45,7 @@ long b32tol(std::string b32)
 }
 
 // stolen from https://stackoverflow.com/questions/1916155/base32-conversion-in-c
-std::string encodeBase32(long i)
+std::string kardeshev::util::encodeBase32(long i)
 {
   unsigned long u = *(reinterpret_cast<unsigned long*>(&i));
   std::string b32;
@@ -66,12 +69,12 @@ std::string encodeBase32(long i)
   return b32;
 }
 
-glm::vec2 polarToCart(const double radius, const double angle)
+glm::vec2 kardeshev::util::polarToCart(const double radius, const double angle)
 {
   return {radius * cos(angle), radius * sin(angle)};
 }
 
-glm::vec2 polarToCart(const double radius, const int angle)
+glm::vec2 kardeshev::util::polarToCart(const double radius, const int angle)
 {
   double radians = static_cast<double>(angle) * ((2 * M_PI) / 360.0);
   return polarToCart(radius, radians);
