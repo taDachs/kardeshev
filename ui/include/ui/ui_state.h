@@ -12,6 +12,7 @@
 
 namespace kardeshev {
 
+// TODO: should be own file
 struct SDLException : public std::exception
 {
   std::string s;
@@ -60,6 +61,7 @@ struct IMGException : public std::exception
 
 class Screen;
 
+// TODO: clean this all this up
 struct UIState
 {
   using Ptr                                   = std::shared_ptr<UIState>;
@@ -67,6 +69,7 @@ struct UIState
   std::shared_ptr<Planet> focused_planet      = nullptr;
   std::shared_ptr<SolarSystem> focused_system = nullptr;
   std::shared_ptr<Screen> current_screen = nullptr;
+  bool paused = true;
 };
 
 struct UISettings

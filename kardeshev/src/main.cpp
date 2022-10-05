@@ -66,6 +66,9 @@ int gameThread(void* data) {
   }
   long framedelay = 100;
   while (kardeshev::UI::running) {
+    if (kardeshev::UI::state->paused) {
+      continue;
+    }
     long framestart = SDL_GetTicks();
     kardeshev::UI::game->step(kardeshev::Duration(1));
     long frametime = SDL_GetTicks() - framestart;

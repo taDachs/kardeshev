@@ -439,6 +439,7 @@ class PlayButton : public TextButton
 private:
   void onClick() override {
     UI::state->current_screen = UI::screen_list.main_screen;
+    UI::state->paused = false;
   }
 public:
   PlayButton(): TextButton("Play") {}

@@ -27,6 +27,7 @@ private:
   SDL_Texture* m_color_filter_tex = nullptr;
   Color m_color_filter_color = DYSTOPIC_YELLOW;
   int m_color_filter_alpha = 32;
+
   Screen::Ptr m_last_screen = nullptr;
 
   void generateScanLineTex();

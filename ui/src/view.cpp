@@ -290,14 +290,14 @@ void MainMenuView::updateView() {
 
   SDL_Rect play_dst = title_dst;
   play_dst.y += title_dst.h * 1.2;
-  m_play_label->setFontSize(Font::Size::MEDIUM);
+  m_play_label->setFontSize(Font::Size::LARGE);
   m_play_label->setDst(play_dst);
   m_play_label->update();
 
 
   SDL_Rect quit_dst = play_dst;
   quit_dst.y += play_dst.h * 1.2;
-  m_quit_label->setFontSize(Font::Size::MEDIUM);
+  m_quit_label->setFontSize(Font::Size::LARGE);
   m_quit_label->setDst(quit_dst);
   m_quit_label->update();
 
