@@ -2,6 +2,7 @@
 #include "lib/population.h"
 #include <iostream>
 using namespace kardeshev;
+using namespace lib;
 
 std::string PlanetInfo::getNameOrId() const
 {

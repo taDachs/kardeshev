@@ -80,7 +80,7 @@ void PlanetEntity::update()
   bool selected    = m_selected || UI::state->focused_planet == m_planet;
   int orbit_radius = m_planet->getInfo()->orbit_distance * m_scale;
   glm::vec2 cors =
-    polarToCart(orbit_radius, m_planet->getInfo()->getCurrentAngle(UI::game->getTime()));
+    util::polarToCart(orbit_radius, m_planet->getInfo()->getCurrentAngle(UI::game->getTime()));
   m_position.x = cors.x;
   m_position.y = cors.y;
   SDL_Rect icon_dst;
@@ -259,7 +259,7 @@ bool ButtonEntity::handleEvent(SDL_Event* e)
 
 void PlanetInfoEntity::generateText()
 {
-  PlanetInfo::Ptr info = m_current_planet->getInfo();
+  lib::PlanetInfo::Ptr info = m_current_planet->getInfo();
   std::stringstream s;
   s << "Planet Class: " << info->planet_class.getName() << "\n";
   s << "Class Description: " << info->planet_class.getDescription() << "\n";
@@ -341,19 +341,20 @@ void LoadingTextEntity::update()
 }
 
 
-const std::string CheckBoxOptionEntity::CHECKBOX_SPRITE                                = "checkbox";
+const std::string CheckBoxOptionEntity::CHECKBOX_SPRITE                = "checkbox";
 const int CheckBoxOptionEntity::CHECKBOX_SPRITE_NOT_SELECTED_OFF_FRAME = 0;
 const int CheckBoxOptionEntity::CHECKBOX_SPRITE_SELECTED_OFF_FRAME     = 1;
 const int CheckBoxOptionEntity::CHECKBOX_SPRITE_NOT_SELECTED_ON_FRAME  = 2;
 const int CheckBoxOptionEntity::CHECKBOX_SPRITE_SELECTED_ON_FRAME      = 3;
 
-void CheckBoxOptionEntity::update() {
+void CheckBoxOptionEntity::update()
+{
   bool on = *m_val;
 
   SDL_Rect checkbox_dst;
   checkbox_dst.h = checkbox_dst.w = m_dst.h;
-  checkbox_dst.x = m_dst.x + m_dst.w - m_dst.h;
-  checkbox_dst.y = m_dst.y;
+  checkbox_dst.x                  = m_dst.x + m_dst.w - m_dst.h;
+  checkbox_dst.y                  = m_dst.y;
   m_checkbox_selected_on->setDst(checkbox_dst);
   m_checkbox_selected_off->setDst(checkbox_dst);
   m_checkbox_not_selected_on->setDst(checkbox_dst);
@@ -372,7 +373,8 @@ void CheckBoxOptionEntity::update() {
   m_title_label->setAlive(true);
 }
 
-bool CheckBoxOptionEntity::handleEvent(SDL_Event* e) {
+bool CheckBoxOptionEntity::handleEvent(SDL_Event* e)
+{
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
 
@@ -401,7 +403,8 @@ bool CheckBoxOptionEntity::handleEvent(SDL_Event* e) {
   return false;
 }
 
-void TextEntity::update() {
+void TextEntity::update()
+{
   m_label->setFontSize(m_size);
   m_label->setText(m_text);
   m_label->setDst(m_dst);

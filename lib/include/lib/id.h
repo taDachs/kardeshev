@@ -7,6 +7,7 @@
 #include <utility>
 
 namespace kardeshev {
+namespace lib {
 class GameObject
 {
 private:
@@ -32,5 +33,6 @@ public:
   bool operator==(const GameClass& other) { return (other.m_key == this->m_key); }
   std::string getKey() const { return m_key; }
 };
+} // namespace lib
 } // namespace kardeshev
 #endif // !ID_H

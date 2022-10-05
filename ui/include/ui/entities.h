@@ -59,7 +59,7 @@ public:
   const static int SYSTEM_SPRITE_NOT_SELECTED_FRAME;
 
 private:
-  SolarSystem::Ptr m_system;
+  lib::SolarSystem::Ptr m_system;
   TextLabelUI::Ptr m_system_name_label;
   TextLabelUI::Ptr m_number_planets_label;
   TextureComponent::Ptr m_system_not_selected_icon;
@@ -67,7 +67,7 @@ private:
   bool m_selected = false;
 
 public:
-  SystemEntity(SolarSystem::Ptr system)
+  SystemEntity(lib::SolarSystem::Ptr system)
     : m_system(std::move(system))
   {
     m_system_selected_icon =
@@ -90,7 +90,7 @@ public:
     m_components.push_back(m_number_planets_label);
   }
   void update() override;
-  SolarSystem::Ptr getSystem() const { return m_system; }
+  lib::SolarSystem::Ptr getSystem() const { return m_system; }
   bool handleEvent(SDL_Event* e) override;
 };
 
@@ -103,7 +103,7 @@ public:
   const static int PLANET_SPRITE_NOT_SELECTED_FRAME;
 
 private:
-  Planet::Ptr m_planet;
+  lib::Planet::Ptr m_planet;
   TextLabelUI::Ptr m_planet_name_label;
   TextureComponent::Ptr m_selected_icon;
   TextureComponent::Ptr m_focused_icon;
@@ -113,7 +113,7 @@ private:
   bool m_selected = false;
 
 public:
-  PlanetEntity(Planet::Ptr planet)
+  PlanetEntity(lib::Planet::Ptr planet)
     : m_planet(std::move(planet))
   {
     m_selected_icon =
@@ -139,7 +139,7 @@ public:
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override;
-  Planet::Ptr getPlanet() const { return m_planet; }
+  lib::Planet::Ptr getPlanet() const { return m_planet; }
 };
 
 class StarEntity : public Entity
@@ -150,14 +150,14 @@ public:
   const static int STAR_SPRITE_NOT_SELECTED_FRAME;
 
 private:
-  Star::Ptr m_star;
+  lib::Star::Ptr m_star;
   TextLabelUI::Ptr m_star_name_label;
   TextureComponent::Ptr m_selected_icon;
   TextureComponent::Ptr m_not_selected_icon;
   bool m_selected = false;
 
 public:
-  StarEntity(Star::Ptr star)
+  StarEntity(lib::Star::Ptr star)
     : m_star(std::move(star))
   {
     m_selected_icon = std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_SELECTED_FRAME);
@@ -173,7 +173,7 @@ public:
   }
   void update() override;
   bool handleEvent(SDL_Event* e) override;
-  Star::Ptr getStar() const { return m_star; }
+  lib::Star::Ptr getStar() const { return m_star; }
 };
 
 class ButtonEntity : public Entity
@@ -270,7 +270,7 @@ private:
   TextBoxUI::Ptr m_info_box;
   TextureComponent::Ptr m_planet_portrait;
   std::string m_text;
-  Planet::Ptr m_current_planet;
+  lib::Planet::Ptr m_current_planet;
   void generateText();
 
 public:
@@ -406,13 +406,14 @@ class TextButton : public ButtonEntity
 {
 public:
   using Ptr = std::shared_ptr<TextButton>;
+
 private:
   TextLabelUI::Ptr m_not_selected_text;
   TextLabelUI::Ptr m_selected_text;
   std::string m_text;
   Color m_not_selected_color = WHITE;
-  Color m_selected_color = DYSTOPIC_YELLOW;
-  Font::Size m_size = Font::Size::MEDIUM;
+  Color m_selected_color     = DYSTOPIC_YELLOW;
+  Font::Size m_size          = Font::Size::MEDIUM;
 
 public:
   TextButton(const std::string& text)
@@ -427,7 +428,8 @@ public:
     m_selected_text->setCentered(true);
   }
 
-  void setFontSize(const Font::Size size) {
+  void setFontSize(const Font::Size size)
+  {
     m_size = size;
     m_selected_text->setFontSize(m_size);
     m_not_selected_text->setFontSize(m_size);
@@ -437,23 +439,30 @@ public:
 class PlayButton : public TextButton
 {
 private:
-  void onClick() override {
+  void onClick() override
+  {
     UI::state->current_screen = UI::screen_list.main_screen;
-    UI::state->paused = false;
+    UI::state->paused         = false;
   }
+
 public:
-  PlayButton(): TextButton("Play") {}
+  PlayButton()
+    : TextButton("Play")
+  {
+  }
 };
 
 
 class QuitButton : public TextButton
 {
 private:
-  void onClick() override {
-    UI::running = false;
-  }
+  void onClick() override { UI::running = false; }
+
 public:
-  QuitButton(): TextButton("Quit") {}
+  QuitButton()
+    : TextButton("Quit")
+  {
+  }
 };
 
 

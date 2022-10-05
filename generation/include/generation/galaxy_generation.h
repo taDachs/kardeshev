@@ -1,18 +1,12 @@
 #ifndef GALAXY_GENERATION_H
 #define GALAXY_GENERATION_H
 
-#include "lib/generators.h"
 #include "lib/galaxy.h"
+#include "lib/generators.h"
 #include <memory>
 
 namespace kardeshev {
-
-class GalaxyGenerator
-{
-public:
-  using Ptr                                              = std::shared_ptr<GalaxyGenerator>;
-  virtual std::shared_ptr<Galaxy> generateGalaxy() const = 0;
-};
+namespace generation {
 
 class NaiveGalaxyGenerator : public GalaxyGenerator
 {
@@ -30,8 +24,9 @@ public:
     , m_max_systems(max_systems)
   {
   }
-  std::shared_ptr<Galaxy> generateGalaxy() const override;
+  std::shared_ptr<lib::Galaxy> generateGalaxy() const override;
 };
+} // namespace generation
 } // namespace kardeshev
 
 #endif // !GALAXY_GENERATION_H

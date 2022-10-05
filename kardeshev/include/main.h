@@ -1,32 +1,29 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "generation/galaxy_generation.h"
-#include "generation/name_generation.h"
-#include "generation/planet_generation.h"
-#include "generation/solar_system_generation.h"
-#include "generation/star_generation.h"
 #include "lib/game.h"
+#include "lib/generators.h"
 #include "ui/window.h"
 
-const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
-                                                  kardeshev::GAS_DWARF,
-                                                  kardeshev::GAS_GIANT,
-                                                  kardeshev::HYCEAN,
-                                                  kardeshev::ICE_GIANT,
-                                                  kardeshev::ICE,
-                                                  kardeshev::IRON,
-                                                  kardeshev::LAVA,
-                                                  kardeshev::OCEAN,
-                                                  kardeshev::PROTO,
-                                                  kardeshev::TERRESTIAL};
-const std::vector<kardeshev::StarClass> STARS{kardeshev::O, kardeshev::B, kardeshev::G};
+const std::vector<kardeshev::lib::PlanetClass> PLANETS{kardeshev::lib::DESERT,
+                                                       kardeshev::lib::GAS_DWARF,
+                                                       kardeshev::lib::GAS_GIANT,
+                                                       kardeshev::lib::HYCEAN,
+                                                       kardeshev::lib::ICE_GIANT,
+                                                       kardeshev::lib::ICE,
+                                                       kardeshev::lib::IRON,
+                                                       kardeshev::lib::LAVA,
+                                                       kardeshev::lib::OCEAN,
+                                                       kardeshev::lib::PROTO,
+                                                       kardeshev::lib::TERRESTIAL};
+const std::vector<kardeshev::lib::StarClass> STARS{
+  kardeshev::lib::O, kardeshev::lib::B, kardeshev::lib::G};
 kardeshev::GameWindow::Ptr main_window;
-kardeshev::PlanetGenerator::Ptr pg;
-kardeshev::StarGenerator::Ptr sg;
-kardeshev::SolarSystemGenerator::Ptr ssg;
-kardeshev::GalaxyGenerator::Ptr gg;
-kardeshev::NameGenerator::Ptr ng;
+kardeshev::generation::PlanetGenerator::Ptr pg;
+kardeshev::generation::StarGenerator::Ptr sg;
+kardeshev::generation::SolarSystemGenerator::Ptr ssg;
+kardeshev::generation::GalaxyGenerator::Ptr gg;
+kardeshev::generation::NameGenerator::Ptr ng;
 
 void setupGenerators();
 

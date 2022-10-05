@@ -5,6 +5,8 @@
 #include "resources.h"
 
 namespace kardeshev {
+namespace lib {
+
 class Building : public GameObject
 {
 public:
@@ -28,5 +30,6 @@ public:
   void satisfyProductionNeeds(const ResourceList& supplies) override;
   void update() override;
 };
+} // namespace lib
 } // namespace kardeshev
 #endif // !BUILDINGS_H

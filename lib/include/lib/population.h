@@ -7,6 +7,7 @@
 #include "resources.h"
 
 namespace kardeshev {
+namespace lib {
 
 #define REPRODUCTION_THRESH 1000
 #define DEATH_THRESH 0.1
@@ -60,6 +61,7 @@ public:
 
   Population reproduce();
 };
+} // namespace lib
 } // namespace kardeshev
 
 

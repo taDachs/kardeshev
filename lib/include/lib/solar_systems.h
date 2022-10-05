@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 namespace kardeshev {
+namespace lib {
 class SolarSystem;
 struct SolarSystemInfo
 {
@@ -39,5 +40,6 @@ public:
   std::shared_ptr<Star> getStar() const { return m_star; }
   void update() override;
 };
+} // namespace lib
 } // namespace kardeshev
 #endif //! SOLAR_SYSTEM_H

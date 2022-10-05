@@ -4,6 +4,7 @@
 #include "id.h"
 #include "solar_systems.h"
 namespace kardeshev {
+namespace lib {
 
 class Galaxy : public GameObject
 {
@@ -28,6 +29,7 @@ public:
     }
   }
 };
+} // namespace lib
 } // namespace kardeshev
 
 #endif // !GALAXY_H

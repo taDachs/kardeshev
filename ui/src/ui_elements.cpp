@@ -25,7 +25,8 @@ SDL_Rect TextLabelUI::draw()
 {
   Font font = UI::assets->getFont(Font::DEFAULT_FONT);
   TTF_Font* font_scaled;
-  switch (m_size) {
+  switch (m_size)
+  {
     case Font::Size::SMALL:
       font_scaled = font.small;
       break;
@@ -39,10 +40,12 @@ SDL_Rect TextLabelUI::draw()
 
   SDL_Surface* surface_message =
     TTF_RenderText_Blended(font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
-  if (surface_message == nullptr) {
+  if (surface_message == nullptr)
+  {
     throw TTFException("Falied to render text to surface");
   }
-  if (m_centered) {
+  if (m_centered)
+  {
     m_dst.x = m_dst.x + (m_dst.w / 2) - std::min(surface_message->w, m_dst.w) / 2;
     m_dst.y = m_dst.y + (m_dst.h / 2) - std::min(surface_message->h, m_dst.h) / 2;
   }
@@ -58,9 +61,10 @@ SDL_Rect TextLabelUI::draw()
 
 SDL_Rect TextBoxUI::draw()
 {
-  Font font                    = UI::assets->getFont(Font::DEFAULT_FONT);
+  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
   TTF_Font* font_scaled;
-  switch (m_size) {
+  switch (m_size)
+  {
     case Font::Size::SMALL:
       font_scaled = font.small;
       break;

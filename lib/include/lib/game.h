@@ -7,6 +7,7 @@
 #include <memory.h>
 
 namespace kardeshev {
+namespace lib {
 class Game
 {
 public:
@@ -26,5 +27,6 @@ public:
   void setGalaxy(const std::shared_ptr<Galaxy>& galaxy) { m_galaxy = galaxy; }
   Galaxy::Ptr getGalaxy() const { return m_galaxy; }
 };
+} // namespace lib
 } // namespace kardeshev
 #endif // !GAME_H

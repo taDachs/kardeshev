@@ -2,7 +2,9 @@
 #include <iostream>
 #include <map>
 
+
 using namespace kardeshev;
+using namespace lib;
 void Population::update()
 {
   if (m_basic_needs_satisfied && !m_dead)

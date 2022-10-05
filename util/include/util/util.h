@@ -2,11 +2,14 @@
 #define UTIL_H
 
 #include "glm/glm.hpp"
-#include "random.h"
+#include "random_generators.h"
 #include <cmath>
 #include <random>
 #include <string>
 #include <vector>
+
+namespace kardeshev {
+namespace util {
 
 std::vector<std::string> splitString(std::string s, const std::string& delimiter);
 std::string joinLines(const std::vector<std::string>& lines,
@@ -48,5 +51,7 @@ public:
   }
 };
 
+} // namespace util
+} // namespace kardeshev
 
 #endif // !UTIL_H

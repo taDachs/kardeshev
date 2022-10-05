@@ -4,6 +4,8 @@
 using verylargenumber = unsigned long long int;
 
 namespace kardeshev {
+namespace lib {
+
 class Duration
 {
 private:
@@ -17,6 +19,7 @@ public:
   verylargenumber getTicks() const { return m_ticks; }
   void add(verylargenumber a) { m_ticks += a; }
 };
+} // namespace lib
 } // namespace kardeshev
 
 #endif // !DURATION_H

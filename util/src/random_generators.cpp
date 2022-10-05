@@ -1,9 +1,12 @@
 #include "util/random_generators.h"
 
-void Splitmix::discard(unsigned long long n) {
+using namespace kardeshev;
+using namespace util;
 
-    for (unsigned long long i = 0; i < n; ++i)
-    {
-      operator()();
-    }
+void Splitmix::discard(unsigned long long n)
+{
+  for (unsigned long long i = 0; i < n; ++i)
+  {
+    operator()();
+  }
 }

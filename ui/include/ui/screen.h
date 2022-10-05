@@ -80,7 +80,7 @@ public:
 
 class LoadingScreen
   : public Screen
-  , public LoggerOutput
+  , public util::LoggerOutput
 {
 public:
   using Ptr = std::shared_ptr<LoadingScreen>;

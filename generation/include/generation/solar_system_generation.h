@@ -6,6 +6,7 @@
 #include <memory>
 
 namespace kardeshev {
+namespace generation {
 
 class NaiveSolarSystemGenerator : public SolarSystemGenerator
 {
@@ -29,9 +30,10 @@ public:
     , m_max_planets(max_planets)
   {
   }
-  std::shared_ptr<SolarSystem> generateSolarSystem() const override;
+  std::shared_ptr<lib::SolarSystem> generateSolarSystem() const override;
 };
 
+} // namespace generation
 } // namespace kardeshev
 
 #endif //! SOLAR_SYSTEM_GENERATION_H

@@ -3,8 +3,12 @@
 #ifndef AG_RANDOM_H
 #define AG_RANDOM_H
 
+
 #include <cstdint>
 #include <random>
+
+namespace kardeshev {
+namespace util {
 class Splitmix
 {
 public:
@@ -123,4 +127,6 @@ private:
   uint64_t m_state;
   uint64_t m_inc;
 };
+} // namespace util
+} // namespace kardeshev
 #endif // !AG_RANDOM_H

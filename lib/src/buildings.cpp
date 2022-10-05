@@ -1,6 +1,7 @@
 #include "lib/buildings.h"
 
 using namespace kardeshev;
+using namespace lib;
 
 void Farm::satisfyProductionNeeds(const ResourceList& supplies)
 {
