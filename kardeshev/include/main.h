@@ -7,6 +7,7 @@
 #include "generation/solar_system_generation.h"
 #include "generation/star_generation.h"
 #include "lib/game.h"
+#include "ui/window.h"
 
 const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
                                                   kardeshev::GAS_DWARF,
@@ -20,7 +21,7 @@ const std::vector<kardeshev::PlanetClass> PLANETS{kardeshev::DESERT,
                                                   kardeshev::PROTO,
                                                   kardeshev::TERRESTIAL};
 const std::vector<kardeshev::StarClass> STARS{kardeshev::O, kardeshev::B, kardeshev::G};
-
+kardeshev::GameWindow::Ptr main_window;
 kardeshev::PlanetGenerator::Ptr pg;
 kardeshev::StarGenerator::Ptr sg;
 kardeshev::SolarSystemGenerator::Ptr ssg;

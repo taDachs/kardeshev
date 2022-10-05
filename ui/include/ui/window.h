@@ -15,6 +15,8 @@ void setupScreens();
 
 class GameWindow
 {
+public:
+  using Ptr = std::shared_ptr<GameWindow>;
 private:
   SDL_Texture* m_scan_line_texture = nullptr;
   unsigned int m_scan_line_step = 0;
