@@ -1,17 +1,11 @@
 #ifndef SOLAR_SYSTEM_GENERATION_H
 #define SOLAR_SYSTEM_GENERATION_H
 
-#include "generation/planet_generation.h"
-#include "generation/star_generation.h"
+#include "lib/generators.h"
 #include "lib/solar_systems.h"
 #include <memory>
+
 namespace kardeshev {
-class SolarSystemGenerator
-{
-public:
-  using Ptr = std::shared_ptr<SolarSystemGenerator>;
-  virtual std::shared_ptr<SolarSystem> generateSolarSystem() const = 0;
-};
 
 class NaiveSolarSystemGenerator : public SolarSystemGenerator
 {

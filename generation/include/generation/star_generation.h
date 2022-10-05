@@ -1,15 +1,10 @@
 #ifndef STAR_GENERATION_H
 #define STAR_GENERATION_H
 
-#include "generation/name_generation.h"
+#include "lib/generators.h"
 #include "lib/stars.h"
 namespace kardeshev {
-class StarGenerator
-{
-public:
-  using Ptr                                          = std::shared_ptr<StarGenerator>;
-  virtual std::shared_ptr<Star> generateStar() const = 0;
-};
+
 
 class NaiveStarGenerator : public StarGenerator
 {

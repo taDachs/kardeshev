@@ -2,6 +2,7 @@
 #define NAME_GENERATION_H
 
 #include "util/util.h"
+#include "lib/generators.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,14 +28,6 @@ public:
   {
     return m_token_list.at(RandomDistribution::sample(0, m_token_list.size() - 1));
   }
-};
-
-class NameGenerator
-{
-public:
-  using Ptr = std::shared_ptr<NameGenerator>;
-
-  virtual std::string generateName() const = 0;
 };
 
 const std::vector<char> VOWELS     = {'a', 'e', 'i', 'o', 'u'};

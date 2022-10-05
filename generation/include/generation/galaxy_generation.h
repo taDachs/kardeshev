@@ -1,7 +1,7 @@
 #ifndef GALAXY_GENERATION_H
 #define GALAXY_GENERATION_H
 
-#include "generation/solar_system_generation.h"
+#include "lib/generators.h"
 #include "lib/galaxy.h"
 #include <memory>
 
