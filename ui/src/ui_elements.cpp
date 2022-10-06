@@ -1,22 +1,22 @@
 #include "ui/ui_elements.h"
-#include "SDL_render.h"
 #include "ui/assets.h"
 #include "ui/render.h"
 #include "ui/ui_state.h"
 #include "ui/window.h"
 
 using namespace kardeshev;
+using namespace ui;
 
 SDL_Rect TextureComponent::draw()
 {
   if (m_frame >= 0)
   {
     SDL_Rect src = m_tex.getFrame(m_frame);
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), &src, &m_dst);
+    UI::render->copyTexture(m_tex, &src, &m_dst);
   }
   else
   {
-    SDL_RenderCopy(UI::render, m_tex.getTexture(), nullptr, &m_dst);
+    UI::render->copyTexture(m_tex, nullptr, &m_dst);
   }
   return m_dst;
 }
@@ -24,77 +24,14 @@ SDL_Rect TextureComponent::draw()
 SDL_Rect TextLabelUI::draw()
 {
   Font font = UI::assets->getFont(Font::DEFAULT_FONT);
-  TTF_Font* font_scaled;
-  switch (m_size)
-  {
-    case Font::Size::SMALL:
-      font_scaled = font.small;
-      break;
-    case Font::Size::MEDIUM:
-      font_scaled = font.medium;
-      break;
-    case Font::Size::LARGE:
-      font_scaled = font.large;
-      break;
-  }
-
-  SDL_Surface* surface_message =
-    TTF_RenderText_Blended(font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b});
-  if (surface_message == nullptr)
-  {
-    throw TTFException("Falied to render text to surface");
-  }
-  if (m_centered)
-  {
-    m_dst.x = m_dst.x + (m_dst.w / 2) - std::min(surface_message->w, m_dst.w) / 2;
-    m_dst.y = m_dst.y + (m_dst.h / 2) - std::min(surface_message->h, m_dst.h) / 2;
-  }
-  m_dst.w              = std::min(surface_message->w, m_dst.w);
-  m_dst.h              = std::min(surface_message->h, m_dst.h);
-  SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
-  SDL_RenderCopy(UI::render, message, nullptr, &m_dst);
-  SDL_FreeSurface(surface_message);
-
-  SDL_DestroyTexture(message);
+  UI::render->drawText(m_text, font, m_size, m_dst, m_centered, false, m_color);
   return m_dst;
 }
 
 SDL_Rect TextBoxUI::draw()
 {
   Font font = UI::assets->getFont(Font::DEFAULT_FONT);
-  TTF_Font* font_scaled;
-  switch (m_size)
-  {
-    case Font::Size::SMALL:
-      font_scaled = font.small;
-      break;
-    case Font::Size::MEDIUM:
-      font_scaled = font.medium;
-      break;
-    case Font::Size::LARGE:
-      font_scaled = font.large;
-      break;
-  }
-
-  SDL_Surface* surface_message = TTF_RenderText_Blended_Wrapped(
-    font_scaled, m_text.c_str(), {m_color.r, m_color.g, m_color.b}, m_dst.w);
-  if (surface_message == nullptr)
-  {
-    throw TTFException("failed drawing text");
-  }
-  m_dst.h              = std::min(surface_message->h, m_dst.h);
-  SDL_Texture* message = SDL_CreateTextureFromSurface(UI::render, surface_message);
-  if (message == nullptr)
-  {
-    throw SDLException("failed creating texture from text message");
-  }
-  if (SDL_RenderCopy(UI::render, message, nullptr, &m_dst))
-  {
-    throw SDLException("Failed copying text message to screen");
-  }
-
-  SDL_FreeSurface(surface_message);
-  SDL_DestroyTexture(message);
+  UI::render->drawText(m_text, font, m_size, m_dst, false, true, m_color);
   return m_dst;
 }
 
@@ -105,8 +42,9 @@ SDL_Rect OrbitRingUI::draw()
   int center_x = m_dst.x + m_dst.w / 2;
   int center_y = m_dst.y + m_dst.h / 2;
   int radius   = m_dst.w / 2;
-  drawCircle(center_x, center_y, radius - 1, GRAY);
-  drawCircle(center_x, center_y, radius, GRAY);
-  drawCircle(center_x, center_y, radius + 1, GRAY);
+  UI::render->setColor(GRAY);
+  UI::render->drawCircle(center_x, center_y, radius - 1);
+  UI::render->drawCircle(center_x, center_y, radius);
+  UI::render->drawCircle(center_x, center_y, radius + 1);
   return m_dst;
 }

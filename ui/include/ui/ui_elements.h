@@ -9,6 +9,8 @@
 #include "ui/ui_state.h"
 
 namespace kardeshev {
+namespace ui {
+
 
 class Component : public std::enable_shared_from_this<Component>
 {
@@ -147,6 +149,7 @@ public:
   void setSelected(bool selected) { m_selected = selected; }
 };
 
+} // namespace ui
 } // namespace kardeshev
 
 #endif // !UI_ELEMENTS_H

@@ -2,6 +2,7 @@
 #include "ui/view.h"
 
 using namespace kardeshev;
+using namespace ui;
 
 MainScreen::MainScreen()
 {

@@ -2,14 +2,13 @@
 #include "generation/name_generation.h"
 #include "ui/ui_state.h"
 #include "ui/window.h"
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <fstream>
 #include <iostream>
 #include <regex>
 #include <stdexcept>
 
 using namespace kardeshev;
+using namespace ui;
 const std::string Font::DEFAULT_FONT = "default";
 
 AssetHandler::~AssetHandler()
@@ -31,24 +30,15 @@ void AssetHandler::addFont(const std::string& name,
                            const int large_size)
 {
   UI::logger->logInfo("Loading Font " + name);
-  TTF_Font* small  = TTF_OpenFont(path.c_str(), small_size);
-  TTF_Font* medium = TTF_OpenFont(path.c_str(), medium_size);
-  TTF_Font* large  = TTF_OpenFont(path.c_str(), large_size);
-  Font f(small, medium, large);
+  Font f = UI::render->loadFont(path, small_size, medium_size, large_size);
   m_fonts.insert({name, f});
 }
 
 void AssetHandler::addTexture(const std::string& name, const std::string& path)
 {
   UI::logger->logInfo("Loading Texture " + name);
-  SDL_Surface* loaded_surface = IMG_Load(path.c_str());
-  if (loaded_surface == nullptr)
-  {
-    throw std::invalid_argument(path);
-  }
-  SDL_Texture* loaded_tex = SDL_CreateTextureFromSurface(UI::render, loaded_surface);
-  SDL_FreeSurface(loaded_surface);
-  Texture tex(loaded_tex);
+
+  Texture tex = UI::render->loadTexture(path);
   m_textures.insert({name, tex});
 }
 
@@ -56,14 +46,8 @@ void AssetHandler::addTexture(
   const std::string& name, const std::string& path, int w, int h, int frames)
 {
   UI::logger->logInfo("Loading Texture " + name);
-  SDL_Surface* loaded_surface = IMG_Load(path.c_str());
-  if (loaded_surface == nullptr)
-  {
-    throw std::invalid_argument(path);
-  }
-  SDL_Texture* loaded_tex = SDL_CreateTextureFromSurface(UI::render, loaded_surface);
-  SDL_FreeSurface(loaded_surface);
-  Texture tex(loaded_tex, w, h, frames);
+  Texture temp = UI::render->loadTexture(path);
+  Texture tex(temp.getTexture(), w, h, frames);
   m_textures.insert({name, tex});
 }
 

@@ -1,9 +1,11 @@
 #include "ui/entities.h"
+#include "ui/render.h"
 #include "ui/window.h"
 #include "util/util.h"
 #include <sstream>
 
 using namespace kardeshev;
+using namespace ui;
 
 const std::string SystemEntity::SYSTEM_SPRITE            = "system_simple";
 const int SystemEntity::SYSTEM_SPRITE_SELECTED_FRAME     = 2;
@@ -43,11 +45,9 @@ bool SystemEntity::handleEvent(SDL_Event* e)
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
 
-  if (UI::current_viewport != nullptr)
-  {
-    mouse.x -= UI::current_viewport->x;
-    mouse.y -= UI::current_viewport->y;
-  }
+  SDL_Rect viewport = UI::getRenderSize();
+  mouse.x -= viewport.x;
+  mouse.y -= viewport.y;
   // std::cout << "mouse x: " << mouse.x << ", y: " << mouse.y << std::endl;
   bool selected = m_system_not_selected_icon->isUnderMouse(mouse.x, mouse.y);
 
@@ -136,8 +136,9 @@ bool PlanetEntity::handleEvent(SDL_Event* e)
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
 
-  mouse.x -= UI::current_viewport->x;
-  mouse.y -= UI::current_viewport->y;
+  SDL_Rect viewport = UI::getRenderSize();
+  mouse.x -= viewport.x;
+  mouse.y -= viewport.y;
   bool selected = m_not_selected_icon->isUnderMouse(mouse.x, mouse.y);
 
   if (e->type == SDL_MOUSEMOTION)
@@ -199,12 +200,10 @@ bool StarEntity::handleEvent(SDL_Event* e)
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
 
-  if (UI::current_viewport != nullptr)
-  {
-    mouse.x -= UI::current_viewport->x;
-    mouse.y -= UI::current_viewport->y;
-  }
-  // std::cout << "mouse x: " << mouse.x << ", y: " << mouse.y << std::endl;
+  SDL_Rect viewport = UI::getRenderSize();
+  mouse.x -= viewport.x;
+  mouse.y -= viewport.y;
+
   bool selected = m_selected_icon->isUnderMouse(mouse.x, mouse.y);
 
   if (e->type == SDL_MOUSEMOTION)
@@ -234,12 +233,10 @@ bool ButtonEntity::handleEvent(SDL_Event* e)
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
 
-  if (UI::current_viewport != nullptr)
-  {
-    mouse.x -= UI::current_viewport->x;
-    mouse.y -= UI::current_viewport->y;
-  }
-  // std::cout << "mouse x: " << mouse.x << ", y: " << mouse.y << std::endl;
+  SDL_Rect size = UI::getRenderSize();
+  mouse.x -= size.x;
+  mouse.y -= size.y;
+
   bool selected = m_button_not_selected->isUnderMouse(mouse.x, mouse.y);
 
   if (e->type == SDL_MOUSEMOTION)
@@ -297,6 +294,7 @@ void PlanetInfoEntity::update()
     info_dst.y = name_dst.h;
     info_dst.w = size.w / 2;
     info_dst.h = size.h - name_dst.h;
+    m_info_box->setFontSize(Font::Size::SMALL);
     m_info_box->setDst(info_dst);
     m_info_box->setAlive(true);
 
@@ -377,12 +375,10 @@ bool CheckBoxOptionEntity::handleEvent(SDL_Event* e)
 {
   SDL_Point mouse;
   SDL_GetMouseState(&mouse.x, &mouse.y);
+  SDL_Rect size = UI::getRenderSize();
 
-  if (UI::current_viewport != nullptr)
-  {
-    mouse.x -= UI::current_viewport->x;
-    mouse.y -= UI::current_viewport->y;
-  }
+  mouse.x -= size.x;
+  mouse.y -= size.y;
 
   bool selected = m_checkbox_not_selected_off->isUnderMouse(mouse.x, mouse.y);
 

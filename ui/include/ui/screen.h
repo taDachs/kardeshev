@@ -8,6 +8,8 @@
 #include <SDL_events.h>
 
 namespace kardeshev {
+namespace ui {
+
 
 class Screen
 {
@@ -97,6 +99,7 @@ public:
   void logError(const std::string& s) override { m_loading_screen_view->setText(s); }
   void logDebug(const std::string& s) override {}
 };
+} // namespace ui
 } // namespace kardeshev
 
 #endif // !SCREEN_H
