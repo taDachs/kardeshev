@@ -82,7 +82,6 @@ public:
 
 class LoadingScreen
   : public Screen
-  , public util::LoggerOutput
 {
 public:
   using Ptr = std::shared_ptr<LoadingScreen>;
@@ -95,9 +94,6 @@ public:
   void draw() final;
   void resize() final{};
   bool handleEvent(SDL_Event* e) final { return false; };
-  void logInfo(const std::string& s) override { m_loading_screen_view->setText(s); }
-  void logError(const std::string& s) override { m_loading_screen_view->setText(s); }
-  void logDebug(const std::string& s) override {}
 };
 } // namespace ui
 } // namespace kardeshev

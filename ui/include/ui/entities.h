@@ -315,7 +315,6 @@ public:
     m_components.push_back(m_title_label);
   }
   void update() override;
-  void setText(const std::string& s) { m_loading_label->setText(s); }
   bool handleEvent(SDL_Event* e) override { return false; }
 };
 

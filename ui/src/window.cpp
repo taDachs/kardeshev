@@ -12,9 +12,7 @@ using namespace ui;
 void kardeshev::ui::setupScreens()
 {
   UI::screen_list.main_screen       = std::make_shared<MainScreen>();
-  LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
-  util::Logger::addLogger(std::static_pointer_cast<util::LoggerOutput>(loading_screen));
-  UI::screen_list.loading_screen   = loading_screen;
+  UI::screen_list.loading_screen   = std::make_shared<LoadingScreen>();
   UI::screen_list.settings_screen  = std::make_shared<SettingsScreen>();
   UI::screen_list.main_menu_screen = std::make_shared<MainMenuScreen>();
   UI::state->screen_stack.push(UI::screen_list.loading_screen);

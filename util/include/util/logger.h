@@ -26,22 +26,37 @@ class Logger
 {
 private:
   static std::vector<LoggerOutput::Ptr> m_logger;
+  static std::string m_last_info;
+  static std::string m_last_error;
+  static std::string m_last_debug;
+  static std::string m_last;
   Logger() = default;
 
 public:
   static void logInfo(const std::string& s)
   {
+    m_last_info = s;
+    m_last = s;
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logInfo(s); });
   }
   static void logError(const std::string& s)
   {
+    m_last_error = s;
+    m_last = s;
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logError(s); });
   }
   static void logDebug(const std::string& s)
   {
+    m_last_debug = s;
+    m_last = s;
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logDebug(s); });
   }
   static void addLogger(const LoggerOutput::Ptr& l) { m_logger.push_back(l); }
+
+  static std::string getLastInfo() { return m_last_info; }
+  static std::string getLastError() { return m_last_error; }
+  static std::string getLastDebug() { return m_last_debug; }
+  static std::string getLast() { return m_last; }
 };
 
 class StdOutLogger : public LoggerOutput

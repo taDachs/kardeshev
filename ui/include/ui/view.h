@@ -173,15 +173,6 @@ private:
   void updateView() override;
   LoadingTextEntity::Ptr m_entity;
   std::string m_text;
-
-public:
-  void setText(const std::string& s)
-  {
-    if (m_entity != nullptr)
-    {
-      m_entity->setText(s);
-    }
-  }
 };
 
 class GameSettingsView : public View

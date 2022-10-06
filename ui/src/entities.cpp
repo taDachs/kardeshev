@@ -1,6 +1,7 @@
 #include "ui/entities.h"
 #include "ui/render.h"
 #include "ui/window.h"
+#include "util/logger.h"
 #include "util/util.h"
 #include <sstream>
 
@@ -327,14 +328,16 @@ void LoadingTextEntity::update()
   loading_label_dst.w = 0.3 * size.w;
   loading_label_dst.h = 0.05 * size.h;
   m_loading_label->setDst(loading_label_dst);
+  m_loading_label->setText(util::Logger::getLastInfo());
   m_loading_label->setAlive(true);
 
   SDL_Rect title_label_dst;
-  title_label_dst.x = 0.4 * size.w;
-  title_label_dst.y = 0.4 * size.h;
+  title_label_dst.x = 0.2 * size.w;
+  title_label_dst.y = 0.2 * size.h;
   title_label_dst.w = 0.6 * size.w;
   title_label_dst.h = 0.6 * size.h;
   m_title_label->setDst(title_label_dst);
+  m_title_label->setCentered(true);
   m_title_label->setAlive(true);
 }
 
