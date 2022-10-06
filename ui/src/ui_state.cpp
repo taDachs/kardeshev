@@ -1,4 +1,5 @@
 #include "ui/ui_state.h"
+#include "ui/screen.h"
 
 using namespace kardeshev;
 using namespace ui;
@@ -22,3 +23,16 @@ SDL_Rect UI::getRenderSize()
   }
   return *UI::render->getViewport();
 }
+
+void ScreenStack::push(const Screen::Ptr& screen) {
+  m_stack.push(screen);
+  screen->resize();
+}
+
+Screen::Ptr ScreenStack::pop()
+{
+    Screen::Ptr top = m_stack.top();
+    m_stack.pop();
+    m_stack.top()->resize();
+    return top;
+  }

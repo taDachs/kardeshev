@@ -49,14 +49,14 @@ int loadAssets(void* data)
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
   kardeshev::ui::UI::logger->logInfo("Finished initialization");
-  kardeshev::ui::UI::state->current_screen = kardeshev::ui::UI::screen_list.main_menu_screen;
+  kardeshev::ui::UI::state->screen_stack.push(kardeshev::ui::UI::screen_list.main_menu_screen);
 
   return 0;
 }
 
 int gameThread(void* data)
 {
-  while (kardeshev::ui::UI::state->current_screen == kardeshev::ui::UI::screen_list.loading_screen)
+  while (kardeshev::ui::UI::state->screen_stack.top() == kardeshev::ui::UI::screen_list.loading_screen)
   {
     // poll until game is done initializing
     // TODO: put the thread to sleep and wake it up you piece of shit, this wastes cpu cycles

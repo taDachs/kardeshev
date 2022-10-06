@@ -10,11 +10,23 @@
 #include <SDL_image.h>
 #include <SDL_render.h>
 #include <memory>
+#include <stack>
 
 namespace kardeshev {
 namespace ui {
 
 class Screen;
+
+class ScreenStack {
+private:
+  std::stack<std::shared_ptr<Screen>> m_stack;
+public:
+  void push(const std::shared_ptr<Screen>& screen);
+  std::shared_ptr<Screen> pop();
+  std::shared_ptr<Screen> top() const {
+    return m_stack.top();
+  }
+};
 
 // TODO: clean this all this up
 struct UIState
@@ -23,7 +35,7 @@ struct UIState
 
   std::shared_ptr<lib::Planet> focused_planet      = nullptr;
   std::shared_ptr<lib::SolarSystem> focused_system = nullptr;
-  std::shared_ptr<Screen> current_screen           = nullptr;
+  ScreenStack screen_stack;
   bool paused                                      = true;
 };
 

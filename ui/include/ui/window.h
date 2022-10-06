@@ -31,8 +31,6 @@ private:
   Color m_color_filter_color         = DYSTOPIC_YELLOW;
   unsigned char m_color_filter_alpha = 32;
 
-  Screen::Ptr m_last_screen = nullptr;
-
   void generateScanLineTex();
   void generateColorFilterTex();
 
