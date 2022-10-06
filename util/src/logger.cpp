@@ -3,6 +3,10 @@
 
 using namespace kardeshev;
 using namespace util;
+
+std::vector<LoggerOutput::Ptr> Logger::m_logger;
+
+
 std::string StdOutLogger::getStamp()
 {
   std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());

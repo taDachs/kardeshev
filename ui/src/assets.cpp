@@ -29,14 +29,14 @@ void AssetHandler::addFont(const std::string& name,
                            const int medium_size,
                            const int large_size)
 {
-  UI::logger->logInfo("Loading Font " + name);
+  util::Logger::logInfo("Loading Font " + name);
   Font f = UI::render->loadFont(path, small_size, medium_size, large_size);
   m_fonts.insert({name, f});
 }
 
 void AssetHandler::addTexture(const std::string& name, const std::string& path)
 {
-  UI::logger->logInfo("Loading Texture " + name);
+  util::Logger::logInfo("Loading Texture " + name);
 
   Texture tex = UI::render->loadTexture(path);
   m_textures.insert({name, tex});
@@ -45,7 +45,7 @@ void AssetHandler::addTexture(const std::string& name, const std::string& path)
 void AssetHandler::addTexture(
   const std::string& name, const std::string& path, int w, int h, int frames)
 {
-  UI::logger->logInfo("Loading Texture " + name);
+  util::Logger::logInfo("Loading Texture " + name);
   Texture temp = UI::render->loadTexture(path);
   Texture tex(temp.getTexture(), w, h, frames);
   m_textures.insert({name, tex});
@@ -53,7 +53,7 @@ void AssetHandler::addTexture(
 
 void AssetHandler::addTokenList(const std::string& name, const std::string& path)
 {
-  UI::logger->logInfo("Loading Tokenlist " + name);
+  util::Logger::logInfo("Loading Tokenlist " + name);
   std::ifstream word_file(path);
   std::string line;
   auto token_list = std::make_shared<generation::TokenList>();

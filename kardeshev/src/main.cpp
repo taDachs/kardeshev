@@ -20,7 +20,7 @@
 
 int loadAssets(void* data)
 {
-  kardeshev::ui::UI::logger->logInfo("Loading assets");
+  kardeshev::util::Logger::logInfo("Loading assets");
   kardeshev::ui::UI::assets->addTokenList("english", "assets/words.txt");
   kardeshev::ui::UI::assets->addTexture("planet_portrait", "assets/test_planet.png", 128, 128, 3);
   kardeshev::ui::UI::assets->addTexture( kardeshev::ui::PlanetEntity::PLANET_SPRITE, "assets/planet_simple.png", 128, 128, 3);
@@ -31,10 +31,10 @@ int loadAssets(void* data)
   kardeshev::ui::UI::assets->addTexture("galaxy_button", "assets/galaxy_button.png", 128, 64, 2);
   kardeshev::ui::UI::assets->addTexture( kardeshev::ui::CheckBoxOptionEntity::CHECKBOX_SPRITE, "assets/checkbox.png", 64, 64, 4);
   kardeshev::ui::UI::assets->addTexture("settings_icon", "assets/settings_icon.png", 128, 64, 2);
-  kardeshev::ui::UI::logger->logInfo("Setting up generators");
+  kardeshev::util::Logger::logInfo("Setting up generators");
   setupGenerators();
 
-  kardeshev::ui::UI::logger->logInfo("Generating galaxy");
+  kardeshev::util::Logger::logInfo("Generating galaxy");
   std::shared_ptr<kardeshev::lib::Galaxy> g = gg->generateGalaxy();
   kardeshev::ui::UI::game->setGalaxy(g);
 
@@ -48,7 +48,7 @@ int loadAssets(void* data)
   ss->getPlanets()[0]->addPop(pop);
   ss->getPlanets()[0]->addBuilding(potato_farm);
 
-  kardeshev::ui::UI::logger->logInfo("Finished initialization");
+  kardeshev::util::Logger::logInfo("Finished initialization");
   kardeshev::ui::UI::state->screen_stack.push(kardeshev::ui::UI::screen_list.main_menu_screen);
 
   return 0;
@@ -83,7 +83,7 @@ int gameThread(void* data)
 int displayThread(void* data)
 {
   main_window->display();
-  kardeshev::ui::UI::logger->logInfo("killing");
+  kardeshev::util::Logger::logInfo("killing");
   main_window->kill();
   return 0;
 }
@@ -105,10 +105,9 @@ int main()
   kardeshev::ui::UI::window_size.h = 1080;
   kardeshev::ui::UI::game          = std::make_shared<kardeshev::lib::Game>();
 
-  kardeshev::ui::UI::logger = std::make_shared<kardeshev::util::Logger>();
-  kardeshev::ui::UI::logger->addLogger(std::make_shared<kardeshev::util::StdOutLogger>());
+  kardeshev::util::Logger::addLogger(std::make_shared<kardeshev::util::StdOutLogger>());
 
-  kardeshev::ui::UI::logger->logInfo("Init SDL");
+  kardeshev::util::Logger::logInfo("Init SDL");
   kardeshev::ui::initSDL();
   kardeshev::ui::setupScreens();
   kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
@@ -118,7 +117,7 @@ int main()
   kardeshev::ui::UI::settings.ui_settings.toggle_options.insert(
     {"Color Filter", &kardeshev::ui::UI::settings.ui_settings.color_filter});
 
-  kardeshev::ui::UI::logger->logInfo("Creating window");
+  kardeshev::util::Logger::logInfo("Creating window");
   main_window = std::make_shared<kardeshev::ui::GameWindow>();
 
   SDL_Thread* asset_loader_thread_id = SDL_CreateThread(loadAssets, "asset_loading", nullptr);

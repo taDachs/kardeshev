@@ -67,7 +67,6 @@ struct UI
   static AssetHandler::Ptr assets;
   static SDL_Rect window_size;
   static lib::Game::Ptr game;
-  static util::Logger::Ptr logger;
   static bool running;
   static Settings settings;
   static ScreenList screen_list;

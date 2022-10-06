@@ -2,6 +2,7 @@
 #include "SDL_image.h"
 #include "ui/render.h"
 #include "ui/view.h"
+#include "util/logger.h"
 #include <SDL_blendmode.h>
 #include <SDL_timer.h>
 
@@ -12,7 +13,7 @@ void kardeshev::ui::setupScreens()
 {
   UI::screen_list.main_screen       = std::make_shared<MainScreen>();
   LoadingScreen::Ptr loading_screen = std::make_shared<LoadingScreen>();
-  UI::logger->addLogger(std::static_pointer_cast<util::LoggerOutput>(loading_screen));
+  util::Logger::addLogger(std::static_pointer_cast<util::LoggerOutput>(loading_screen));
   UI::screen_list.loading_screen   = loading_screen;
   UI::screen_list.settings_screen  = std::make_shared<SettingsScreen>();
   UI::screen_list.main_menu_screen = std::make_shared<MainMenuScreen>();
@@ -89,7 +90,7 @@ void GameWindow::handleEvents()
       {
         if (e.window.event == SDL_WINDOWEVENT_RESIZED)
         {
-          UI::logger->logDebug("Resizing window...");
+          util::Logger::logDebug("Resizing window...");
           UI::window_size.x = UI::window_size.y = 0;
           UI::window_size.w                     = e.window.data1;
           UI::window_size.h                     = e.window.data2;

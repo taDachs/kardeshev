@@ -24,26 +24,24 @@ public:
 
 class Logger
 {
-public:
-  using Ptr = std::shared_ptr<Logger>;
-
 private:
-  std::vector<LoggerOutput::Ptr> m_logger;
+  static std::vector<LoggerOutput::Ptr> m_logger;
+  Logger() = default;
 
 public:
-  void logInfo(const std::string& s)
+  static void logInfo(const std::string& s)
   {
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logInfo(s); });
   }
-  void logError(const std::string& s)
+  static void logError(const std::string& s)
   {
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logError(s); });
   }
-  void logDebug(const std::string& s)
+  static void logDebug(const std::string& s)
   {
     std::for_each(m_logger.begin(), m_logger.end(), [&](auto& log) { log->logDebug(s); });
   }
-  void addLogger(LoggerOutput::Ptr l) { m_logger.push_back(l); }
+  static void addLogger(const LoggerOutput::Ptr& l) { m_logger.push_back(l); }
 };
 
 class StdOutLogger : public LoggerOutput

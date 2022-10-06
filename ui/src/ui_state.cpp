@@ -9,7 +9,6 @@ Render::Ptr UI::render                         = nullptr;
 SDL_Window* UI::window                         = nullptr;
 AssetHandler::Ptr UI::assets                   = std::make_shared<AssetHandler>();
 lib::Game::Ptr UI::game                        = nullptr;
-util::Logger::Ptr UI::logger                   = nullptr;
 SDL_Rect UI::window_size;
 bool UI::running = false;
 Settings UI::settings;
