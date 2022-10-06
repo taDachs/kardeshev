@@ -125,20 +125,7 @@ void Render::drawText(const std::string& text,
                       const bool wrapped,
                       const Color& color)
 {
-  TTF_Font* font_scaled;
-  switch (size)
-  {
-    case Font::Size::SMALL:
-      font_scaled = font.small;
-      break;
-    case Font::Size::MEDIUM:
-      font_scaled = font.medium;
-      break;
-    case Font::Size::LARGE:
-      font_scaled = font.large;
-      break;
-  }
-
+  TTF_Font* font_scaled = font.getFont(size);
 
   SDL_Surface* surface_message;
 
@@ -239,9 +226,22 @@ Texture Render::loadTexture(const std::string& path)
   return {loaded_tex};
 }
 
-void Render::drawRect(const SDL_Rect& rect)
+void Render::drawRect(const SDL_Rect& rect, const bool filled)
 {
-  SDL_RenderDrawRect(m_render, &rect);
+  if (filled)
+  {
+    if (SDL_RenderFillRect(m_render, &rect))
+    {
+      throw SDLException("Drawing rect failed");
+    }
+  }
+  else
+  {
+    if (SDL_RenderDrawRect(m_render, &rect))
+    {
+      throw SDLException("Drawing rect failed");
+    }
+  }
 }
 
 Font Render::loadFont(const std::string& path,
@@ -254,4 +254,35 @@ Font Render::loadFont(const std::string& path,
   TTF_Font* large  = TTF_OpenFont(path.c_str(), large_size);
   Font f(small, medium, large);
   return f;
+}
+
+SDL_Rect
+Render::getExpectedTextSize(const Font& font, const Font::Size size, const std::string& text)
+{
+  SDL_Rect dst;
+  dst.x = 0;
+  dst.y = 0;
+  TTF_SizeText(font.getFont(size), text.c_str(), &dst.w, &dst.h);
+  return dst;
+}
+
+SDL_Rect
+Render::getExpectedWrappedTextSize(const Font& font, const Font::Size size, const std::string& text, int w)
+{
+  SDL_Rect dst;
+  dst.x                 = 0;
+  dst.y                 = 0;
+  TTF_Font* font_scaled = font.getFont(size);
+
+  SDL_Surface* surface_message;
+
+  surface_message =
+    TTF_RenderText_Blended_Wrapped(font_scaled, text.c_str(), {BLACK.r, BLACK.g, BLACK.b}, w);
+  if (surface_message == nullptr) {
+    throw TTFException("Failed rendering wrapped text for size estimation");
+  }
+  dst.w = surface_message->w;
+  dst.h = surface_message->h;
+  SDL_FreeSurface(surface_message);
+  return dst;
 }

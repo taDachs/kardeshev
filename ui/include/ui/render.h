@@ -32,6 +32,7 @@ const Color RED(0xFF, 0, 0);
 const Color BLACK(0, 0, 0);
 const Color DYSTOPIC_GREEN(16, 69, 17);
 const Color DYSTOPIC_YELLOW(204, 163, 27);
+const Color DARK_BLUE(14, 11, 97);
 const Color TRANSPARENT(0, 0, 0, 0);
 
 class Texture
@@ -108,6 +109,23 @@ struct Font
     , large(large_)
   {
   }
+  TTF_Font* getFont(Font::Size size) const
+  {
+    TTF_Font* f;
+    switch (size)
+    {
+      case Font::Size::SMALL:
+        f = small;
+        break;
+      case Font::Size::MEDIUM:
+        f = medium;
+        break;
+      case Font::Size::LARGE:
+        f = large;
+        break;
+    }
+    return f;
+  }
   void closeFont()
   {
     TTF_CloseFont(small);
@@ -165,7 +183,9 @@ public:
                 const int small_size,
                 const int medium_size,
                 const int large_size);
-  void drawRect(const SDL_Rect& rect);
+  void drawRect(const SDL_Rect& rect, const bool filled = false);
+  SDL_Rect getExpectedTextSize(const Font& font, const Font::Size size, const std::string& text);
+  SDL_Rect getExpectedWrappedTextSize(const Font& font, const Font::Size size, const std::string& text, int w);
 };
 
 } // namespace ui

@@ -62,6 +62,10 @@ private:
   Color m_color     = WHITE;
   Font::Size m_size = Font::Size::MEDIUM;
   bool m_centered   = false;
+  bool m_boxed = false;
+  Color m_box_color = BLACK;
+  bool m_box_border = false;
+  Color m_box_border_color = WHITE;
 
 public:
   TextLabelUI() = default;
@@ -73,6 +77,10 @@ public:
 
   void setText(const std::string& text) { m_text = text; }
   void setCentered(const bool centered) { m_centered = centered; }
+  void setBoxed(const bool boxed) { m_boxed = boxed; }
+  void setBoxColor(const Color& color) { m_box_color = color; }
+  void setBoxBorderColor(const Color& border_color) { m_box_border_color = border_color; }
+  void setBoxBorder(const bool border) { m_box_border = border; }
 
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
@@ -89,6 +97,11 @@ private:
   std::string m_text;
   Color m_color     = WHITE;
   Font::Size m_size = Font::Size::SMALL;
+  bool m_boxed = false;
+  Color m_box_color = BLACK;
+  bool m_box_filled = false;
+  bool m_box_border = false;
+  Color m_box_border_color = WHITE;
 
 public:
   TextBoxUI() = default;
@@ -100,6 +113,10 @@ public:
 
   void setText(const std::string& text) { m_text = text; }
 
+  void setBoxed(const bool boxed) { m_boxed = boxed; }
+  void setBoxColor(const Color& color) { m_box_color = color; }
+  void setBoxBorderColor(const Color& border_color) { m_box_border_color = border_color; }
+  void setBoxBorder(const bool border) { m_box_border = border; }
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;

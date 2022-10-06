@@ -26,16 +26,28 @@ void SystemEntity::update()
   m_system_not_selected_icon->setDepth(250);
 
   SDL_Rect label_dst;
-  label_dst.x = m_position.x;
+  label_dst.x = m_position.x + icon_dst.w;
   label_dst.y = m_position.y - 20;
-  label_dst.w = 100;
-  label_dst.h = 20;
-  m_system_name_label->setDst(label_dst);
-  label_dst.y -= 20;
+  label_dst.w = 150;
+  label_dst.h = 30;
   m_number_planets_label->setDst(label_dst);
+  label_dst.y -= 30;
+  m_system_name_label->setDst(label_dst);
 
   m_system_name_label->setAlive(m_selected);
   m_number_planets_label->setAlive(m_selected);
+
+  m_system_name_label->setBoxed(true);
+  m_system_name_label->setBoxBorder(true);
+  m_system_name_label->setBoxColor(WHITE);
+  m_system_name_label->setBoxBorderColor(WHITE);
+  m_system_name_label->setColor(BLACK);
+
+  m_number_planets_label->setBoxed(true);
+  m_number_planets_label->setBoxBorder(true);
+  m_number_planets_label->setBoxColor(BLACK);
+  m_number_planets_label->setBoxBorderColor(WHITE);
+  m_number_planets_label->setColor(WHITE);
 
   m_system_selected_icon->setAlive(m_selected);
   m_system_not_selected_icon->setAlive(!m_selected);
@@ -49,7 +61,6 @@ bool SystemEntity::handleEvent(SDL_Event* e)
   SDL_Rect viewport = UI::getRenderSize();
   mouse.x -= viewport.x;
   mouse.y -= viewport.y;
-  // std::cout << "mouse x: " << mouse.x << ", y: " << mouse.y << std::endl;
   bool selected = m_system_not_selected_icon->isUnderMouse(mouse.x, mouse.y);
 
   if (e->type == SDL_MOUSEMOTION)
@@ -112,17 +123,23 @@ void PlanetEntity::update()
   SDL_Rect description_dst;
   description_dst.x = icon_dst.x + m_scale * 20 + 10;
   description_dst.y = icon_dst.y - 50;
-  description_dst.w = 300;
-  description_dst.h = 300;
+  description_dst.w = 400;
+  description_dst.h = 400;
   m_description_box->setDst(description_dst);
+  m_description_box->setBoxed(true);
+  // m_description_box->setBoxColor(WHITE);
   m_description_box->setAlive(selected);
 
   SDL_Rect label_dst;
   label_dst.x = icon_dst.x + m_scale * 20 + 10;
-  label_dst.y = icon_dst.y - 70;
-  label_dst.w = 200;
-  label_dst.h = 20;
+  label_dst.y = icon_dst.y - 80;
+  label_dst.w = 400;
+  label_dst.h = 30;
   m_planet_name_label->setDst(label_dst);
+  m_planet_name_label->setBoxed(true);
+  m_planet_name_label->setBoxColor(WHITE);
+  m_planet_name_label->setBoxBorderColor(WHITE);
+  m_planet_name_label->setColor(BLACK);
   m_planet_name_label->setAlive(selected);
 
   SDL_Rect orbit_ring_dst;
@@ -188,11 +205,17 @@ void StarEntity::update()
   m_not_selected_icon->setAlive(!m_selected);
 
   SDL_Rect label_dst;
-  label_dst.x = icon_dst.x;
+  label_dst.x = icon_dst.x + size;
   label_dst.y = icon_dst.y - 20;
   label_dst.w = 200;
-  label_dst.h = 20;
+  label_dst.h = 30;
   m_star_name_label->setDst(label_dst);
+  // m_star_name_label->setBoxColor(WHITE);
+  m_star_name_label->setBoxed(true);
+  m_star_name_label->setBoxBorder(true);
+  m_star_name_label->setBoxColor(WHITE);
+  m_star_name_label->setBoxBorderColor(WHITE);
+  m_star_name_label->setColor(BLACK);
   m_star_name_label->setAlive(m_selected);
 }
 
