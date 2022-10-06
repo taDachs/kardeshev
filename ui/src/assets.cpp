@@ -60,7 +60,9 @@ void AssetHandler::addTokenList(const std::string& name, const std::string& path
   while (getline(word_file, line))
   {
     line = regex_replace(line, std::regex("^[ |\t|\n|\r|\v|\f]*|[ |\t|\n|\r|\v|\f]*$"), "");
-    token_list->addWord(line);
+    for (const auto& t : util::splitString(line, ";")) {
+      token_list->addToken(t);
+    }
   }
   m_token_lists.insert({name, token_list});
 }

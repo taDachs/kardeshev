@@ -16,17 +16,25 @@ public:
 
 private:
   std::vector<std::string> m_token_list;
+  bool m_unqiue = false;
 
 public:
-  void addWord(const std::string& w, int token_length = 3)
-  {
-    for (int i = 0; i < w.length(); i += token_length)
-    {
-      m_token_list.push_back(w.substr(i, i + token_length));
-    }
-  }
+  void addToken(const std::string& s) { m_token_list.push_back(s); }
+  // void addWord(const std::string& w, int token_length = 3)
+  // {
+  //   for (int i = 0; i < w.length(); i += token_length)
+  //   {
+  //     m_token_list.push_back(w.substr(i, i + token_length));
+  //   }
+  // }
   std::string getRandomToken()
   {
+    if (!m_unqiue)
+    {
+      std::sort(m_token_list.begin(), m_token_list.end());
+      m_token_list.erase(unique(m_token_list.begin(), m_token_list.end()), m_token_list.end());
+      m_unqiue = true;
+    }
     return m_token_list.at(util::RandomDistribution::sample(0, m_token_list.size() - 1));
   }
 };
