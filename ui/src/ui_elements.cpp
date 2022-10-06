@@ -44,8 +44,7 @@ SDL_Rect TextLabelUI::draw()
     text_dst.h -= 2 * text_padding;
     text_dst.w -= 2 * text_padding;
   }
-  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
-  UI::render->drawText(m_text, font, m_size, text_dst, m_centered, false, m_color);
+  UI::render->drawText(m_text, m_font, text_dst, m_centered, false, m_color);
 
   return m_dst;
 }
@@ -53,12 +52,11 @@ SDL_Rect TextLabelUI::draw()
 SDL_Rect TextBoxUI::draw()
 {
   SDL_Rect text_dst = m_dst;
-  Font font = UI::assets->getFont(Font::DEFAULT_FONT);
   const double border_thickness = 0.005;
   const double padding = 0.01;
   if (m_boxed)
   {
-    text_dst = UI::render->getExpectedWrappedTextSize(font, m_size, m_text, m_dst.w);
+    text_dst = UI::render->getExpectedWrappedTextSize(m_font, m_text, m_dst.w);
     text_dst.x = m_dst.x;
     text_dst.y = m_dst.y;
 
@@ -77,7 +75,7 @@ SDL_Rect TextBoxUI::draw()
     text_dst.h -= 2 * text_padding;
     text_dst.w -= 2 * text_padding;
   }
-  UI::render->drawText(m_text, font, m_size, text_dst, false, true, m_color);
+  UI::render->drawText(m_text, m_font, text_dst, false, true, m_color);
 
   return m_dst;
 }

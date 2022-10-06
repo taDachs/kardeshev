@@ -9,7 +9,6 @@
 
 using namespace kardeshev;
 using namespace ui;
-const std::string Font::DEFAULT_FONT = "default";
 
 AssetHandler::~AssetHandler()
 {
@@ -25,12 +24,10 @@ AssetHandler::~AssetHandler()
 
 void AssetHandler::addFont(const std::string& name,
                            const std::string& path,
-                           const int small_size,
-                           const int medium_size,
-                           const int large_size)
+                           const int size)
 {
   util::Logger::logInfo("Loading Font " + name);
-  Font f = UI::render->loadFont(path, small_size, medium_size, large_size);
+  Font f = UI::render->loadFont(path, size);
   m_fonts.insert({name, f});
 }
 

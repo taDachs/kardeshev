@@ -5,8 +5,10 @@
 #include <glm/fwd.hpp>
 #include <memory>
 #include <string>
-#include <ui/exceptions.h>
+#include "ui/exceptions.h"
 #include <vector>
+#include "ui/text.h"
+#include "ui/texture.h"
 
 namespace kardeshev {
 namespace ui {
@@ -35,107 +37,6 @@ const Color DYSTOPIC_YELLOW(204, 163, 27);
 const Color DARK_BLUE(14, 11, 97);
 const Color TRANSPARENT(0, 0, 0, 0);
 
-class Texture
-{
-private:
-  SDL_Texture* m_texture;
-  std::vector<SDL_Rect> m_frames;
-  int m_w;
-  int m_h;
-
-public:
-  Texture(SDL_Texture* texture)
-    : m_texture(texture)
-  {
-    SDL_QueryTexture(texture, nullptr, nullptr, &m_w, &m_h);
-    SDL_Rect r;
-    r.x = 0;
-    r.y = 0;
-    r.w = m_w;
-    r.h = m_h;
-    m_frames.push_back(r);
-  }
-
-  Texture(SDL_Texture* texture, int w, int h, int frames)
-    : m_texture(texture)
-  {
-    m_w = w;
-    m_h = h;
-    for (int i = 0; i < frames; i++)
-    {
-      SDL_Rect r;
-      r.x = 0;
-      r.y = i * h;
-      r.h = h;
-      r.w = w;
-      m_frames.push_back(r);
-    }
-  }
-
-  SDL_Texture* getTexture() const { return m_texture; }
-
-  SDL_Rect getFrame(const int i) const { return m_frames.at(i); }
-
-  void setTextureBlendMode(const SDL_BlendMode blend_mode)
-  {
-    if (SDL_SetTextureBlendMode(m_texture, blend_mode))
-    {
-      throw SDLException();
-    }
-  }
-
-  void closeTexture() { SDL_DestroyTexture(m_texture); }
-};
-
-struct Font
-{
-  const static std::string DEFAULT_FONT;
-
-  enum Size
-  {
-    SMALL,
-    MEDIUM,
-    LARGE
-  };
-
-
-  TTF_Font* small;
-  TTF_Font* medium;
-  TTF_Font* large;
-
-  Font(TTF_Font* small_, TTF_Font* medium_, TTF_Font* large_)
-    : small(small_)
-    , medium(medium_)
-    , large(large_)
-  {
-  }
-  TTF_Font* getFont(Font::Size size) const
-  {
-    TTF_Font* f;
-    switch (size)
-    {
-      case Font::Size::SMALL:
-        f = small;
-        break;
-      case Font::Size::MEDIUM:
-        f = medium;
-        break;
-      case Font::Size::LARGE:
-        f = large;
-        break;
-    }
-    return f;
-  }
-  void closeFont()
-  {
-    TTF_CloseFont(small);
-    small = nullptr;
-    TTF_CloseFont(medium);
-    medium = nullptr;
-    TTF_CloseFont(large);
-    large = nullptr;
-  }
-};
 
 class Render
 {
@@ -164,7 +65,6 @@ public:
   std::shared_ptr<SDL_Rect> getViewport() const { return m_viewport; }
   void drawText(const std::string& text,
                 const Font& font,
-                const Font::Size size,
                 SDL_Rect dst,
                 const bool centered = false,
                 const bool wrapped  = false,
@@ -179,13 +79,10 @@ public:
   drawCircle(const int centre_x, const int centre_y, const int radius, const bool filled = false);
 
   Texture loadTexture(const std::string& path);
-  Font loadFont(const std::string& path,
-                const int small_size,
-                const int medium_size,
-                const int large_size);
+  Font loadFont(const std::string& path, const int size);
   void drawRect(const SDL_Rect& rect, const bool filled = false);
-  SDL_Rect getExpectedTextSize(const Font& font, const Font::Size size, const std::string& text);
-  SDL_Rect getExpectedWrappedTextSize(const Font& font, const Font::Size size, const std::string& text, int w);
+  SDL_Rect getExpectedTextSize(const Font& font, const std::string& text);
+  SDL_Rect getExpectedWrappedTextSize(const Font& font, const std::string& text, int w);
 };
 
 } // namespace ui

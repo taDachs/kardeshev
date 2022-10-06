@@ -110,7 +110,9 @@ int main()
   kardeshev::util::Logger::logInfo("Init SDL");
   kardeshev::ui::initSDL();
   kardeshev::ui::setupScreens();
-  kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT, "assets/kongtext.ttf", 12, 26, 52);
+  kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_SMALL, "assets/kongtext.ttf", 12);
+  kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_MEDIUM, "assets/kongtext.ttf", 26);
+  kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_LARGE, "assets/kongtext.ttf", 52);
 
   kardeshev::ui::UI::settings.ui_settings.toggle_options.insert(
     {"Scan Lines", &kardeshev::ui::UI::settings.ui_settings.scan_lines});

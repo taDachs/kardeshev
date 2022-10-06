@@ -318,7 +318,7 @@ void PlanetInfoEntity::update()
     info_dst.y = name_dst.h;
     info_dst.w = size.w / 2;
     info_dst.h = size.h - name_dst.h;
-    m_info_box->setFontSize(Font::Size::SMALL);
+    m_info_box->setFont(UI::assets->getFont(Font::DEFAULT_FONT_SMALL));
     m_info_box->setDst(info_dst);
     m_info_box->setAlive(true);
 
@@ -427,13 +427,13 @@ bool CheckBoxOptionEntity::handleEvent(SDL_Event* e)
 
 void TextEntity::update()
 {
-  m_label->setFontSize(m_size);
+  m_label->setFont(m_font);
   m_label->setText(m_text);
   m_label->setDst(m_dst);
   m_label->setAlive(!m_wrapping);
   m_label->setCentered(m_centered);
 
-  m_box->setFontSize(m_size);
+  m_box->setFont(m_font);
   m_box->setText(m_text);
   m_box->setDst(m_dst);
   m_box->setAlive(m_wrapping);

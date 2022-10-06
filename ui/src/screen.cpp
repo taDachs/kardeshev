@@ -88,7 +88,7 @@ bool MainScreen::handleEvent(SDL_Event* e)
 
 void LoadingScreen::draw()
 {
-  if (UI::assets->isFontLoaded(Font::DEFAULT_FONT))
+  if (UI::assets->isFontLoaded(Font::DEFAULT_FONT_LARGE))
   {
     m_loading_screen_view->update();
     m_loading_screen_view->draw();

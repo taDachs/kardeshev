@@ -310,7 +310,7 @@ public:
   {
     m_loading_label = std::make_shared<TextLabelUI>("Loading");
     m_title_label   = std::make_shared<TextLabelUI>("Kardeshev");
-    m_title_label->setFontSize(Font::Size::LARGE);
+    m_title_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
     m_components.push_back(m_loading_label);
     m_components.push_back(m_title_label);
   }
@@ -355,7 +355,7 @@ public:
       UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_NOT_SELECTED_ON_FRAME);
     m_checkbox_not_selected_off = std::make_shared<TextureComponent>(
       UI::assets->getTexture(CHECKBOX_SPRITE), CHECKBOX_SPRITE_NOT_SELECTED_OFF_FRAME);
-    m_title_label->setFontSize(Font::Size::LARGE);
+    m_title_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
     m_components.push_back(m_title_label);
     m_components.push_back(m_checkbox_selected_on);
     m_components.push_back(m_checkbox_selected_off);
@@ -378,7 +378,7 @@ private:
   bool m_wrapping = false;
   TextLabelUI::Ptr m_label;
   TextBoxUI::Ptr m_box;
-  Font::Size m_size = Font::Size::SMALL;
+  Font m_font = UI::assets->getFont(Font::DEFAULT_FONT_SMALL);
   bool m_centered   = false;
   SDL_Rect m_dst;
 
@@ -388,8 +388,8 @@ public:
   {
     m_label = std::make_shared<TextLabelUI>(m_text);
     m_box   = std::make_shared<TextBoxUI>(m_text);
-    m_label->setFontSize(m_size);
-    m_box->setFontSize(m_size);
+    m_label->setFont(m_font);
+    m_box->setFont(m_font);
     m_components.push_back(m_label);
     m_components.push_back(m_box);
   }
@@ -398,7 +398,7 @@ public:
   bool handleEvent(SDL_Event* e) override { return false; }
   void setDst(const SDL_Rect& dst) { m_dst = dst; }
   void setWrapping(const bool wrapping) { m_wrapping = wrapping; }
-  void setFontSize(Font::Size size) { m_size = size; }
+  void setFont(const Font& font) { m_font = font; }
   void setCentered(const bool centered) { m_centered = centered; }
 };
 
@@ -413,7 +413,7 @@ private:
   std::string m_text;
   Color m_not_selected_color = WHITE;
   Color m_selected_color     = DYSTOPIC_YELLOW;
-  Font::Size m_size          = Font::Size::MEDIUM;
+  Font m_font = UI::assets->getFont(Font::DEFAULT_FONT_MEDIUM);
 
 public:
   TextButton(const std::string& text)
@@ -428,11 +428,10 @@ public:
     m_selected_text->setCentered(true);
   }
 
-  void setFontSize(const Font::Size size)
-  {
-    m_size = size;
-    m_selected_text->setFontSize(m_size);
-    m_not_selected_text->setFontSize(m_size);
+  void setFont(const Font& font) {
+    m_font = font;
+    m_selected_text->setFont(font);
+    m_not_selected_text->setFont(font);
   }
 };
 

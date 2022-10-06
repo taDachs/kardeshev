@@ -60,7 +60,7 @@ public:
 private:
   std::string m_text;
   Color m_color     = WHITE;
-  Font::Size m_size = Font::Size::MEDIUM;
+  Font m_font = UI::assets->getFont(Font::DEFAULT_FONT_MEDIUM);
   bool m_centered   = false;
   bool m_boxed = false;
   Color m_box_color = BLACK;
@@ -85,7 +85,7 @@ public:
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;
-  void setFontSize(Font::Size size) { m_size = size; }
+  void setFont(const Font& font) { m_font = font; }
 };
 
 class TextBoxUI : public Component
@@ -96,7 +96,7 @@ public:
 private:
   std::string m_text;
   Color m_color     = WHITE;
-  Font::Size m_size = Font::Size::SMALL;
+  Font m_font = UI::assets->getFont(Font::DEFAULT_FONT_SMALL);
   bool m_boxed = false;
   Color m_box_color = BLACK;
   bool m_box_filled = false;
@@ -120,7 +120,7 @@ public:
   void setColor(const Color& color) { m_color = color; }
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;
-  void setFontSize(Font::Size size) { m_size = size; }
+  void setFont(const Font& font) { m_font = font; }
 };
 
 

@@ -26,9 +26,7 @@ public:
   ~AssetHandler();
   void addFont(const std::string& name,
                const std::string& path,
-               const int size_small,
-               const int size_medium,
-               const int size_large);
+               const int size);
   void addTexture(const std::string& name, const std::string& path);
   void addTexture(const std::string& name, const std::string& path, int w, int h, int frames);
   void addTokenList(const std::string& name, const std::string& path);

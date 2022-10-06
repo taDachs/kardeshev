@@ -248,7 +248,7 @@ void GameSettingsView::updateView()
   title_dst.h = title_dst.w / 8.0;
   title_dst.x = size.w / 2 - title_dst.w / 2;
   title_dst.y = size.h * 0.2;
-  m_title_label->setFontSize(Font::Size::LARGE);
+  m_title_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
   m_title_label->setDst(title_dst);
   m_title_label->update();
 
@@ -266,11 +266,8 @@ void MainMenuView::updateView()
   if (m_entities.empty())
   {
     m_title_label = std::make_shared<TextEntity>("Kardeshev");
-    m_title_label->setFontSize(Font::Size::LARGE);
     m_play_label = std::make_shared<PlayButton>();
-    m_play_label->setFontSize(Font::Size::MEDIUM);
     m_quit_label = std::make_shared<QuitButton>();
-    m_quit_label->setFontSize(Font::Size::MEDIUM);
 
     m_entities.push_back(m_title_label);
     m_entities.push_back(m_play_label);
@@ -284,7 +281,7 @@ void MainMenuView::updateView()
   title_dst.h = title_dst.w * 0.3;
   title_dst.x = size.w * 0.375;
   title_dst.y = size.h * 0.25;
-  m_title_label->setFontSize(Font::Size::LARGE);
+  m_title_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
   m_title_label->setCentered(true);
   m_title_label->setDst(title_dst);
   m_title_label->update();
@@ -292,14 +289,14 @@ void MainMenuView::updateView()
 
   SDL_Rect play_dst = title_dst;
   play_dst.y += title_dst.h * 1.2;
-  m_play_label->setFontSize(Font::Size::LARGE);
+  m_play_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
   m_play_label->setDst(play_dst);
   m_play_label->update();
 
 
   SDL_Rect quit_dst = play_dst;
   quit_dst.y += play_dst.h * 1.2;
-  m_quit_label->setFontSize(Font::Size::LARGE);
+  m_quit_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_LARGE));
   m_quit_label->setDst(quit_dst);
   m_quit_label->update();
 

@@ -119,13 +119,12 @@ void Render::copyTexture(const Texture& tex, SDL_Rect* src, SDL_Rect* dst)
 
 void Render::drawText(const std::string& text,
                       const Font& font,
-                      const Font::Size size,
                       SDL_Rect dst,
                       const bool centered,
                       const bool wrapped,
                       const Color& color)
 {
-  TTF_Font* font_scaled = font.getFont(size);
+  TTF_Font* font_scaled = font.getFont();
 
   SDL_Surface* surface_message;
 
@@ -244,35 +243,30 @@ void Render::drawRect(const SDL_Rect& rect, const bool filled)
   }
 }
 
-Font Render::loadFont(const std::string& path,
-                      const int small_size,
-                      const int medium_size,
-                      const int large_size)
+Font Render::loadFont(const std::string& path, const int size)
 {
-  TTF_Font* small  = TTF_OpenFont(path.c_str(), small_size);
-  TTF_Font* medium = TTF_OpenFont(path.c_str(), medium_size);
-  TTF_Font* large  = TTF_OpenFont(path.c_str(), large_size);
-  Font f(small, medium, large);
+  TTF_Font* font  = TTF_OpenFont(path.c_str(), size);
+  Font f(font);
   return f;
 }
 
 SDL_Rect
-Render::getExpectedTextSize(const Font& font, const Font::Size size, const std::string& text)
+Render::getExpectedTextSize(const Font& font, const std::string& text)
 {
   SDL_Rect dst;
   dst.x = 0;
   dst.y = 0;
-  TTF_SizeText(font.getFont(size), text.c_str(), &dst.w, &dst.h);
+  TTF_SizeText(font.getFont(), text.c_str(), &dst.w, &dst.h);
   return dst;
 }
 
 SDL_Rect
-Render::getExpectedWrappedTextSize(const Font& font, const Font::Size size, const std::string& text, int w)
+Render::getExpectedWrappedTextSize(const Font& font, const std::string& text, int w)
 {
   SDL_Rect dst;
   dst.x                 = 0;
   dst.y                 = 0;
-  TTF_Font* font_scaled = font.getFont(size);
+  TTF_Font* font_scaled = font.getFont();
 
   SDL_Surface* surface_message;
 
