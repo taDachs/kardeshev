@@ -16,7 +16,7 @@ void kardeshev::ui::setupScreens()
   UI::screen_list.loading_screen   = loading_screen;
   UI::screen_list.settings_screen  = std::make_shared<SettingsScreen>();
   UI::screen_list.main_menu_screen = std::make_shared<MainMenuScreen>();
-  UI::state->current_screen        = UI::screen_list.loading_screen;
+  UI::state->screen_stack.push(UI::screen_list.loading_screen);
 }
 
 void GameWindow::kill()
@@ -93,12 +93,12 @@ void GameWindow::handleEvents()
           UI::window_size.x = UI::window_size.y = 0;
           UI::window_size.w                     = e.window.data1;
           UI::window_size.h                     = e.window.data2;
-          UI::state->current_screen->resize();
+          UI::state->screen_stack.top()->resize();
           generateScanLineTex();
           generateColorFilterTex();
         }
       }
-      UI::state->current_screen->handleEvent(&e);
+      UI::state->screen_stack.top()->handleEvent(&e);
     }
   }
 }
@@ -109,25 +109,21 @@ void GameWindow::display()
   long framedelay = 33; // 30 fps
   generateScanLineTex();
   generateColorFilterTex();
-  UI::state->current_screen->resize();
+  Screen::Ptr current_screen = UI::state->screen_stack.top();
+  current_screen->resize();
 
   UI::running = true;
   while (UI::running)
   {
     framestart = SDL_GetTicks();
+    current_screen = UI::state->screen_stack.top();
 
     handleEvents();
-
-    if (m_last_screen != UI::state->current_screen)
-    {
-      m_last_screen = UI::state->current_screen;
-      UI::state->current_screen->resize();
-    }
 
     UI::render->setColor(BLACK);
     UI::render->clear();
 
-    UI::state->current_screen->draw();
+    current_screen->draw();
 
     if (UI::settings.ui_settings.scan_lines)
     {

@@ -208,13 +208,13 @@ class SettingsButtonEntity : public ButtonEntity
 private:
   void onClick() override
   {
-    if (UI::state->current_screen == UI::screen_list.settings_screen)
+    if (UI::state->screen_stack.top() == UI::screen_list.settings_screen)
     {
-      UI::state->current_screen = UI::screen_list.main_screen;
+      UI::state->screen_stack.pop();
     }
     else
     {
-      UI::state->current_screen = UI::screen_list.settings_screen;
+      UI::state->screen_stack.push(UI::screen_list.settings_screen);
     }
   }
 
@@ -442,7 +442,7 @@ class PlayButton : public TextButton
 private:
   void onClick() override
   {
-    UI::state->current_screen = UI::screen_list.main_screen;
+    UI::state->screen_stack.push(UI::screen_list.main_screen);
     UI::state->paused         = false;
   }
 
