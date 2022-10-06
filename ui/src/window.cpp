@@ -41,7 +41,7 @@ void GameWindow::generateColorFilterTex()
   UI::render->setTarget(*m_color_filter_tex);
 
   UI::render->setColor(
-    {m_color_filter_color.a, m_color_filter_color.g, m_color_filter_color.b, m_color_filter_alpha});
+    {m_color_filter_color.r, m_color_filter_color.g, m_color_filter_color.b, m_color_filter_alpha});
   UI::render->clear();
   UI::render->renderPresent();
   UI::render->resetTarget();
