@@ -8,8 +8,8 @@
 #include "ui/view.h"
 
 namespace kardeshev {
+namespace ui {
 
-void initSDL();
 
 void setupScreens();
 
@@ -19,17 +19,17 @@ public:
   using Ptr = std::shared_ptr<GameWindow>;
 
 private:
-  SDL_Texture* m_scan_line_texture  = nullptr;
-  unsigned int m_scan_line_step     = 0;
+  std::shared_ptr<Texture> m_scan_lines_tex;
+  int m_scan_lines_step             = 0;
   Color m_scan_lines_color          = GRAY;
-  int m_scan_lines_alpha            = 64;
+  unsigned char m_scan_lines_alpha  = 64;
   int m_distance_between_scan_lines = 20;
-  int m_scan_line_thickness         = 20;
-  double m_scan_line_speed          = 0.5;
+  int m_scan_lines_thickness        = 20;
+  double m_scan_lines_speed         = 0.5;
 
-  SDL_Texture* m_color_filter_tex = nullptr;
-  Color m_color_filter_color      = DYSTOPIC_YELLOW;
-  int m_color_filter_alpha        = 32;
+  std::shared_ptr<Texture> m_color_filter_tex;
+  Color m_color_filter_color         = DYSTOPIC_YELLOW;
+  unsigned char m_color_filter_alpha = 32;
 
   Screen::Ptr m_last_screen = nullptr;
 
@@ -41,6 +41,7 @@ public:
   void display();
   void handleEvents();
 };
+} // namespace ui
 } // namespace kardeshev
 
 

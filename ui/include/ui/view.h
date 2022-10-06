@@ -1,8 +1,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#include <SDL.h>
-
 #include "entities.h"
 #include "ui/assets.h"
 #include "ui_state.h"
@@ -10,6 +8,8 @@
 #include <utility>
 
 namespace kardeshev {
+namespace ui {
+
 
 class View
 {
@@ -64,28 +64,24 @@ public:
   {
     if (m_viewport != nullptr)
     {
-      SDL_RenderSetViewport(UI::render, m_viewport.get());
-      UI::current_viewport = m_viewport;
+      UI::render->setViewport(m_viewport);
     }
     drawView();
     if (m_viewport != nullptr)
     {
-      SDL_RenderSetViewport(UI::render, nullptr);
-      UI::current_viewport = nullptr;
+      UI::render->setViewport(nullptr);
     }
   }
   void update()
   {
     if (m_viewport != nullptr)
     {
-      SDL_RenderSetViewport(UI::render, m_viewport.get());
-      UI::current_viewport = m_viewport;
+      UI::render->setViewport(m_viewport);
     }
     updateView();
     if (m_viewport != nullptr)
     {
-      SDL_RenderSetViewport(UI::render, nullptr);
-      UI::current_viewport = nullptr;
+      UI::render->setViewport(nullptr);
     }
   }
   virtual bool handleEvent(SDL_Event* e)
@@ -99,11 +95,9 @@ public:
         return false;
       }
     }
-    SDL_RenderSetViewport(UI::render, m_viewport.get());
-    UI::current_viewport = m_viewport;
+    UI::render->setViewport(m_viewport);
     bool handled         = handleEventView(e);
-    SDL_RenderSetViewport(UI::render, nullptr);
-    UI::current_viewport = nullptr;
+    UI::render->setViewport(nullptr);
     return handled;
   }
 
@@ -125,16 +119,9 @@ protected:
   SDL_Point getCenterOffset()
   {
     SDL_Point offset = m_offset;
-    if (UI::current_viewport == nullptr)
-    {
-      offset.x += UI::window_size.w / 2;
-      offset.y += UI::window_size.h / 2;
-    }
-    else
-    {
-      offset.x += UI::current_viewport->w / 2;
-      offset.y += UI::current_viewport->h / 2;
-    }
+    SDL_Rect size = UI::getRenderSize();
+    offset.x += size.w / 2;
+    offset.y += size.h / 2;
     return offset;
   }
   bool handleEventView(SDL_Event* e) override;
@@ -230,6 +217,7 @@ private:
   void updateView() override;
 };
 
+} // namespace ui
 } // namespace kardeshev
 
 #endif // !VIEW_H

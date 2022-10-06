@@ -10,6 +10,7 @@
 #include <utility>
 
 namespace kardeshev {
+namespace ui {
 
 
 class Entity : public std::enable_shared_from_this<Entity>
@@ -464,6 +465,7 @@ public:
   {
   }
 };
+} // namespace ui
 
 
 } // namespace kardeshev

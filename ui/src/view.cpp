@@ -5,6 +5,7 @@
 #include "ui/window.h"
 
 using namespace kardeshev;
+using namespace ui;
 
 bool MoveableView::handleEventView(SDL_Event* e)
 {
@@ -84,7 +85,7 @@ void GalaxyView::drawView()
 {
   View::drawView();
   Texture border = UI::assets->getTexture("main_view_border");
-  SDL_RenderCopy(UI::render, border.getTexture(), nullptr, nullptr);
+  UI::render->copyTexture(border, nullptr, nullptr);
 }
 
 void GalaxyView::updateView()
@@ -116,7 +117,7 @@ void SystemView::drawView()
 {
   View::drawView();
   Texture border = UI::assets->getTexture("main_view_border");
-  SDL_RenderCopy(UI::render, border.getTexture(), nullptr, nullptr);
+  UI::render->copyTexture(border, nullptr, nullptr);
 }
 
 void SystemView::updateView()
@@ -305,6 +306,6 @@ void MainMenuView::updateView()
   SDL_Rect border = title_dst;
   border.w += border.x * 0.2;
   border.x *= 0.9;
-  SDL_SetRenderDrawColor(UI::render, WHITE.r, WHITE.g, WHITE.b, WHITE.a);
-  SDL_RenderDrawRect(UI::render, &border);
+  UI::render->setColor(WHITE);
+  UI::render->drawRect(border);
 }

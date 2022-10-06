@@ -5,59 +5,14 @@
 #include "lib/planets.h"
 #include "lib/solar_systems.h"
 #include "ui/assets.h"
+#include "ui/render.h"
 #include "util/logger.h"
 #include <SDL_image.h>
 #include <SDL_render.h>
 #include <memory>
 
 namespace kardeshev {
-
-// TODO: should be own file
-struct SDLException : public std::exception
-{
-  std::string s;
-  SDLException()
-    : s(SDL_GetError())
-  {
-  }
-  SDLException(const std::string& msg)
-    : s("Error: " + msg + ", SDL_GetError(): " + SDL_GetError())
-  {
-  }
-  ~SDLException() noexcept override = default; // Updated
-  const char* what() const noexcept override { return s.c_str(); }
-};
-
-struct TTFException : public std::exception
-{
-  std::string s;
-  TTFException()
-    : s(SDL_GetError())
-  {
-  }
-  TTFException(const std::string& msg)
-    : s("Error: " + msg + ", TTF_GetError(): " + TTF_GetError())
-  {
-  }
-  ~TTFException() noexcept override = default; // Updated
-  const char* what() const noexcept override { return s.c_str(); }
-};
-
-
-struct IMGException : public std::exception
-{
-  std::string s;
-  IMGException()
-    : s(SDL_GetError())
-  {
-  }
-  IMGException(const std::string& msg)
-    : s("Error: " + msg + ", IMG_GetError(): " + IMG_GetError())
-  {
-  }
-  ~IMGException() noexcept override = default; // Updated
-  const char* what() const noexcept override { return s.c_str(); }
-};
+namespace ui {
 
 class Screen;
 
@@ -95,10 +50,9 @@ struct ScreenList
 struct UI
 {
   static std::shared_ptr<UIState> state;
-  static SDL_Renderer* render;
+  static Render::Ptr render;
   static SDL_Window* window;
   static AssetHandler::Ptr assets;
-  static std::shared_ptr<SDL_Rect> current_viewport;
   static SDL_Rect window_size;
   static lib::Game::Ptr game;
   static util::Logger::Ptr logger;
@@ -110,6 +64,7 @@ struct UI
 };
 
 
+} // namespace ui
 } // namespace kardeshev
 
 #endif // !UI_STATE_H

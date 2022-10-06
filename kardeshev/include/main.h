@@ -18,7 +18,7 @@ const std::vector<kardeshev::lib::PlanetClass> PLANETS{kardeshev::lib::DESERT,
                                                        kardeshev::lib::TERRESTIAL};
 const std::vector<kardeshev::lib::StarClass> STARS{
   kardeshev::lib::O, kardeshev::lib::B, kardeshev::lib::G};
-kardeshev::GameWindow::Ptr main_window;
+kardeshev::ui::GameWindow::Ptr main_window;
 kardeshev::generation::PlanetGenerator::Ptr pg;
 kardeshev::generation::StarGenerator::Ptr sg;
 kardeshev::generation::SolarSystemGenerator::Ptr ssg;
