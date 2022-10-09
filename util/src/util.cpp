@@ -15,6 +15,9 @@ std::vector<std::string> kardeshev::util::splitString(std::string s, const std::
     out.push_back(token);
     s.erase(0, pos + delimiter.length());
   }
+  if (!s.empty()) {
+    out.push_back(s);
+  }
 
   return out;
 }

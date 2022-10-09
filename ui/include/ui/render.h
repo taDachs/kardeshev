@@ -47,6 +47,17 @@ private:
   SDL_Renderer* m_render;
   Color m_color = WHITE;
   std::shared_ptr<SDL_Rect> m_viewport;
+  int m_character_spacing = 0;
+
+  void drawWrappedText(const std::string& text,
+                       const Font& font,
+                       SDL_Rect dst,
+                       const Color& color  = WHITE);
+  void drawLabelText(const std::string& text,
+                     const Font& font,
+                     SDL_Rect dst,
+                     const Color& color  = WHITE);
+  std::vector<std::string> splitIntoLinesByLength(const std::string& text, const Font& font, int w) const;
 
 public:
   Render(SDL_Renderer* render)
@@ -66,7 +77,6 @@ public:
   void drawText(const std::string& text,
                 const Font& font,
                 SDL_Rect dst,
-                const bool centered = false,
                 const bool wrapped  = false,
                 const Color& color  = WHITE);
   void renderPresent();

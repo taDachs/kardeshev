@@ -54,6 +54,18 @@ struct IMGException : public std::exception
   const char* what() const noexcept override { return s.c_str(); }
 };
 
+struct AssetException : public std::exception
+{
+  std::string s;
+  AssetException(const std::string& msg)
+    : s("Error: " + msg)
+  {
+  }
+  ~AssetException() noexcept override = default; // Updated
+  const char* what() const noexcept override { return s.c_str(); }
+};
+
+
 } // namespace ui
 } // namespace kardeshev
 #endif // !EXCEPTIONS_H

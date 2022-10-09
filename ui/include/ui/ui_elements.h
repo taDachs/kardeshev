@@ -50,6 +50,9 @@ public:
     SDL_Rect res;
     return SDL_IntersectRect(&viewport, &m_dst, &res);
   }
+  virtual SDL_Rect getExpectedSize() const {
+    return m_dst;
+  }
 };
 
 class TextLabelUI : public Component
@@ -66,6 +69,8 @@ private:
   Color m_box_color = BLACK;
   bool m_box_border = false;
   Color m_box_border_color = WHITE;
+  double m_border_percentage = 0.005;
+  double m_padding_percentage = 0.01;
 
 public:
   TextLabelUI() = default;
@@ -86,6 +91,7 @@ public:
   std::string getText() const { return m_text; }
   SDL_Rect draw() override;
   void setFont(const Font& font) { m_font = font; }
+  SDL_Rect getExpectedSize() const override;
 };
 
 class TextBoxUI : public Component

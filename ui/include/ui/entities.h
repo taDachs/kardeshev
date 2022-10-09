@@ -381,6 +381,11 @@ private:
   Font m_font = UI::assets->getFont(Font::DEFAULT_FONT_SMALL);
   bool m_centered   = false;
   SDL_Rect m_dst;
+  Color m_color = WHITE;
+  bool m_boxed = false;
+  Color m_box_color = BLACK;
+  bool m_box_border = false;
+  Color m_box_border_color = WHITE;
 
 public:
   TextEntity(std::string text)
@@ -400,6 +405,17 @@ public:
   void setWrapping(const bool wrapping) { m_wrapping = wrapping; }
   void setFont(const Font& font) { m_font = font; }
   void setCentered(const bool centered) { m_centered = centered; }
+  void setBoxed(const bool boxed) { m_boxed = boxed; }
+  void setBoxColor(const Color& color) { m_box_color = color; }
+  void setBoxBorderColor(const Color& border_color) { m_box_border_color = border_color; }
+  void setBoxBorder(const bool border) { m_box_border = border; }
+  void setColor(const Color color) { m_color = color; }
+  SDL_Rect getExpectedSize() const {
+    if (m_wrapping) {
+      return m_box->getExpectedSize();
+    }
+    return m_label->getExpectedSize();
+  }
 };
 
 class TextButton : public ButtonEntity

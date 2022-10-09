@@ -28,7 +28,7 @@ void SystemEntity::update()
   SDL_Rect label_dst;
   label_dst.x = m_position.x + icon_dst.w;
   label_dst.y = m_position.y - 20;
-  label_dst.w = 150;
+  label_dst.w = 300;
   label_dst.h = 30;
   m_number_planets_label->setDst(label_dst);
   label_dst.y -= 30;
@@ -47,6 +47,7 @@ void SystemEntity::update()
   m_number_planets_label->setBoxBorder(true);
   m_number_planets_label->setBoxColor(BLACK);
   m_number_planets_label->setBoxBorderColor(WHITE);
+  m_number_planets_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_NOT_SO_SMALL));
   m_number_planets_label->setColor(WHITE);
 
   m_system_selected_icon->setAlive(m_selected);
@@ -120,16 +121,6 @@ void PlanetEntity::update()
     m_focused_icon->setAlive(false);
   }
 
-  SDL_Rect description_dst;
-  description_dst.x = icon_dst.x + m_scale * 20 + 10;
-  description_dst.y = icon_dst.y - 50;
-  description_dst.w = 400;
-  description_dst.h = 400;
-  m_description_box->setDst(description_dst);
-  m_description_box->setBoxed(true);
-  // m_description_box->setBoxColor(WHITE);
-  m_description_box->setAlive(selected);
-
   SDL_Rect label_dst;
   label_dst.x = icon_dst.x + m_scale * 20 + 10;
   label_dst.y = icon_dst.y - 80;
@@ -142,6 +133,16 @@ void PlanetEntity::update()
   m_planet_name_label->setColor(BLACK);
   m_planet_name_label->setAlive(selected);
 
+
+  SDL_Rect description_dst;
+  description_dst.x = label_dst.x;
+  description_dst.y = label_dst.y + label_dst.h;
+  description_dst.w = label_dst.w;
+  description_dst.h = 400;
+  m_description_box->setDst(description_dst);
+  m_description_box->setBoxed(true);
+  // m_description_box->setBoxColor(WHITE);
+  m_description_box->setAlive(selected);
   SDL_Rect orbit_ring_dst;
   orbit_ring_dst.x = m_offset.x - orbit_radius;
   orbit_ring_dst.y = m_offset.y - orbit_radius;
@@ -297,7 +298,7 @@ void PlanetInfoEntity::update()
     m_current_planet = UI::state->focused_planet;
     if (m_current_planet != nullptr)
     {
-      m_planet_name_label->setText("Planet Name: " +
+      m_planet_name_label->setText("Name: " +
                                    m_current_planet->getInfo()->getNameOrId().substr(0, 10));
       generateText();
       m_info_box->setText(m_text);
@@ -312,6 +313,7 @@ void PlanetInfoEntity::update()
     name_dst.h              = size.h * 0.1;
     m_planet_name_label->setDst(name_dst);
     m_planet_name_label->setAlive(true);
+    m_planet_name_label->setFont(UI::assets->getFont(Font::DEFAULT_FONT_NOT_SO_SMALL));
 
     SDL_Rect info_dst;
     info_dst.x = 0;
@@ -432,9 +434,19 @@ void TextEntity::update()
   m_label->setDst(m_dst);
   m_label->setAlive(!m_wrapping);
   m_label->setCentered(m_centered);
+  m_label->setBoxBorder(m_box_border);
+  m_label->setBoxed(m_boxed);
+  m_label->setBoxColor(m_box_color);
+  m_label->setBoxBorderColor(m_box_border_color);
+  m_label->setColor(m_color);
 
   m_box->setFont(m_font);
   m_box->setText(m_text);
   m_box->setDst(m_dst);
   m_box->setAlive(m_wrapping);
+  m_box->setBoxBorder(m_box_border);
+  m_box->setBoxed(m_boxed);
+  m_box->setBoxColor(m_box_color);
+  m_box->setBoxBorderColor(m_box_border_color);
+  m_box->setColor(m_color);
 }

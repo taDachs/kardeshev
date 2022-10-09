@@ -4,10 +4,10 @@
 #include "SDL_ttf.h"
 #include "lib/planets.h"
 #include "ui/ui_state.h"
+#include "util/logger.h"
 #include "util/util.h"
 #include <algorithm>
 #include <exception>
-#include <glm/glm.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -120,47 +120,187 @@ void Render::copyTexture(const Texture& tex, SDL_Rect* src, SDL_Rect* dst)
 void Render::drawText(const std::string& text,
                       const Font& font,
                       SDL_Rect dst,
-                      const bool centered,
                       const bool wrapped,
                       const Color& color)
 {
-  TTF_Font* font_scaled = font.getFont();
+  if (wrapped) {
+    drawWrappedText(text, font, dst, color);
+  } else {
+    drawLabelText(text, font ,dst, color);
+  }
+}
+void Render::drawLabelText(const std::string& text,
+                           const Font& font,
+                           SDL_Rect dst,
+                           const Color& color)
+{
+  SDL_Rect expected_size = getExpectedTextSize(font, text);
+  double size_scalar     = 1.0;
+  // if (expected_size.w > dst.w)
+  // {
+  //   size_scalar = static_cast<double>(dst.w) / static_cast<double>(expected_size.w);
+  // }
+  // if (expected_size.h > dst.h)
+  // {
+  //   double height_scalar = static_cast<double>(dst.h) / static_cast<double>(expected_size.h);
+  //   if (height_scalar < size_scalar)
+  //   {
+  //     size_scalar = height_scalar;
+  //   }
+  // }
 
-  SDL_Surface* surface_message;
+  SDL_Rect c_dst;
+  c_dst.x                  = dst.x;
+  c_dst.y                  = dst.y;
+  c_dst.w                  = 0;
+  c_dst.h                  = 0;
+  SDL_Texture* glyph_atlas = font.getAtlas();
+  SDL_SetTextureColorMod(glyph_atlas, color.r, color.g, color.b);
 
-  if (wrapped)
+  SDL_Rect src = font.getGlyphSrc('A');
+  for (const auto& c : text)
   {
-    surface_message =
-      TTF_RenderText_Blended_Wrapped(font_scaled, text.c_str(), {color.r, color.g, color.b}, dst.w);
+    if (c < ' ')
+    {
+      c_dst.x += src.w * size_scalar;
+      continue;
+    }
+    src = font.getGlyphSrc(c);
+    c_dst.w      = src.w * size_scalar;
+    c_dst.h      = src.h * size_scalar;
+    SDL_RenderCopy(m_render, glyph_atlas, &src, &c_dst);
+    c_dst.x += c_dst.w * size_scalar;
   }
-  else
-  {
-    surface_message =
-      TTF_RenderText_Blended(font_scaled, text.c_str(), {color.r, color.g, color.b, color.a});
-  }
-  if (surface_message == nullptr)
-  {
-    throw TTFException("Falied to render text to surface");
-  }
-  if (centered)
-  {
-    dst.x = dst.x + (dst.w / 2) - std::min(surface_message->w, dst.w) / 2;
-    dst.y = dst.y + (dst.h / 2) - std::min(surface_message->h, dst.h) / 2;
-  }
-  dst.w                = std::min(surface_message->w, dst.w);
-  dst.h                = std::min(surface_message->h, dst.h);
-  SDL_Texture* message = SDL_CreateTextureFromSurface(m_render, surface_message);
-  if (message == nullptr)
-  {
-    throw SDLException("Failed to create texture from text surface");
-  }
-  Texture tex(message);
-  copyTexture(tex, nullptr, &dst);
-
-  SDL_FreeSurface(surface_message);
-  tex.closeTexture();
 }
 
+std::vector<std::string> Render::splitIntoLinesByLength(const std::string& text, const Font& font, int w) const {
+  std::vector<std::string> lines;
+  const SDL_Rect space = font.getGlyphSrc(' ');
+  for (const auto& line :  util::splitString(text, "\n")) {
+    int line_length = 0;
+    std::vector<std::string> words;
+    for (const auto& word : util::splitString(line, " ")) {
+      int word_length = 0;
+      for (const auto& c: word) {
+        word_length += font.getGlyphSrc(c).w + m_character_spacing;
+      }
+
+      line_length += word_length + space.w;;
+      if (line_length > w) {
+        line_length = word_length;
+        lines.push_back(util::joinLines(words, " "));
+        words.clear();
+      }
+      words.push_back(word);
+    }
+    if (!words.empty()) {
+      lines.push_back(util::joinLines(words, " "));
+      words.clear();
+    }
+  }
+  return lines;
+}
+
+std::string rectToString(SDL_Rect r) {
+  return "x: " + std::to_string(r.x) + " y: " + std::to_string(r.y) + " w: " + std::to_string(r.w) + " h: " + std::to_string(r.h);
+}
+
+void Render::drawWrappedText(const std::string& text,
+                             const Font& font,
+                             SDL_Rect dst,
+                             const Color& color)
+{
+  SDL_Rect expected_size = getExpectedWrappedTextSize(font, text, dst.w);
+  // std::cout << "Text: " << text << std::endl;
+  // std::cout << "Expected Size: " << rectToString(expected_size) << std::endl;
+  // std::cout << "Target Size: " << rectToString(dst) << std::endl;
+  double size_scalar     = 1.0;
+
+  // if (expected_size.w > dst.w)
+  // {
+  //   size_scalar = static_cast<double>(dst.w) / static_cast<double>(expected_size.w);
+  // }
+  // if (expected_size.h > dst.h)
+  // {
+  //   double height_scalar = static_cast<double>(dst.h) / static_cast<double>(expected_size.h);
+  //   if (height_scalar < size_scalar)
+  //   {
+  //     size_scalar = height_scalar;
+  //   }
+  // }
+  // expected_size = getExpectedWrappedTextSize(font, text, dst.w * size_scalar);
+  // std::cout << "Size Scalar: " << size_scalar << std::endl;
+
+  // if (centered)
+  // {
+  //   dst.x = dst.x + (dst.w / 2) - std::min(expected_size.w, dst.w) / 2;
+  //   dst.y = dst.y + (dst.h / 2) - std::min(expected_size.h, dst.h) / 2;
+  // }
+  // dst.w = std::min(expected_size.w, dst.w);
+  // dst.h = std::min(expected_size.h, dst.h);
+
+  SDL_Rect c_dst;
+  c_dst.x                  = dst.x;
+  c_dst.y                  = dst.y;
+  c_dst.w                  = 0;
+  c_dst.h                  = 0;
+  SDL_Texture* glyph_atlas = font.getAtlas();
+  SDL_SetTextureColorMod(glyph_atlas, color.r, color.g, color.b);
+
+  SDL_Rect src = font.getGlyphSrc('A');
+  for (const auto& line : splitIntoLinesByLength(text, font, dst.w)) {
+    for (const auto& c : line)
+    {
+      if (c < ' ')
+      {
+        c_dst.x += src.w * size_scalar;
+        continue;
+      }
+      src = font.getGlyphSrc(c);
+      c_dst.w      = src.w * size_scalar;
+      c_dst.h      = src.h * size_scalar;
+      SDL_RenderCopy(m_render, glyph_atlas, &src, &c_dst);
+      c_dst.x += c_dst.w * size_scalar;
+    }
+    c_dst.x = dst.x;
+    c_dst.y += src.h * size_scalar;
+  }
+}
+
+SDL_Rect Render::getExpectedTextSize(const Font& font, const std::string& text)
+{
+  SDL_Rect size;
+  size.x = size.y = size.w = size.h = 0;
+
+  SDL_Rect glyph;
+  glyph.w = 0;
+  for (const auto& c : text)
+  {
+    if (c < ' ')
+    {
+      size.w += glyph.w + m_character_spacing;
+      continue;
+    }
+    glyph = font.getGlyphSrc(c);
+    size.w += glyph.w;
+    if (glyph.h > size.h)
+    {
+      size.h = glyph.h;
+    }
+  }
+  return size;
+}
+
+SDL_Rect Render::getExpectedWrappedTextSize(const Font& font, const std::string& text, int w)
+{
+  SDL_Rect size;
+  size.x = size.y = size.h = 0;
+  size.w                   = w;
+
+  SDL_Rect glyph = font.getGlyphSrc('A');
+  size.h = splitIntoLinesByLength(text, font, w).size() * glyph.h;
+  return size;
+}
 void Render::renderPresent()
 {
   SDL_RenderPresent(m_render);
@@ -245,38 +385,7 @@ void Render::drawRect(const SDL_Rect& rect, const bool filled)
 
 Font Render::loadFont(const std::string& path, const int size)
 {
-  TTF_Font* font  = TTF_OpenFont(path.c_str(), size);
-  Font f(font);
+  TTF_Font* font = TTF_OpenFont(path.c_str(), size);
+  Font f(font, m_render);
   return f;
-}
-
-SDL_Rect
-Render::getExpectedTextSize(const Font& font, const std::string& text)
-{
-  SDL_Rect dst;
-  dst.x = 0;
-  dst.y = 0;
-  TTF_SizeText(font.getFont(), text.c_str(), &dst.w, &dst.h);
-  return dst;
-}
-
-SDL_Rect
-Render::getExpectedWrappedTextSize(const Font& font, const std::string& text, int w)
-{
-  SDL_Rect dst;
-  dst.x                 = 0;
-  dst.y                 = 0;
-  TTF_Font* font_scaled = font.getFont();
-
-  SDL_Surface* surface_message;
-
-  surface_message =
-    TTF_RenderText_Blended_Wrapped(font_scaled, text.c_str(), {BLACK.r, BLACK.g, BLACK.b}, w);
-  if (surface_message == nullptr) {
-    throw TTFException("Failed rendering wrapped text for size estimation");
-  }
-  dst.w = surface_message->w;
-  dst.h = surface_message->h;
-  SDL_FreeSurface(surface_message);
-  return dst;
 }

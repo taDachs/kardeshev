@@ -111,6 +111,7 @@ int main()
   kardeshev::ui::initSDL();
   kardeshev::ui::setupScreens();
   kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_SMALL, "assets/kongtext.ttf", 12);
+  kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_NOT_SO_SMALL, "assets/kongtext.ttf", 20);
   kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_MEDIUM, "assets/kongtext.ttf", 26);
   kardeshev::ui::UI::assets->addFont(kardeshev::ui::Font::DEFAULT_FONT_LARGE, "assets/kongtext.ttf", 52);
 
