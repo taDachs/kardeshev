@@ -2,10 +2,13 @@
 #define STARS_H
 
 #include "id.h"
+#include "lib/astronomical_object.h"
 #include <memory>
 
 namespace kardeshev {
 namespace lib {
+
+class AstronomicalObjectVisitor;
 
 class StarClass : public GameClass
 {
@@ -34,29 +37,16 @@ const StarClass F("f", "f_star", "", 6500);
 const StarClass G("g", "g_star", "", 5700);
 const StarClass K("k", "k_star", "", 4500);
 const StarClass M("m", "m_star", "", 3200);
-
-class Star;
-
-struct StarInfo
-{
-  std::string name;
-  std::shared_ptr<Star> star;
-  StarClass star_class;
-  std::string getNameOrId() const;
-};
-
-class Star : public GameObject
+class Star : public AstronomicalObject
 {
 public:
   using Ptr = std::shared_ptr<Star>;
 
 private:
-  std::shared_ptr<StarInfo> m_info;
-
+  StarClass m_class;
 public:
-  Star(std::shared_ptr<StarInfo> info)
-    : m_info(std::move(info)){};
-  std::shared_ptr<StarInfo> getInfo() const { return m_info; }
+  void visited(AstronomicalObjectVisitor& visitor) override;
+  void setStarClass(const StarClass& star_class) { m_class = star_class; }
 };
 
 } // namespace lib

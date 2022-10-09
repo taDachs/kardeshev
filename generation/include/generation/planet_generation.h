@@ -8,11 +8,6 @@
 namespace kardeshev {
 namespace generation {
 
-struct PlanetEnvironemnt
-{
-};
-
-
 class NaivePlanetGenerator : public PlanetGenerator
 {
 private:
@@ -27,6 +22,7 @@ public:
   }
   std::shared_ptr<lib::Planet> generatePlanet() const override;
 };
+
 } // namespace generation
 } // namespace kardeshev
 #endif // !PLANET_GENERATION_H

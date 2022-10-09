@@ -113,8 +113,8 @@ protected:
   bool m_left_mouse_pressed = false;
 
   double m_max_scale  = 8.0;
-  double m_min_scale  = 0.3;
-  double m_scale_step = 1.1;
+  double m_min_scale  = 0.05;
+  double m_scale_step = 1.05;
 
   SDL_Point getCenterOffset()
   {

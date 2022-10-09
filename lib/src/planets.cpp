@@ -1,18 +1,13 @@
 #include "lib/planets.h"
 #include "lib/population.h"
+#include "lib/astronomical_object_visitor.h"
 #include <iostream>
 using namespace kardeshev;
 using namespace lib;
 
-std::string PlanetInfo::getNameOrId() const
-{
-  if (name.empty())
-  {
-    return planet->getIdAsString();
-  }
-  return name;
+void Planet::visited(AstronomicalObjectVisitor& visitor) {
+  visitor.visitPlanet(*this);
 }
-
 void Planet::update()
 {
   for (auto& building : m_buildings)
@@ -25,24 +20,24 @@ void Planet::update()
       m_stockpile.addSupply(prod);
     }
   }
-  size_t size = m_pops.size();
+  size_t size = m_populations.size();
   std::vector<Population> alive_pops;
-  for (int i = 0; i < size; ++i)
+  for (auto& pop : m_populations)
   {
-    m_pops[i].satisfyNeeds(m_stockpile);
-    m_pops[i].update();
-    if (m_pops[i].canReproduce())
+    pop.satisfyNeeds(m_stockpile);
+    pop.update();
+    if (pop.canReproduce())
     {
-      alive_pops.push_back(m_pops[i].reproduce());
+      alive_pops.push_back(pop.reproduce());
     }
-    if (!m_pops[i].isDead())
+    if (!pop.isDead())
     {
-      alive_pops.push_back(m_pops[i]);
+      alive_pops.push_back(pop);
     }
   }
-  m_pops = alive_pops;
-  for (const auto& supply : m_stockpile.getSupplies())
-  {
-    /* std::cout << supply.getType().getName() << " : " << supply.getAmount() << std::endl; */
-  }
+  m_populations = alive_pops;
+  // for (const auto& supply : m_stockpile.getSupplies())
+  // {
+  //   std::cout << supply.getType().getName() << " : " << supply.getAmount() << std::endl;
+  // }
 }

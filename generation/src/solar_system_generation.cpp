@@ -15,7 +15,8 @@ std::shared_ptr<lib::SolarSystem> NaiveSolarSystemGenerator::generateSolarSystem
   std::vector<std::shared_ptr<lib::Planet> > planets(num_planets);
   for (int i = 0; i < num_planets; ++i)
   {
-    planets[i] = m_planet_generator->generatePlanet();
+    planets.at(i) = m_planet_generator->generatePlanet();
+    planets.at(i)->setParent(std::static_pointer_cast<lib::AstronomicalObject>(star));
   }
 
   auto solar_system  = std::make_shared<lib::SolarSystem>(info, star, planets);

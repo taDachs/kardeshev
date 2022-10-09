@@ -1,12 +1,8 @@
 #include "lib/stars.h"
+#include "lib/astronomical_object_visitor.h"
 using namespace kardeshev;
 using namespace lib;
 
-std::string StarInfo::getNameOrId() const
-{
-  if (name.empty())
-  {
-    return star->getIdAsString();
-  }
-  return name;
+void Star::visited(AstronomicalObjectVisitor& visitor) {
+  visitor.visitStar(*this);
 }

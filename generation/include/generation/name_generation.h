@@ -77,7 +77,7 @@ private:
   int m_max_tokens;
 
 public:
-  TokenListNameGenerator(TokenList::Ptr tokens, int min_tokens = 3, int max_tokens = 5)
+  TokenListNameGenerator(TokenList::Ptr tokens, int min_tokens = 2, int max_tokens = 4)
     : m_tokens(std::move(tokens))
     , m_min_tokens(min_tokens)
     , m_max_tokens(max_tokens)
