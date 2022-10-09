@@ -10,6 +10,8 @@ std::shared_ptr<lib::Star> NaiveStarGenerator::generateStar() const
   s->setName(m_name_generator->generateName());
   s->setMass(util::RandomDistribution::sample(1e5, 1e9));
   s->setStarClass(m_classes.at(util::RandomDistribution::sample(0, m_classes.size())));
+  s->setOrbitDuration(lib::Duration(0));
+  s->setOrbitDistance(lib::Distance(0));
 
   return s;
 }

@@ -4,6 +4,7 @@
 #include "planets.h"
 #include "stars.h"
 #include <glm/glm.hpp>
+#include <memory>
 
 namespace kardeshev {
 namespace lib {
@@ -24,6 +25,7 @@ public:
 private:
   std::shared_ptr<Star> m_star;
   std::vector<std::shared_ptr<Planet> > m_planets;
+  std::vector<AstronomicalObject::Ptr> m_objects;
   std::shared_ptr<SolarSystemInfo> m_info;
 
 public:
@@ -34,10 +36,13 @@ public:
     , m_star(std::move(star))
     , m_planets(std::move(planets))
   {
+    m_objects.push_back(std::static_pointer_cast<AstronomicalObject>(m_star));
+    for (const auto& p : m_planets) {
+      m_objects.push_back(std::static_pointer_cast<AstronomicalObject>(p));
+    }
   }
-  std::vector<std::shared_ptr<Planet> > getPlanets() const { return m_planets; }
+  std::vector<AstronomicalObject::Ptr> getObjects() const { return m_objects; }
   std::shared_ptr<SolarSystemInfo> getInfo() const { return m_info; }
-  std::shared_ptr<Star> getStar() const { return m_star; }
   void update() override;
 };
 } // namespace lib

@@ -2,6 +2,7 @@
 #include "ui/assets.h"
 #include "ui/entities.h"
 #include "ui/render.h"
+#include "ui/render_visitor.h"
 #include "ui/window.h"
 
 using namespace kardeshev;
@@ -132,43 +133,45 @@ void SystemView::updateView()
   }
   if (m_entities.empty())
   {
-    lib::Star::Ptr s = UI::state->focused_system->getStar();
-    Entity::Ptr e    = std::make_shared<StarEntity>(s);
-    m_entities.push_back(e);
+    // lib::Star::Ptr s = UI::state->focused_system->getStar();
+    // Entity::Ptr e    = std::make_shared<StarEntity>(s);
+    // m_entities.push_back(e);
+    // e->setOffset(getCenterOffset());
+    // e->setScale(m_scale);
+    // e->update();
+    // std::vector<lib::Planet::Ptr> planets = UI::state->focused_system->getPlanets();
+    // for (const auto& p : planets)
+    // {
+    //   auto e = std::make_shared<PlanetEntity>(p);
+    //   m_entities.push_back(e);
+    //   e->setOffset(getCenterOffset());
+    //   e->setScale(m_scale);
+    //   e->update();
+    // }
+    //
+    // e->update();
+    RenderVisitor v;
+    for (const auto& obj : UI::state->focused_system->getObjects()) {
+      v.visit(*obj);
+    }
+    m_entities = v.getEntities();
+    m_back_button = std::make_shared<BackButtonEntity>();
+    m_entities.push_back(std::static_pointer_cast<Entity>(m_back_button));
+  }
+  SDL_Rect screen = UI::getRenderSize();
+
+  int padding = 10;
+  SDL_Rect button_dst;
+  button_dst.y = screen.h - 64 - padding;
+  button_dst.x = padding;
+  button_dst.w = 128;
+  button_dst.h = 64;
+  m_back_button->setDst(button_dst);
+  for (auto& e : m_entities)
+  {
     e->setOffset(getCenterOffset());
     e->setScale(m_scale);
     e->update();
-    std::vector<lib::Planet::Ptr> planets = UI::state->focused_system->getPlanets();
-    for (const auto& p : planets)
-    {
-      auto e = std::make_shared<PlanetEntity>(p);
-      m_entities.push_back(e);
-      e->setOffset(getCenterOffset());
-      e->setScale(m_scale);
-      e->update();
-    }
-
-    m_back_button = std::make_shared<BackButtonEntity>();
-    m_entities.push_back(std::static_pointer_cast<Entity>(m_back_button));
-    e->update();
-  }
-  else
-  {
-    SDL_Rect screen = UI::getRenderSize();
-
-    int padding = 10;
-    SDL_Rect button_dst;
-    button_dst.y = screen.h - 64 - padding;
-    button_dst.x = padding;
-    button_dst.w = 128;
-    button_dst.h = 64;
-    m_back_button->setDst(button_dst);
-    for (auto& e : m_entities)
-    {
-      e->setOffset(getCenterOffset());
-      e->setScale(m_scale);
-      e->update();
-    }
   }
 }
 

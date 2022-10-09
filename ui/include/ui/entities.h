@@ -13,7 +13,7 @@ namespace kardeshev {
 namespace ui {
 
 #define AU_TO_PIXEL_SCALING 150
-#define EARTH_MASS_TO_PIXEL_SCALING 0.5
+#define EARTH_MASS_TO_PIXEL_SCALING 0.1
 
 class Entity : public std::enable_shared_from_this<Entity>
 {
@@ -83,7 +83,7 @@ public:
       std::make_shared<TextLabelUI>(m_system->getInfo()->getNameOrId().substr(0, 10));
     m_system_name_label->setAlive(false);
     m_number_planets_label = std::make_shared<TextLabelUI>(
-      "Num Planets: " + std::to_string(m_system->getPlanets().size()));
+      "Num Bodies: " + std::to_string(m_system->getObjects().size()));
     m_number_planets_label->setAlive(false);
 
     m_components.push_back(m_system_selected_icon);

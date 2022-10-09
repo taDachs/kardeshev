@@ -45,8 +45,8 @@ int loadAssets(void* data)
   kardeshev::lib::Species humans("human_species", "Humans", 1.01, {food_req});
   kardeshev::lib::Population pop(humans, {});
   std::shared_ptr<kardeshev::lib::SolarSystem> ss = g->getSystems()[0];
-  ss->getPlanets()[0]->addPopulation(pop);
-  ss->getPlanets()[0]->addBuilding(std::move(potato_farm));
+  // ss->getPlanets()[0]->addPopulation(pop);
+  // ss->getPlanets()[0]->addBuilding(std::move(potato_farm));
 
   kardeshev::util::Logger::logInfo("Finished initialization");
   kardeshev::ui::UI::state->screen_stack.push(kardeshev::ui::UI::screen_list.main_menu_screen);

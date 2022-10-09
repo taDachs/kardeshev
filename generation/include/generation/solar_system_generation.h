@@ -16,6 +16,7 @@ private:
   int m_min_planets;
   int m_max_planets;
   NameGenerator::Ptr m_name_generator;
+  double m_moon_prob = 0.4;
 
 public:
   NaiveSolarSystemGenerator(NameGenerator::Ptr name_generator,

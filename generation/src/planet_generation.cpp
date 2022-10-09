@@ -19,7 +19,7 @@ std::shared_ptr<lib::Planet> NaivePlanetGenerator::generatePlanet() const
   const double astronomical_unit = 1.496e+8;
   auto orbit_distance = static_cast<double>(util::RandomDistribution::sample(10, 300) / 10.0);
   p->setOrbitDistance(lib::Distance(orbit_distance));
-  p->setOrbitDuration(lib::Duration(orbit_distance * orbit_distance * util::RandomDistribution::sample(100, 300)));
+  p->setOrbitDuration(lib::Duration(orbit_distance * util::RandomDistribution::sample(100, 1000)));
   p->setMass(lib::Mass(util::RandomDistribution::sample(55, 317800) / 1000.0));
 
   return p;

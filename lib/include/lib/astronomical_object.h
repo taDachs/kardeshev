@@ -54,11 +54,14 @@ public:
 
   virtual void visited(AstronomicalObjectVisitor& visitor) = 0;
 
-  int getCurrentAngle(const Duration& time) const
+  double getCurrentAngle(const Duration& time) const
   {
     // this is okay because the orbit duraiton shouldn't be that large
+    if (m_parent == nullptr) {
+      return 0;
+    }
     auto day_of_year     = static_cast<double>(time.getDays() % m_orbit_duration.getDays());
-    return static_cast<int>((day_of_year / m_orbit_duration.getDays()) * 360.0);
+    return (day_of_year / m_orbit_duration.getDays()) * 360.0;
   }
 };
 

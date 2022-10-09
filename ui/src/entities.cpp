@@ -90,12 +90,23 @@ const int PlanetEntity::PLANET_SPRITE_NOT_SELECTED_FRAME = 0;
 
 void PlanetEntity::update()
 {
+  SDL_Point parent_offset;
+  parent_offset.x = 0;
+  parent_offset.y = 0;
+  if (m_planet->getParent() != nullptr) {
+    lib::AstronomicalObject::Ptr parent = m_planet->getParent();
+    int orbit_radius = parent->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+    glm::vec2 cors =
+      util::polarToCart(orbit_radius, parent->getCurrentAngle(UI::game->getTime()));
+    parent_offset.x = cors.x;
+    parent_offset.y = cors.y;
+  }
   bool selected    = m_selected || UI::state->focused_planet == m_planet;
   int orbit_radius = m_planet->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
   glm::vec2 cors =
     util::polarToCart(orbit_radius, m_planet->getCurrentAngle(UI::game->getTime()));
-  m_position.x = cors.x;
-  m_position.y = cors.y;
+  m_position.x = cors.x + parent_offset.x;
+  m_position.y = cors.y + parent_offset.y;
   int size = m_scale * m_planet->getMass().getInEarthMasses() * EARTH_MASS_TO_PIXEL_SCALING;
   SDL_Rect icon_dst;
   icon_dst.w = icon_dst.h = std::max(static_cast<double>(size), 5.0);
@@ -145,8 +156,8 @@ void PlanetEntity::update()
   // m_description_box->setBoxColor(WHITE);
   m_description_box->setAlive(selected);
   SDL_Rect orbit_ring_dst;
-  orbit_ring_dst.x = m_offset.x - orbit_radius;
-  orbit_ring_dst.y = m_offset.y - orbit_radius;
+  orbit_ring_dst.x = parent_offset.x + m_offset.x - orbit_radius;
+  orbit_ring_dst.y = parent_offset.y + m_offset.y - orbit_radius;
   orbit_ring_dst.w = orbit_ring_dst.h = 2 * orbit_radius;
   m_orbit_ring->setDst(orbit_ring_dst);
 }
