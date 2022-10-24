@@ -3,6 +3,7 @@
 
 #include "id.h"
 #include "resources.h"
+#include <memory>
 
 namespace kardeshev {
 namespace lib {
@@ -10,6 +11,7 @@ namespace lib {
 class Building : public GameObject
 {
 public:
+  using Ptr = std::shared_ptr<Building>;
   virtual void satisfyProductionNeeds(const ResourceList& supplies) = 0;
   virtual std::vector<ResourceSupply> getProduce()                  = 0;
 };

@@ -5,10 +5,11 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <string>
 #include <utility>
+#include <memory>
 
 namespace kardeshev {
 namespace lib {
-class GameObject
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 private:
   boost::uuids::uuid m_id;

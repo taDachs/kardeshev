@@ -40,13 +40,13 @@ int loadAssets(void* data)
 
   kardeshev::lib::ResourceType potatoes("potato_resource", "Potatoes");
   kardeshev::lib::Need food_req(potatoes, 1);
-  std::shared_ptr<kardeshev::lib::Building> potato_farm =
-    std::make_shared<kardeshev::lib::Farm>(potatoes);
+  std::unique_ptr<kardeshev::lib::Building> potato_farm =
+    std::make_unique<kardeshev::lib::Farm>(potatoes);
   kardeshev::lib::Species humans("human_species", "Humans", 1.01, {food_req});
   kardeshev::lib::Population pop(humans, {});
   std::shared_ptr<kardeshev::lib::SolarSystem> ss = g->getSystems()[0];
-  ss->getPlanets()[0]->addPop(pop);
-  ss->getPlanets()[0]->addBuilding(potato_farm);
+  // ss->getPlanets()[0]->addPopulation(pop);
+  // ss->getPlanets()[0]->addBuilding(std::move(potato_farm));
 
   kardeshev::util::Logger::logInfo("Finished initialization");
   kardeshev::ui::UI::state->screen_stack.push(kardeshev::ui::UI::screen_list.main_menu_screen);

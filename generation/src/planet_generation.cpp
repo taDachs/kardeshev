@@ -1,5 +1,4 @@
 #include "generation/planet_generation.h"
-#include "lib/duration.h"
 #include "lib/planets.h"
 #include "util/util.h"
 
@@ -10,18 +9,18 @@ const double KELVIN_ZERO = 273;
 
 std::shared_ptr<lib::Planet> NaivePlanetGenerator::generatePlanet() const
 {
-  auto info                     = std::make_shared<lib::PlanetInfo>();
-  info->name                    = m_name_generator->generateName();
-  lib::PlanetClass planet_class = m_classes[rand() % m_classes.size()];
-  info->planet_class            = planet_class;
+  std::shared_ptr<lib::Planet> p = std::make_shared<lib::Planet>();
+  p->setName(m_name_generator->generateName());
+  lib::PlanetClass planet_class = m_classes.at(rand() % m_classes.size());
+  p->setPlanetClass(planet_class);
   double min_temp               = planet_class.getTempRange().first;
   double max_temp               = planet_class.getTempRange().second;
-  info->temperature             = static_cast<double>(
-    util::RandomDistribution::sample(static_cast<int>(min_temp), static_cast<int>(max_temp)));
-  info->orbit_duration           = lib::Duration(util::RandomDistribution::sample(360, 9999));
-  info->orbit_distance           = static_cast<double>(util::RandomDistribution::sample(100, 500));
-  std::shared_ptr<lib::Planet> p = std::make_shared<lib::Planet>(info);
-  p->getInfo()->planet           = p;
+  p->setTemperature(static_cast<double>( util::RandomDistribution::sample(static_cast<int>(min_temp), static_cast<int>(max_temp))));
+  const double astronomical_unit = 1.496e+8;
+  auto orbit_distance = static_cast<double>(util::RandomDistribution::sample(10, 300) / 10.0);
+  p->setOrbitDistance(lib::Distance(orbit_distance));
+  p->setOrbitDuration(lib::Duration(orbit_distance * util::RandomDistribution::sample(100, 1000)));
+  p->setMass(lib::Mass(util::RandomDistribution::sample(55, 317800) / 1000.0));
 
   return p;
 }

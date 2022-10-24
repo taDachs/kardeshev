@@ -2,8 +2,8 @@
 #define PLANETS_H
 
 #include "buildings.h"
-#include "duration.h"
 #include "id.h"
+#include "lib/astronomical_object.h"
 #include "population.h"
 #include <memory>
 #include <vector>
@@ -128,51 +128,21 @@ const PlanetClass TERRESTIAL("terestial",
                              "Also known as a telluric planet or rocky planet. A planet that is "
                              "composed primarily of carbonaceous or silicate rocks or metals.",
                              std::pair<double, double>(200, 400));
-class Planet;
-
-struct PlanetInfo
-{
-  using Ptr = std::shared_ptr<PlanetInfo>;
-  std::string name;
-  std::shared_ptr<Planet> planet;
-  PlanetClass planet_class;
-  double temperature;
-  std::vector<ResourceDeposit> resources;
-  std::string getNameOrId() const;
-  Duration orbit_duration;
-  double orbit_distance;
-
-  int getCurrentAngle(const Duration& time) const
-  {
-    // this is okay because the orbit duraiton shouldn't be that large
-    auto day_of_year     = static_cast<double>(time.getTicks() % orbit_duration.getTicks());
-    auto orbit_duration_ = static_cast<double>(orbit_duration.getTicks());
-
-    return static_cast<int>((day_of_year / orbit_duration_) * 360.0);
-  }
-};
-
-class Planet : public GameObject
+class Planet : public AstronomicalObject
 {
 public:
   using Ptr = std::shared_ptr<Planet>;
 
 private:
-  std::vector<Population> m_pops;
-  std::vector<std::shared_ptr<Building> > m_buildings;
-  std::shared_ptr<PlanetInfo> m_info;
   ResourceList m_stockpile;
+  PlanetClass m_planet_class;
 
 public:
-  Planet(std::shared_ptr<PlanetInfo> info)
-    : m_info(std::move(info)){};
-  std::vector<Population> getPops() const { return m_pops; };
-  void addPop(const Population& pop) { m_pops.push_back(pop); }
-  std::vector<std::shared_ptr<Building> > getBuildings() const { return m_buildings; };
-  std::shared_ptr<PlanetInfo> getInfo() const { return m_info; }
+  PlanetClass getPlanetClass() const { return m_planet_class; }
   ResourceList getStockpile() const { return m_stockpile; }
   void update() override;
-  void addBuilding(const std::shared_ptr<Building>& building) { m_buildings.push_back(building); }
+  void visited(AstronomicalObjectVisitor& visitor) override;
+  void setPlanetClass(const PlanetClass& planet_class) { m_planet_class = planet_class; }
 };
 
 } // namespace lib

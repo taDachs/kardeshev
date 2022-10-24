@@ -20,7 +20,6 @@ std::string joinLines(const std::vector<std::string>& lines,
 std::string encodeBase32(long i);
 
 glm::vec2 polarToCart(const double radius, const double angle);
-glm::vec2 polarToCart(const double radius, const int angle);
 
 class RandomDistribution
 {

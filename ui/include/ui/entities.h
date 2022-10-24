@@ -12,6 +12,8 @@
 namespace kardeshev {
 namespace ui {
 
+#define AU_TO_PIXEL_SCALING 150
+#define EARTH_MASS_TO_PIXEL_SCALING 0.1
 
 class Entity : public std::enable_shared_from_this<Entity>
 {
@@ -81,7 +83,7 @@ public:
       std::make_shared<TextLabelUI>(m_system->getInfo()->getNameOrId().substr(0, 10));
     m_system_name_label->setAlive(false);
     m_number_planets_label = std::make_shared<TextLabelUI>(
-      "Num Planets: " + std::to_string(m_system->getPlanets().size()));
+      "Num Bodies: " + std::to_string(m_system->getObjects().size()));
     m_number_planets_label->setAlive(false);
 
     m_components.push_back(m_system_selected_icon);
@@ -124,11 +126,11 @@ public:
     m_focused_icon = std::make_shared<TextureComponent>(PLANET_SPRITE, PLANET_SPRITE_FOCUSED_FRAME);
 
     m_planet_name_label =
-      std::make_shared<TextLabelUI>(m_planet->getInfo()->getNameOrId().substr(0, 10));
+      std::make_shared<TextLabelUI>(m_planet->getName());
     m_orbit_ring = std::make_shared<OrbitRingUI>();
     m_planet_name_label->setAlive(false);
     m_description_box =
-      std::make_shared<TextBoxUI>(m_planet->getInfo()->planet_class.getDescription());
+      std::make_shared<TextBoxUI>(m_planet->getPlanetClass().getDescription());
     m_components.push_back(m_orbit_ring);
 
     m_components.push_back(m_selected_icon);
@@ -142,6 +144,45 @@ public:
   bool handleEvent(SDL_Event* e) override;
   lib::Planet::Ptr getPlanet() const { return m_planet; }
 };
+
+
+class AsteroidEntity : public Entity
+{
+public:
+
+private:
+  lib::Asteroid::Ptr m_asteroid;
+  TextLabelUI::Ptr m_asteroid_name_label;
+  TextureComponent::Ptr m_selected_icon;
+  TextureComponent::Ptr m_focused_icon;
+  TextureComponent::Ptr m_not_selected_icon;
+  bool m_selected = false;
+
+public:
+  AsteroidEntity(lib::Asteroid::Ptr planet)
+    : m_asteroid(std::move(planet))
+  {
+    m_selected_icon =
+      std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_SELECTED_FRAME);
+    m_not_selected_icon =
+      std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_NOT_SELECTED_FRAME);
+    m_focused_icon = std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_FOCUSED_FRAME);
+
+    m_asteroid_name_label =
+      std::make_shared<TextLabelUI>(m_asteroid->getName());
+    m_asteroid_name_label->setAlive(false);
+
+    m_components.push_back(m_selected_icon);
+    m_components.push_back(m_not_selected_icon);
+    m_components.push_back(m_focused_icon);
+
+    m_components.push_back(m_asteroid_name_label);
+  }
+  void update() override;
+  bool handleEvent(SDL_Event* e) override;
+  lib::Asteroid::Ptr getAsteroid() const { return m_asteroid; }
+};
+
 
 class StarEntity : public Entity
 {
@@ -166,7 +207,7 @@ public:
     m_not_selected_icon =
       std::make_shared<TextureComponent>(STAR_SPRITE, STAR_SPRITE_NOT_SELECTED_FRAME);
     m_star_name_label =
-      std::make_shared<TextLabelUI>(m_star->getInfo()->getNameOrId().substr(0, 10));
+      std::make_shared<TextLabelUI>(m_star->getName());
     m_star_name_label->setAlive(false);
     m_components.push_back(m_selected_icon);
     m_components.push_back(m_not_selected_icon);
@@ -257,7 +298,7 @@ public:
     dst.x        = 0;
     dst.y        = dst.h * 0.01;
     dst.w        = std::min(dst.w, 200);
-    m_text_box->setText("Time: " + std::to_string(UI::game->getTime().getTicks()));
+    m_text_box->setText("Time: " + std::to_string(UI::game->getTime().getDays()));
     m_text_box->setDst(dst);
   }
   bool handleEvent(SDL_Event* e) override { return false; }

@@ -74,11 +74,6 @@ std::string kardeshev::util::encodeBase32(long i)
 
 glm::vec2 kardeshev::util::polarToCart(const double radius, const double angle)
 {
-  return {radius * cos(angle), radius * sin(angle)};
-}
-
-glm::vec2 kardeshev::util::polarToCart(const double radius, const int angle)
-{
   double radians = static_cast<double>(angle) * ((2 * M_PI) / 360.0);
-  return polarToCart(radius, radians);
+  return {radius * cos(radians), radius * sin(radians)};
 }

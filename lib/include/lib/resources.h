@@ -58,7 +58,6 @@ class ResourceDeposit
 private:
   ResourceType m_type;
   double m_amount;
-  double m_mined = 0;
 
 public:
   ResourceDeposit(ResourceType type, double amount)
@@ -68,7 +67,10 @@ public:
   }
   ResourceType getType() const { return m_type; }
   double getAmount() const { return m_amount; }
-  double getMined() const { return m_mined; }
+  double mine(double amount) {
+    m_amount -= amount;
+    return m_amount;
+  }
 };
 
 class ResourceSupply
@@ -85,8 +87,8 @@ public:
   }
   ResourceType getType() const { return m_type; }
   size_t getAmount() const { return m_amount; }
-  void addAnoubt(size_t amount) { m_amount += amount; }
-  void removeAnoubt(size_t amount) { m_amount -= amount; }
+  void addAmount(size_t amount) { m_amount += amount; }
+  void removeAmount(size_t amount) { m_amount -= amount; }
 };
 
 class Need

@@ -6,5 +6,6 @@ add_library(kardeshev_lib STATIC
   src/population.cpp
   src/solar_systems.cpp
   src/stars.cpp
+  src/asteroid.cpp
 )
 target_link_libraries(kardeshev_lib ${GLM_LIBRARIES} ${Boost_LIBRARIES})

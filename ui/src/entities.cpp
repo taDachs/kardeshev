@@ -90,14 +90,26 @@ const int PlanetEntity::PLANET_SPRITE_NOT_SELECTED_FRAME = 0;
 
 void PlanetEntity::update()
 {
+  SDL_Point parent_offset;
+  parent_offset.x = 0;
+  parent_offset.y = 0;
+  if (m_planet->getParent() != nullptr) {
+    lib::AstronomicalObject::Ptr parent = m_planet->getParent();
+    int orbit_radius = parent->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+    glm::vec2 cors =
+      util::polarToCart(orbit_radius, parent->getCurrentAngle(UI::game->getTime()));
+    parent_offset.x = cors.x;
+    parent_offset.y = cors.y;
+  }
   bool selected    = m_selected || UI::state->focused_planet == m_planet;
-  int orbit_radius = m_planet->getInfo()->orbit_distance * m_scale;
+  int orbit_radius = m_planet->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
   glm::vec2 cors =
-    util::polarToCart(orbit_radius, m_planet->getInfo()->getCurrentAngle(UI::game->getTime()));
-  m_position.x = cors.x;
-  m_position.y = cors.y;
+    util::polarToCart(orbit_radius, m_planet->getCurrentAngle(UI::game->getTime()));
+  m_position.x = cors.x + parent_offset.x;
+  m_position.y = cors.y + parent_offset.y;
+  int size = m_scale * m_planet->getMass().getInEarthMasses() * EARTH_MASS_TO_PIXEL_SCALING;
   SDL_Rect icon_dst;
-  icon_dst.w = icon_dst.h = m_scale * 20;
+  icon_dst.w = icon_dst.h = std::max(static_cast<double>(size), 5.0);
   icon_dst.x              = m_offset.x + m_position.x - icon_dst.w / 2;
   icon_dst.y              = m_offset.y + m_position.y - icon_dst.h / 2;
 
@@ -122,7 +134,7 @@ void PlanetEntity::update()
   }
 
   SDL_Rect label_dst;
-  label_dst.x = icon_dst.x + m_scale * 20 + 10;
+  label_dst.x = icon_dst.x + icon_dst.w + 10;
   label_dst.y = icon_dst.y - 80;
   label_dst.w = 400;
   label_dst.h = 30;
@@ -144,8 +156,8 @@ void PlanetEntity::update()
   // m_description_box->setBoxColor(WHITE);
   m_description_box->setAlive(selected);
   SDL_Rect orbit_ring_dst;
-  orbit_ring_dst.x = m_offset.x - orbit_radius;
-  orbit_ring_dst.y = m_offset.y - orbit_radius;
+  orbit_ring_dst.x = parent_offset.x + m_offset.x - orbit_radius;
+  orbit_ring_dst.y = parent_offset.y + m_offset.y - orbit_radius;
   orbit_ring_dst.w = orbit_ring_dst.h = 2 * orbit_radius;
   m_orbit_ring->setDst(orbit_ring_dst);
 }
@@ -192,12 +204,12 @@ const int StarEntity::STAR_SPRITE_NOT_SELECTED_FRAME = 0;
 
 void StarEntity::update()
 {
-  int size     = m_scale * 80;
+  int size     = m_scale * std::min(m_star->getMass().getInEarthMasses() * EARTH_MASS_TO_PIXEL_SCALING, 300.0);
   m_position.x = 0;
   m_position.y = 0;
 
   SDL_Rect icon_dst;
-  icon_dst.w = icon_dst.h = size;
+  icon_dst.w = icon_dst.h = std::max(static_cast<double>(size), 5.0);
   icon_dst.x              = m_offset.x + m_position.x - size / 2;
   icon_dst.y              = m_offset.y + m_position.y - size / 2;
   m_selected_icon->setDst(icon_dst);
@@ -206,7 +218,7 @@ void StarEntity::update()
   m_not_selected_icon->setAlive(!m_selected);
 
   SDL_Rect label_dst;
-  label_dst.x = icon_dst.x + size;
+  label_dst.x = icon_dst.x + icon_dst.w;
   label_dst.y = icon_dst.y - 20;
   label_dst.w = 200;
   label_dst.h = 30;
@@ -281,13 +293,12 @@ bool ButtonEntity::handleEvent(SDL_Event* e)
 
 void PlanetInfoEntity::generateText()
 {
-  lib::PlanetInfo::Ptr info = m_current_planet->getInfo();
   std::stringstream s;
-  s << "Planet Class: " << info->planet_class.getName() << "\n";
-  s << "Class Description: " << info->planet_class.getDescription() << "\n";
-  s << "Temperature: " << info->temperature - 273.0 << " C\n";
-  s << "Orbit Duration: " << info->orbit_duration.getTicks() << " Days\n";
-  s << "Orbit Distance: " << info->orbit_distance << " km\n";
+  s << "Planet Class: " << m_current_planet->getPlanetClass().getName() << "\n";
+  s << "Class Description: " << m_current_planet->getPlanetClass().getDescription() << "\n";
+  s << "Temperature: " << m_current_planet->getTemperature().getInC()  << " C\n";
+  s << "Orbit Duration: " << m_current_planet->getOrbitDuration().getDays() << " Days\n";
+  s << "Orbit Distance: " << m_current_planet->getOrbitDistance().getInAU() << " AU\n";
   m_text = s.str();
 }
 
@@ -298,8 +309,7 @@ void PlanetInfoEntity::update()
     m_current_planet = UI::state->focused_planet;
     if (m_current_planet != nullptr)
     {
-      m_planet_name_label->setText("Name: " +
-                                   m_current_planet->getInfo()->getNameOrId().substr(0, 10));
+      m_planet_name_label->setText("Name: " + m_current_planet->getName());
       generateText();
       m_info_box->setText(m_text);
     }
@@ -450,3 +460,74 @@ void TextEntity::update()
   m_box->setBoxBorderColor(m_box_border_color);
   m_box->setColor(m_color);
 }
+
+void AsteroidEntity::update()
+{
+  SDL_Point parent_offset;
+  parent_offset.x = 0;
+  parent_offset.y = 0;
+  if (m_asteroid->getParent() != nullptr) {
+    lib::AstronomicalObject::Ptr parent = m_asteroid->getParent();
+    int orbit_radius = parent->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+    glm::vec2 cors =
+      util::polarToCart(orbit_radius, parent->getCurrentAngle(UI::game->getTime()));
+    parent_offset.x = cors.x;
+    parent_offset.y = cors.y;
+  }
+  bool selected    = m_selected;
+  int orbit_radius = m_asteroid->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+  glm::vec2 cors =
+    util::polarToCart(orbit_radius, m_asteroid->getCurrentAngle(UI::game->getTime()));
+  m_position.x = cors.x + parent_offset.x;
+  m_position.y = cors.y + parent_offset.y;
+  int size = m_scale * m_asteroid->getMass().getInEarthMasses() * EARTH_MASS_TO_PIXEL_SCALING;
+  SDL_Rect icon_dst;
+  icon_dst.w = icon_dst.h = std::max(static_cast<double>(size), 5.0);
+  icon_dst.x              = m_offset.x + m_position.x - icon_dst.w / 2;
+  icon_dst.y              = m_offset.y + m_position.y - icon_dst.h / 2;
+
+  m_selected_icon->setDst(icon_dst);
+  m_selected_icon->setDepth(250);
+  m_not_selected_icon->setDst(icon_dst);
+  m_not_selected_icon->setDepth(250);
+  m_focused_icon->setDst(icon_dst);
+  m_focused_icon->setDepth(250);
+
+  m_selected_icon->setAlive(m_selected);
+  m_not_selected_icon->setAlive(!m_selected);
+  m_focused_icon->setAlive(false);
+
+  SDL_Rect label_dst;
+  label_dst.x = icon_dst.x + icon_dst.w + 10;
+  label_dst.y = icon_dst.y - 80;
+  label_dst.w = 400;
+  label_dst.h = 30;
+  m_asteroid_name_label->setDst(label_dst);
+  m_asteroid_name_label->setBoxed(true);
+  m_asteroid_name_label->setBoxColor(WHITE);
+  m_asteroid_name_label->setBoxBorderColor(WHITE);
+  m_asteroid_name_label->setColor(BLACK);
+  m_asteroid_name_label->setAlive(selected);
+}
+
+bool AsteroidEntity::handleEvent(SDL_Event* e)
+{
+  SDL_Point mouse;
+  SDL_GetMouseState(&mouse.x, &mouse.y);
+
+  SDL_Rect viewport = UI::getRenderSize();
+  mouse.x -= viewport.x;
+  mouse.y -= viewport.y;
+  bool selected = m_not_selected_icon->isUnderMouse(mouse.x, mouse.y);
+
+  if (e->type == SDL_MOUSEMOTION)
+  {
+    // Get mouse position
+    m_selected = selected;
+
+    // should not be counted as handled
+    return false;
+  }
+  return false;
+}
+
