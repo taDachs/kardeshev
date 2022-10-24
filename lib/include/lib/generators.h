@@ -1,5 +1,6 @@
 #ifndef GENERATORS_H
 #define GENERATORS_H
+#include "lib/asteroid.h"
 #include "lib/galaxy.h"
 #include "lib/solar_systems.h"
 #include "lib/stars.h"
@@ -42,6 +43,13 @@ class GalaxyGenerator
 public:
   using Ptr                                                   = std::shared_ptr<GalaxyGenerator>;
   virtual std::shared_ptr<lib::Galaxy> generateGalaxy() const = 0;
+};
+
+class AsteroidGenerator
+{
+public:
+  using Ptr                                                   = std::shared_ptr<GalaxyGenerator>;
+  virtual std::shared_ptr<lib::Asteroid> generateAsteroid() const = 0;
 };
 
 } // namespace generation

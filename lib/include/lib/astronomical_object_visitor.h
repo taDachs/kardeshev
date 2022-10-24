@@ -1,6 +1,7 @@
 #ifndef ASTRONOMICAL_OBJECT_VISITOR_H
 #define ASTRONOMICAL_OBJECT_VISITOR_H
 
+#include "lib/asteroid.h"
 #include "lib/astronomical_object.h"
 #include "lib/planets.h"
 #include "lib/stars.h"
@@ -14,6 +15,7 @@ public:
   void visit(AstronomicalObject& obj) { obj.visited(*this); }
   virtual void visitPlanet(Planet& obj) {};
   virtual void visitStar(Star& obj) {};
+  virtual void visitAsteroid(Asteroid& obj) {};
 };
 } // namespace lib
 

@@ -145,6 +145,45 @@ public:
   lib::Planet::Ptr getPlanet() const { return m_planet; }
 };
 
+
+class AsteroidEntity : public Entity
+{
+public:
+
+private:
+  lib::Asteroid::Ptr m_asteroid;
+  TextLabelUI::Ptr m_asteroid_name_label;
+  TextureComponent::Ptr m_selected_icon;
+  TextureComponent::Ptr m_focused_icon;
+  TextureComponent::Ptr m_not_selected_icon;
+  bool m_selected = false;
+
+public:
+  AsteroidEntity(lib::Asteroid::Ptr planet)
+    : m_asteroid(std::move(planet))
+  {
+    m_selected_icon =
+      std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_SELECTED_FRAME);
+    m_not_selected_icon =
+      std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_NOT_SELECTED_FRAME);
+    m_focused_icon = std::make_shared<TextureComponent>(PlanetEntity::PLANET_SPRITE, PlanetEntity::PLANET_SPRITE_FOCUSED_FRAME);
+
+    m_asteroid_name_label =
+      std::make_shared<TextLabelUI>(m_asteroid->getName());
+    m_asteroid_name_label->setAlive(false);
+
+    m_components.push_back(m_selected_icon);
+    m_components.push_back(m_not_selected_icon);
+    m_components.push_back(m_focused_icon);
+
+    m_components.push_back(m_asteroid_name_label);
+  }
+  void update() override;
+  bool handleEvent(SDL_Event* e) override;
+  lib::Asteroid::Ptr getAsteroid() const { return m_asteroid; }
+};
+
+
 class StarEntity : public Entity
 {
 public:

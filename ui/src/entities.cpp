@@ -460,3 +460,74 @@ void TextEntity::update()
   m_box->setBoxBorderColor(m_box_border_color);
   m_box->setColor(m_color);
 }
+
+void AsteroidEntity::update()
+{
+  SDL_Point parent_offset;
+  parent_offset.x = 0;
+  parent_offset.y = 0;
+  if (m_asteroid->getParent() != nullptr) {
+    lib::AstronomicalObject::Ptr parent = m_asteroid->getParent();
+    int orbit_radius = parent->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+    glm::vec2 cors =
+      util::polarToCart(orbit_radius, parent->getCurrentAngle(UI::game->getTime()));
+    parent_offset.x = cors.x;
+    parent_offset.y = cors.y;
+  }
+  bool selected    = m_selected;
+  int orbit_radius = m_asteroid->getOrbitDistance().getInAU() * m_scale * AU_TO_PIXEL_SCALING;
+  glm::vec2 cors =
+    util::polarToCart(orbit_radius, m_asteroid->getCurrentAngle(UI::game->getTime()));
+  m_position.x = cors.x + parent_offset.x;
+  m_position.y = cors.y + parent_offset.y;
+  int size = m_scale * m_asteroid->getMass().getInEarthMasses() * EARTH_MASS_TO_PIXEL_SCALING;
+  SDL_Rect icon_dst;
+  icon_dst.w = icon_dst.h = std::max(static_cast<double>(size), 5.0);
+  icon_dst.x              = m_offset.x + m_position.x - icon_dst.w / 2;
+  icon_dst.y              = m_offset.y + m_position.y - icon_dst.h / 2;
+
+  m_selected_icon->setDst(icon_dst);
+  m_selected_icon->setDepth(250);
+  m_not_selected_icon->setDst(icon_dst);
+  m_not_selected_icon->setDepth(250);
+  m_focused_icon->setDst(icon_dst);
+  m_focused_icon->setDepth(250);
+
+  m_selected_icon->setAlive(m_selected);
+  m_not_selected_icon->setAlive(!m_selected);
+  m_focused_icon->setAlive(false);
+
+  SDL_Rect label_dst;
+  label_dst.x = icon_dst.x + icon_dst.w + 10;
+  label_dst.y = icon_dst.y - 80;
+  label_dst.w = 400;
+  label_dst.h = 30;
+  m_asteroid_name_label->setDst(label_dst);
+  m_asteroid_name_label->setBoxed(true);
+  m_asteroid_name_label->setBoxColor(WHITE);
+  m_asteroid_name_label->setBoxBorderColor(WHITE);
+  m_asteroid_name_label->setColor(BLACK);
+  m_asteroid_name_label->setAlive(selected);
+}
+
+bool AsteroidEntity::handleEvent(SDL_Event* e)
+{
+  SDL_Point mouse;
+  SDL_GetMouseState(&mouse.x, &mouse.y);
+
+  SDL_Rect viewport = UI::getRenderSize();
+  mouse.x -= viewport.x;
+  mouse.y -= viewport.y;
+  bool selected = m_not_selected_icon->isUnderMouse(mouse.x, mouse.y);
+
+  if (e->type == SDL_MOUSEMOTION)
+  {
+    // Get mouse position
+    m_selected = selected;
+
+    // should not be counted as handled
+    return false;
+  }
+  return false;
+}
+

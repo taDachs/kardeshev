@@ -1,4 +1,5 @@
 #include "generation/solar_system_generation.h"
+#include "generation/asteroid_generation.h"
 #include "util/util.h"
 #include "util/logger.h"
 #include <iostream>
@@ -29,7 +30,22 @@ std::shared_ptr<lib::SolarSystem> NaiveSolarSystemGenerator::generateSolarSystem
     }
   }
 
-  auto solar_system  = std::make_shared<lib::SolarSystem>(info, star, planets);
+  // asteroid belt
+  std::vector<std::shared_ptr<lib::Asteroid>> asteroids;
+  if (util::RandomDistribution::sample(0, 2) > 0) {
+    util::Logger::logDebug("Generating Asteroid Belt");
+    auto orbit_distance = static_cast<double>(util::RandomDistribution::sample(10, 300) / 10.0);
+    int num_asteroid = util::RandomDistribution::sample(10, 3000);
+    NaiveAsteroidGenerator ag(orbit_distance);
+
+    for (int i = 0; i < num_asteroid; i++) {
+      std::shared_ptr<lib::Asteroid> a = ag.generateAsteroid();
+      a->setParent(star);
+      asteroids.push_back(a);
+    }
+  }
+
+  auto solar_system  = std::make_shared<lib::SolarSystem>(info, star, planets, asteroids);
   info->solar_system = solar_system;
   return solar_system;
 }

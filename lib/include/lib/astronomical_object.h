@@ -54,12 +54,12 @@ public:
 
   virtual void visited(AstronomicalObjectVisitor& visitor) = 0;
 
-  double getCurrentAngle(const Duration& time) const
+  virtual double getCurrentAngle(const Duration& time) const
   {
-    // this is okay because the orbit duraiton shouldn't be that large
     if (m_parent == nullptr) {
       return 0;
     }
+    // this is okay because the orbit duraiton shouldn't be that large
     auto day_of_year     = static_cast<double>(time.getDays() % m_orbit_duration.getDays());
     return (day_of_year / m_orbit_duration.getDays()) * 360.0;
   }

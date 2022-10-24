@@ -1,6 +1,7 @@
 #ifndef SOLAR_SYSTEM_H
 #define SOLAR_SYSTEM_H
 #include "id.h"
+#include "lib/asteroid.h"
 #include "planets.h"
 #include "stars.h"
 #include <glm/glm.hpp>
@@ -31,7 +32,8 @@ private:
 public:
   SolarSystem(std::shared_ptr<SolarSystemInfo> info,
               std::shared_ptr<Star> star,
-              std::vector<std::shared_ptr<Planet> > planets)
+              std::vector<std::shared_ptr<Planet> > planets,
+              const std::vector<std::shared_ptr<Asteroid> >& asteroids)
     : m_info(std::move(info))
     , m_star(std::move(star))
     , m_planets(std::move(planets))
@@ -39,6 +41,9 @@ public:
     m_objects.push_back(std::static_pointer_cast<AstronomicalObject>(m_star));
     for (const auto& p : m_planets) {
       m_objects.push_back(std::static_pointer_cast<AstronomicalObject>(p));
+    }
+    for (const auto& a : asteroids) {
+      m_objects.push_back(std::static_pointer_cast<AstronomicalObject>(a));
     }
   }
   std::vector<AstronomicalObject::Ptr> getObjects() const { return m_objects; }
